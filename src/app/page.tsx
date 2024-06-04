@@ -21,12 +21,6 @@ export default function Home() {
   ];
   return (
     <main className="bg-gray-200">
-      {/* Navbar */}
-
-      <div>
-        <Navbar />
-      </div>
-      
 
       {/* Carousel Slider */}
 

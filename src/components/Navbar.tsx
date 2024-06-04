@@ -20,7 +20,7 @@ const Navbar: React.FC = () => {
       <div className="flex justify-between max-w-7xl mx-auto items-center px-2 h-fit">
         {/* Logo */}
         <div>
-          <a href="" className="flex items-center">
+          <a href=".." className="flex items-center">
             <CodeBracketSquareIcon className="size-12 text-black mr-2" />
             <span className="text-black text-xl font-bold">VERITAS</span>
           </a>
@@ -30,7 +30,7 @@ const Navbar: React.FC = () => {
           <a href="#" className="py-5 px-6 rounded hover:bg-gray-200">
             Statistics
           </a>
-          <a href="#" className="py-5 px-6 hover:bg-gray-200">
+          <a href="/manualcheck" className="py-5 px-6 hover:bg-gray-200">
             Manual Check
           </a>
           <a href="#" className="py-5 px-6 hover:bg-gray-200">
@@ -51,8 +51,8 @@ const Navbar: React.FC = () => {
           />
         </div>
         {/* Burger Menu */}
-        <div className="relative">
-          <button onClick={toggleMenu}>
+        <div className="flex h-full relative">
+          <button className="hover:bg-gray-200" onClick={toggleMenu}>
             <Bars3Icon className="size-8 text-black" />
           </button>
           {/* Menubar */}
