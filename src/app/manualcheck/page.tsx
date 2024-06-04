@@ -4,7 +4,7 @@ import { HandThumbDownIcon, HandThumbUpIcon, MagnifyingGlassIcon } from "@heroic
 
 export default function ManualCheck() {
   return (
-    <main className="bg-gray-200">
+    <main className="bg-gray-200 h-screen">
         {/* Input bar */}
       <div className="flex justify-center mx-auto px-2 max-w-7xl py-14">
         <Input className="border-black/25" placeholder="Enter URL or content"/>
