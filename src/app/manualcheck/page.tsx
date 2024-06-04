@@ -6,7 +6,7 @@ export default function ManualCheck() {
   return (
     <main className="bg-gray-200 h-screen">
         {/* Input bar */}
-      <div className="flex justify-center mx-auto px-2 max-w-7xl py-14">
+      <div className="flex justify-center mx-auto px-2 max-w-7xl py-11">
         <Input className="border-black/25" placeholder="Enter URL or content"/>
       </div>
 
