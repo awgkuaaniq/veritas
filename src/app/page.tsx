@@ -31,15 +31,17 @@ export default function Home() {
               <CarouselItem className="py-0" key={index}>
                 <Card className="flex items-center justify-center h-full">
                   <CardContent className="w-full h-full p-0 relative">
-                    <img
-                      className="object-fill w-full h-full"
-                      src={image.src}
-                      alt={image.alt}
-                    />
-                    {/* News Title */}
-                    <div className="absolute w-full h-max bottom-0 bg-black/65 text-justify text-white font-semibold text-2xl px-4 py-4">
-                      {image.alt}
-                    </div>
+                    <a href="/article">
+                      <img
+                        className="object-fill w-full h-full"
+                        src={image.src}
+                        alt={image.alt}
+                      />
+                      {/* News Title */}
+                      <div className="absolute w-full h-max bottom-0 bg-black/65 text-justify text-white font-semibold text-2xl px-4 py-4">
+                        {image.alt}
+                      </div>
+                    </a>
                   </CardContent>
                 </Card>
               </CarouselItem>

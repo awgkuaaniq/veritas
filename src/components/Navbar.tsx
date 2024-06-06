@@ -27,7 +27,7 @@ const Navbar: React.FC = () => {
         </div>
         {/* Navigation */}
         <div className="text-black flex justify-between items-center">
-          <a href="#" className="py-5 px-6 rounded hover:bg-gray-200">
+          <a href="/statistic" className="py-5 px-6 rounded hover:bg-gray-200">
             Statistics
           </a>
           <a href="/manualcheck" className="py-5 px-6 hover:bg-gray-200">
