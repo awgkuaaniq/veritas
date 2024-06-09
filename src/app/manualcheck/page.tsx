@@ -1,57 +1,123 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { HandThumbDownIcon, HandThumbUpIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import {
+  HandThumbDownIcon,
+  HandThumbUpIcon,
+  MagnifyingGlassIcon,
+} from "@heroicons/react/24/outline";
+import axios from "axios";
+import { useState } from "react";
+
+type Prediction = {
+  category: string;
+  confidence: number;
+};
 
 export default function ManualCheck() {
+  const [userInput, setUserInput] = useState(""); // State to store user input
+  const [predictionData, setPrediction] = useState<Prediction | null>(null); // State to store API response
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUserInput(event.target.value);
+  };
+
+  const handleCheck = async () => {
+    // Consider using a more specific event type
+    if (!userInput) return; // Check if input is empty
+
+    try {
+      const response = await axios.post(
+        `http://localhost:8000/api/predict?body=${userInput}`
+      );
+      setPrediction(response.data);
+      console.log(response.data); // Optional: Log API response for debugging
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      // Handle errors (e.g., display error message)
+    }
+  };
+
+  // Handle Enter key press in the input field (optional)
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleCheck();
+    }
+  };
+
   return (
     <main className="bg-gray-200 h-screen">
-        {/* Input bar */}
+      {/* Input bar */}
       <div className="flex justify-center mx-auto px-2 max-w-7xl py-11">
-        <Input className="border-black/25" placeholder="Enter URL or content"/>
+        <Input
+          className="border-black/25"
+          placeholder="Enter URL or content"
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+        />
       </div>
 
       {/* Fake News Percentage Output*/}
-      <div className="flex max-w-7xl mx-auto h-fit justify-center items-center px-2 py-3">
-        {/* Fake News Card */}
-        <div className="flex flex-col w-full h-fit p-3 gap-y-2 bg-black rounded-3xl text-white">
-          {/* Card Title */}
-          <div className="flex w-full h-fit px-4 py-3 justify-center items-center">
-            <h1 className="text-2xl font-bold">Fake News Detected</h1>
-          </div>
-          {/* Card Content Div */}
-          <div className="flex w-full h-fit p-3 gap-x-3 items-center">
-            <h1 className="text-xl text-nowrap font-bold">Confidence Level:</h1>
-            <h1 className="text-8xl w-fit text-green-500 font-bold">96%</h1>
-            <h1 className="text-xl w-full font-semibold">This article has been flagged as fake because it contains specific red flags which our machine learning model has deemed to relate to fake news.</h1>
+      {predictionData !== null && (
+        <div className="flex max-w-7xl mx-auto h-fit justify-center items-center px-2 py-3">
+          {/* Fake News Card */}
+          <div className="flex flex-col w-full h-fit p-3 gap-y-2 bg-black rounded-3xl text-white">
+            {/* Card Title */}
+            <div className="flex w-full h-fit px-4 py-3 justify-center items-center">
+              <h1 className="text-2xl font-bold">
+                {predictionData.category} News Detected
+              </h1>
+            </div>
+            {/* Card Content Div */}
+            <div className="flex w-full h-fit p-3 gap-x-3 items-center">
+              <h1 className="text-xl text-nowrap font-bold">
+                Confidence Level:
+              </h1>
+              <h1 className="text-8xl w-fit text-green-500 font-bold">
+                {Math.round(predictionData.confidence * 100)}%
+              </h1>
+              <h1 className="text-xl w-full font-semibold">
+                This article has been flagged as potentialy{" "}
+                {predictionData.category.toLowerCase()} because it contains
+                specific flags which our machine learning model has deemed to
+                relate to {predictionData.category.toLowerCase()} news.
+              </h1>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Feedback Div*/}
-      <div className="flex max-w-7xl mx-auto h-fit justify-center items-center px-2 py-3">
-        {/* Feedback Form */}
-        <form className="flex flex-col w-full h-fit p-3 gap-y-2 bg-black rounded-3xl text-white">
-          {/* Form Title */}
-          <div className="flex w-full h-fit px-4 py-3 justify-center items-center">
-            <h1 className="text-2xl font-bold">
-              Feedback
-            </h1>
-          </div>
-          {/* Form Content */}
-          <div className="flex w-full h-fit p-3 gap-x-3 justify-center items-center">
-            <Button className="bg-green-500 rounded-full aspect-square h-fit p-1 hover:bg-green-700">
-              <HandThumbUpIcon className="text-black size-8"/>
-            </Button>
-            <Button className="bg-red-500 rounded-full aspect-square h-fit p-1 hover:bg-red-700">
-              <HandThumbDownIcon className="text-black size-8"/>
-            </Button>
-            <Input className="w-1/2 h-fit text-black" placeholder="Enter your feedback here"/>
-            <Button className="border border-gray-700 hover:bg-black hover:border-gray-900" type="submit">
-              Submit
-            </Button>
-          </div>
-        </form>
-      </div>
+      {predictionData !== null && (
+        <div className="flex max-w-7xl mx-auto h-fit justify-center items-center px-2 py-3">
+          {/* Feedback Form */}
+          <form className="flex flex-col w-full h-fit p-3 gap-y-2 bg-black rounded-3xl text-white">
+            {/* Form Title */}
+            <div className="flex w-full h-fit px-4 py-3 justify-center items-center">
+              <h1 className="text-2xl font-bold">Feedback</h1>
+            </div>
+            {/* Form Content */}
+            <div className="flex w-full h-fit p-3 gap-x-3 justify-center items-center">
+              <Button className="bg-green-500 rounded-full aspect-square h-fit p-1 hover:bg-green-700">
+                <HandThumbUpIcon className="text-black size-8" />
+              </Button>
+              <Button className="bg-red-500 rounded-full aspect-square h-fit p-1 hover:bg-red-700">
+                <HandThumbDownIcon className="text-black size-8" />
+              </Button>
+              <Input
+                className="w-1/2 h-fit text-black"
+                placeholder="Enter your feedback here"
+              />
+              <Button
+                className="border border-gray-700 hover:bg-black hover:border-gray-900"
+                type="submit"
+              >
+                Submit
+              </Button>
+            </div>
+          </form>
+        </div>
+      )}
     </main>
   );
 }

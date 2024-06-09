@@ -35,7 +35,6 @@ type Classification = {
 
 export default function Home({ params }: any) {
   const [articles, setArticles] = useState<Article[]>([]); // Initialize articles state
-
   const getArticleById = async () => {
     try {
       const response = await axios.get("http://localhost:8000/api/articles/");
