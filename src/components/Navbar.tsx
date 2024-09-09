@@ -13,6 +13,7 @@ const Navbar: React.FC = () => {
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+  
 
   return (
     <nav className="bg-gray-50 relative">

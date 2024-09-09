@@ -3,6 +3,9 @@ import { Inter } from "next/font/google";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import ReactGA from "react-ga4";
+
+ReactGA.initialize("G-W44N0DYVF6");
 
 const inter = Inter({ subsets: ["latin"] });
 const poppins = Poppins({
@@ -22,6 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html className="overflow-y-scroll" lang="en">
+      
       <body className={poppins.className}>
         <Navbar />
         {children}
