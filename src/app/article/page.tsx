@@ -15,6 +15,7 @@ type Article = {
   published_at?: Date;
   likes: number;
   dislikes: number;
+  views: number;
   time_added: Date;
   unique_hash?: string;
   classification: Classification;
@@ -95,7 +96,7 @@ export default function ArticleDetail() {
 
           {/* Article Views */}
           <div className="flex flex-col min-h-full justify-end">
-            <h1 className="">231,029 views</h1>
+            <h1 className="">{article?.views}</h1>
           </div>
         </div>
 
