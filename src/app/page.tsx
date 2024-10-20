@@ -31,7 +31,7 @@ export default function Home() {
               <CarouselItem className="py-0" key={index}>
                 <Card className="flex items-center justify-center h-full">
                   <CardContent className="w-full h-full p-0 relative">
-                    <a href="/article">
+                    <a href="/article/[id]">
                       <img
                         className="object-fill w-full h-full"
                         src={image.src}

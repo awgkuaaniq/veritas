@@ -1,13 +1,52 @@
+"use client";
 import LikeDislikeBar from "@/components/LikeDislikeBar";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { HandThumbDownIcon } from "@heroicons/react/24/outline";
 import { HandThumbUpIcon } from "@heroicons/react/24/outline";
+import { useEffect, useState } from "react";
 
-export default function ArticleDetail() {
+export default function ArticleDetail({ params }: { params: { id: string } }) {
+  const [articleId, setArticleId] = useState<string | null>(null);
+  const [cookieValue, setCookieValue] = useState<string | null>(null);
+  const { id } = params; // Dynamic article ID from the route
 
-    // Pull from database and put the img src as well as desc here
-    const articleDetail = { src: "/dummyIMG/corgi.webp", desc: "In this screen grab taken from a video released by the Weifang public security bureau, Fuzai is seen wearing a police dog vest, in eastern China's Shandong province" };
+  // Fetch cookie value from the server
+  async function fetchCookie() {
+    const res = await fetch("/api/get-cookie");
+    const data = await res.json();
+    setCookieValue(data.articleId); // Store cookie value (if any)
+  }
+
+  // Set article cookie and increment view count
+  async function setArticleCookie() {
+    await fetch("/api/set-cookie", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ articleId: id }), // Pass the article ID in the request
+    });
+  }
+
+  // On component mount, check for cookie and handle view logic
+  useEffect(() => {
+    if (id) {
+      setArticleId(id); // Set the articleId state with the dynamic route value
+      fetchCookie().then(() => {
+        // If no cookie exists, set a new one and increment the view count
+        if (!cookieValue) {
+          setArticleCookie();
+        }
+      });
+    }
+  }, [id, cookieValue]);
+
+  // Pull from database and put the img src as well as desc here
+  const articleDetail = {
+    src: "/dummyIMG/corgi.webp",
+    desc: "In this screen grab taken from a video released by the Weifang public security bureau, Fuzai is seen wearing a police dog vest, in eastern China's Shandong province",
+  };
   return (
     <main className="bg-gray-200">
       {/* Main Container */}
@@ -45,18 +84,18 @@ export default function ArticleDetail() {
             <h1>Fake News Detected</h1>
             {/* Like/Dislike Button Container */}
             <div className="flex gap-x-3">
-                <Button className="bg-green-500 rounded-full aspect-square h-fit p-1 hover:bg-green-700">
-                  <HandThumbUpIcon className="text-black size-8" />
-                </Button>
-                <Button className="bg-red-500 rounded-full aspect-square h-fit p-1 hover:bg-red-700">
-                  <HandThumbDownIcon className="text-black size-8" />
-                </Button>
+              <Button className="bg-green-500 rounded-full aspect-square h-fit p-1 hover:bg-green-700">
+                <HandThumbUpIcon className="text-black size-8" />
+              </Button>
+              <Button className="bg-red-500 rounded-full aspect-square h-fit p-1 hover:bg-red-700">
+                <HandThumbDownIcon className="text-black size-8" />
+              </Button>
             </div>
           </div>
 
           {/* Article Like/Dislike Bar */}
           <div className="flex justify-end py-5 pr-12 w-full py-2">
-            <LikeDislikeBar/>
+            <LikeDislikeBar />
           </div>
 
           {/* Article Thumbnail and Description */}
