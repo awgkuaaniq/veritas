@@ -1,10 +1,74 @@
 "use client";
+
 import LikeDislikeBar from "@/components/LikeDislikeBar";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { HandThumbDownIcon } from "@heroicons/react/24/outline";
 import { HandThumbUpIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+
+type Article = {
+  title: string;
+  body: string;
+  url: string;
+  published_at?: Date;
+  likes: number;
+  dislikes: number;
+  views: number;
+  time_added: Date;
+  unique_hash?: string;
+  classification: Classification;
+};
+
+type Classification = {
+  category: string;
+  probability: number;
+  hasBeenChecked: boolean;
+};
+
+
+export default function ArticleDetail() {
+  const [article, setArticle] = useState<Article | null>(null); // State for fetched article
+  const [isLoading, setIsLoading] = useState(true); // State for loading indicator
+  const [error, setError] = useState(null); // State for any error
+
+  useEffect(() => {
+    const fetchArticle = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const searchParams = new URLSearchParams(window.location.search);
+        const uniqueHash = searchParams.get("unique_hash");
+
+        if (uniqueHash) {
+          const response = await axios.get(
+            `http://localhost:8000/api/articles${uniqueHash}` // Use unique_hash from URL
+          );
+
+          if (response.data) {
+            console.log(response.data);
+            setArticle(response.data);
+          } else {
+            console.error("Error fetching article");
+          }
+        } else {
+          console.error("Missing unique_hash parameter in URL");
+        }
+      } catch (error) {
+        console.error("Error fetching article:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchArticle();
+  }, []);
+
+  if (isLoading) return <div>Loading article...</div>;
+  if (error) return <div>Error fetching article:</div>;
 
 export default function ArticleDetail({ params }: { params: { id: string } }) {
   const [articleId, setArticleId] = useState<string | null>(null);
@@ -42,6 +106,7 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
     }
   }, [id, cookieValue]);
 
+
   // Pull from database and put the img src as well as desc here
   const articleDetail = {
     src: "/dummyIMG/corgi.webp",
@@ -53,9 +118,7 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
       <div className="flex flex-col mx-auto px-2 max-w-5xl">
         {/* Article Title */}
         <div className="flex text-3xl font-semibold py-6">
-          <h1>
-            Paw patrol: China's most popular new police officer is a corgi
-          </h1>
+          <h1>{article.title}</h1>
         </div>
 
         {/* Article Details */}
@@ -72,7 +135,7 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
 
           {/* Article Views */}
           <div className="flex flex-col min-h-full justify-end">
-            <h1 className="">231,029 views</h1>
+            <h1 className="">{article?.views}</h1>
           </div>
         </div>
 
@@ -80,8 +143,8 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
         <div className="py-6">
           {/* AI Check */}
           <div className="flex justify-between bg-black text-white items-center text-2xl font-bold py-4 px-5 rounded-3xl max-w-4xl mx-auto">
-            <h1>93%</h1>
-            <h1>Fake News Detected</h1>
+            <h1>{Math.round(article?.classification.probability * 100)}%</h1>
+            <h1>{article?.classification.category} News Detected</h1>
             {/* Like/Dislike Button Container */}
             <div className="flex gap-x-3">
               <Button className="bg-green-500 rounded-full aspect-square h-fit p-1 hover:bg-green-700">
@@ -107,25 +170,7 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
 
         {/* Article Content */}
         <div className="flex flex-col gap-y-5 py-5 max-w-2xl mx-auto">
-          <p>
-            China’s sprawling security apparatus has a far-from-cuddly
-            reputation, but the country’s most popular new police officer is
-            making waves on social media with his stubby legs, wide grin and
-            wagging tail.
-          </p>
-          <p>
-            Fuzai the corgi puppy, whose name means “Lucky Boy,” is a reserve
-            police dog in Weifang, a city in the eastern province of Shandong.
-            The uniformed pooch made his debut at an open-day event organized by
-            Weifang police earlier this month, according to state-run media.
-          </p>
-          <p>
-            He immediately became a social media phenomenon, with one video of
-            Fuzai viewed more than 1.3 million times on the Chinese platform
-            Weibo, where a related hashtag has been viewed nearly 16 million
-            times.Fuzai began training at two months old and now, at six months,
-            is outperforming many of his peers, according to state media.
-          </p>
+          {article.body}
         </div>
       </div>
     </main>
