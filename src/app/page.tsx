@@ -1,5 +1,8 @@
+"use client";
 import Navbar from "@/components/Navbar";
 import HomeArticle from "@/components/HomeArticle";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 import * as React from "react";
 
@@ -12,16 +15,55 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-export default function Home() {
+type Article = {
+  title: string;
+  body: string;
+  url: string;
+  published_at?: Date;
+  likes: number;
+  dislikes: number;
+  time_added: Date;
+  unique_hash?: string;
+  classification: Classification;
+};
+
+type Classification = {
+  category: string;
+  probability: number;
+  hasBeenChecked: boolean;
+};
+
+export default function Home({ params }: any) {
+  const [articles, setArticles] = useState<Article[]>([]); // Initialize articles state
+  const getArticleById = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/api/articles/");
+      const fetchedArticles = response.data; // Assuming the response contains an array of articles
+
+      setArticles(fetchedArticles); // Update state with fetched articles
+    } catch (error) {
+      console.error("Error fetching articles:", error);
+    }
+  };
+
+  useEffect(() => {
+    getArticleById();
+  }, []);
+
   // Array of image URLs
   const images = [
-    { src: "/dummyIMG/corgi.webp", alt: "Paw patrol: China's most popular new police officer is a corgi" },
-    { src: "/dummyIMG/chrisbrown.webp", alt: "Chris Brown gets back with Rihanna and punches ASAP Wocky" },
+    {
+      src: "/dummyIMG/corgi.webp",
+      alt: "Paw patrol: China's most popular new police officer is a corgi",
+    },
+    {
+      src: "/dummyIMG/chrisbrown.webp",
+      alt: "Chris Brown gets back with Rihanna and punches ASAP Wocky",
+    },
     { src: "/dummyIMG/kanye.webp", alt: "Kanye West joins Neo Nazi Program" },
   ];
   return (
     <main className="bg-gray-200">
-
       {/* Carousel Slider */}
 
       <div className="flex justify-center py-11">
@@ -55,23 +97,21 @@ export default function Home() {
       {/*Display Article Section*/}
 
       <div className="flex flex-col justify-between max-w-7xl mx-auto px-2">
-
         <div className="font-semibold text-black text-2xl py-5">
-            Latest Fake News
+          Latest Fake News
         </div>
-        <div className="grid grid-cols-3 gap-y-5">
-          {/* Columns */}
-          <div className="justify-self-start"><HomeArticle/></div>
-          <div className="justify-self-center"><HomeArticle/></div>
-          <div className="justify-self-end"><HomeArticle/></div>
-            {/* Columns */}
-          <div className="justify-self-start"><HomeArticle/></div>
-          <div className="justify-self-center"><HomeArticle/></div>
-          <div className="justify-self-end"><HomeArticle/></div>
-            
-            
-        </div>
-
+        {articles.length > 0 ? (
+          <div className="grid grid-cols-3 gap-y-5">
+            {articles.map((article) => (
+              <HomeArticle
+                key={article.unique_hash || article.title}
+                article={article}
+              />
+            ))}
+          </div>
+        ) : (
+          <div>Loading articles...</div>
+        )}
       </div>
     </main>
   );
