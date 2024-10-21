@@ -22,6 +22,7 @@ type Article = {
   published_at?: Date;
   likes: number;
   dislikes: number;
+  views: number;
   time_added: Date;
   unique_hash?: string;
   classification: Classification;

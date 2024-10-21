@@ -28,11 +28,13 @@ type Classification = {
   hasBeenChecked: boolean;
 };
 
-
-export default function ArticleDetail() {
+export default function ArticleDetail({ params }: { params: { id: string } }) {
   const [article, setArticle] = useState<Article | null>(null); // State for fetched article
   const [isLoading, setIsLoading] = useState(true); // State for loading indicator
   const [error, setError] = useState(null); // State for any error
+  const [articleId, setArticleId] = useState<string | null>(null);
+  const [cookieValue, setCookieValue] = useState<string | null>(null);
+  const { id } = params; // Dynamic article ID from the route
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -40,9 +42,12 @@ export default function ArticleDetail() {
       setError(null);
 
       try {
-        const searchParams = new URLSearchParams(window.location.search);
-        const uniqueHash = searchParams.get("unique_hash");
+        const url = window.location.href; // Get the full URL
+        const articleId = url.split("/article/")[1]; // Split the URL and get the part after "article/"
 
+        // If you want to remove any trailing slashes or parameters (if they exist)
+        const uniqueHash = articleId.split("/")[0]; // This will give you just the article ID
+        console.log(uniqueHash);
         if (uniqueHash) {
           const response = await axios.get(
             `http://localhost:8000/api/articles${uniqueHash}` // Use unique_hash from URL
@@ -66,46 +71,46 @@ export default function ArticleDetail() {
 
     fetchArticle();
   }, []);
+  // On component mount, check for cookie and handle view logic
+  useEffect(() => {
+    if (id) {
+      checkAndSetArticleCookie(id);
+    }
+  }, [id]);
 
   if (isLoading) return <div>Loading article...</div>;
   if (error) return <div>Error fetching article:</div>;
 
-export default function ArticleDetail({ params }: { params: { id: string } }) {
-  const [articleId, setArticleId] = useState<string | null>(null);
-  const [cookieValue, setCookieValue] = useState<string | null>(null);
-  const { id } = params; // Dynamic article ID from the route
+  // Function to check if the cookie exists and set it if it doesn't
+  async function checkAndSetArticleCookie(articleId: string) {
+    try {
+      const res = await fetch("/api/get-cookie");
+      const data = await res.json();
 
-  // Fetch cookie value from the server
-  async function fetchCookie() {
-    const res = await fetch("/api/get-cookie");
-    const data = await res.json();
-    setCookieValue(data.articleId); // Store cookie value (if any)
+      const visitedArticles = data.articleId ? data.articleId.split(",") : [];
+
+      // If the article ID isn't in the cookie, increment the view count and set the cookie
+      if (!visitedArticles.includes(articleId)) {
+        await setArticleCookie(articleId);
+      }
+
+      // Set cookie value in state
+      setCookieValue(data.articleId);
+    } catch (err) {
+      console.log("Error setting cookies.");
+    }
   }
 
-  // Set article cookie and increment view count
-  async function setArticleCookie() {
+  // Function to set the article cookie and increment the view count
+  async function setArticleCookie(articleId: string) {
     await fetch("/api/set-cookie", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ articleId: id }), // Pass the article ID in the request
+      body: JSON.stringify({ articleId }), // Pass the article ID to be set in the cookie
     });
   }
-
-  // On component mount, check for cookie and handle view logic
-  useEffect(() => {
-    if (id) {
-      setArticleId(id); // Set the articleId state with the dynamic route value
-      fetchCookie().then(() => {
-        // If no cookie exists, set a new one and increment the view count
-        if (!cookieValue) {
-          setArticleCookie();
-        }
-      });
-    }
-  }, [id, cookieValue]);
-
 
   // Pull from database and put the img src as well as desc here
   const articleDetail = {
@@ -118,7 +123,7 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
       <div className="flex flex-col mx-auto px-2 max-w-5xl">
         {/* Article Title */}
         <div className="flex text-3xl font-semibold py-6">
-          <h1>{article.title}</h1>
+          <h1>{article?.title}</h1>
         </div>
 
         {/* Article Details */}
@@ -135,7 +140,7 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
 
           {/* Article Views */}
           <div className="flex flex-col min-h-full justify-end">
-            <h1 className="">{article?.views}</h1>
+            <h1 className="">{article?.views} views</h1>
           </div>
         </div>
 
@@ -170,7 +175,7 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
 
         {/* Article Content */}
         <div className="flex flex-col gap-y-5 py-5 max-w-2xl mx-auto">
-          {article.body}
+          {article?.body}
         </div>
       </div>
     </main>

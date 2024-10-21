@@ -1,12 +1,7 @@
-import { cookies } from "next/headers";
+import { NextResponse, NextRequest } from "next/server";
 
-export async function GET() {
-  const cookieStore = cookies();
-  const articleCookie = cookieStore.get("article_id");
+export async function GET(request: NextRequest) {
+  const cookieValue = request.cookies.get("article_id")?.value || ""; // Safely get the cookie value
 
-  // Return the cookie value or null if it doesn't exist
-  return new Response(JSON.stringify({ articleId: articleCookie?.value || null }), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' },
-  });
+  return NextResponse.json({ articleId: cookieValue });
 }
