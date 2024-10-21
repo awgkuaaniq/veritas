@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { HandThumbDownIcon } from "@heroicons/react/24/outline";
 import { HandThumbUpIcon } from "@heroicons/react/24/outline";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
@@ -35,6 +35,7 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
   const [articleId, setArticleId] = useState<string | null>(null);
   const [cookieValue, setCookieValue] = useState<string | null>(null);
   const { id } = params; // Dynamic article ID from the route
+  const [isCookieLoading, setIsCookieLoading] = useState(false);
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -68,16 +69,25 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
         setIsLoading(false);
       }
     };
-
+    console.log('fetcharticle fire once');
     fetchArticle();
   }, []);
+
+  const hasIncremented = useRef(false);
   // On component mount, check for cookie and handle view logic
   useEffect(() => {
-    if (id) {
-      checkAndSetArticleCookie(id);
+    if (id && !hasIncremented.current) {
+      setIsCookieLoading(true);
+      checkAndSetArticleCookie(id).finally(() => {
+        setIsCookieLoading(false);
+        hasIncremented.current = true; //Ensure this runs only once
+      });
+      
     }
+    console.log('cookie fire once');
   }, [id]);
 
+  if (isCookieLoading) return <div>Processing cookies...</div>;
   if (isLoading) return <div>Loading article...</div>;
   if (error) return <div>Error fetching article:</div>;
 

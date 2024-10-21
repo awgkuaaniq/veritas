@@ -1,10 +1,9 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
     const { articleId } = await request.json(); // Get article ID from request body
-    console.log(articleId);
     console.log(articleId);
     
     if (!articleId) {
@@ -21,7 +20,8 @@ export async function POST(request: Request) {
     if (!visitedArticles.has(articleId)) {
       try {
         // Call the backend API to increment views using Axios
-        const res = await axios.post(`http://localhost:8000/api/increment-views`, {unique_hash: articleId});
+        const res = await axios.post(`http://127.0.0.1:8000/api/increment-views`, {unique_hash: articleId});
+        console.log("Increment views response:", res.data);
         
         // Add this articleId to the visitedArticles Set
         visitedArticles.add(articleId);
@@ -34,15 +34,19 @@ export async function POST(request: Request) {
           value: updatedCookieValue,
           httpOnly: true,
           path: "/",
-          secure: true,
+          secure: process.env.NODE_ENV === "production", // Make it secure in production
           sameSite: "strict",
         });
 
         return response;
       } catch (error) {
         // Handle Axios error
-        console.error("Error incrementing views:", error);
-        throw new Error("Failed to increment views");
+        if (error instanceof AxiosError){
+          console.error("Error incrementing views:", error.response ? error.response.data : error.message);
+        }
+        else{
+          console.log('Unexpected error', error);
+        }
       }
     }
 
