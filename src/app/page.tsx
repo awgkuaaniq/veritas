@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/carousel";
 
 type Article = {
+  _id: string;
   title: string;
   body: string;
   url: string;
@@ -105,7 +106,7 @@ export default function Home({ params }: any) {
           <div className="grid grid-cols-3 gap-y-5">
             {articles.map((article) => (
               <HomeArticle
-                key={article.unique_hash || article.title}
+                key={article._id || article.title}
                 article={article}
               />
             ))}

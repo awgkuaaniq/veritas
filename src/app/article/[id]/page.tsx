@@ -10,6 +10,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 
 type Article = {
+  _id: string;
   title: string;
   body: string;
   url: string;
@@ -44,14 +45,14 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
 
       try {
         const url = window.location.href; // Get the full URL
-        const articleId = url.split("/article/")[1]; // Split the URL and get the part after "article/"
+        const articleURL = url.split("/article/")[1]; // Split the URL and get the part after "article/"
 
         // If you want to remove any trailing slashes or parameters (if they exist)
-        const uniqueHash = articleId.split("/")[0]; // This will give you just the article ID
-        console.log(uniqueHash);
-        if (uniqueHash) {
+        const articleID = articleURL.split("/")[0]; // This will give you just the article ID
+        console.log(articleID);
+        if (articleID) {
           const response = await axios.get(
-            `http://localhost:8000/api/articles${uniqueHash}` // Use unique_hash from URL
+            `http://localhost:8000/api/articles${articleID}` // Use unique_hash from URL
           );
 
           if (response.data) {

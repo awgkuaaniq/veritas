@@ -1,6 +1,7 @@
 import React from "react";
 
 interface Article {
+  _id: string
   title: string;
   body: string;
   url: string;
@@ -25,7 +26,7 @@ const HomeArticle: React.FC<{ article: Article }> = ({ article }) => {
       {/* Article Picture (assuming an image prop is available) */}
       {article.url && (
         <div className="relative w-96 aspect-video">
-          <a href={`/article/${article.unique_hash}`}>
+          <a href={`/article/${article._id}`}>
             <img
               className="absolute inset-0 h-full w-full object-cover rounded-xl"
               src="/dummyIMG/kanye.webp"
@@ -36,7 +37,7 @@ const HomeArticle: React.FC<{ article: Article }> = ({ article }) => {
 
       {/* Article Title */}
       <div className="text-black font-semibold text-base h-12">
-        <a href={`/article/${article.unique_hash}`}>
+        <a href={`/article/${article._id}`}>
           {article.title}
         </a>
       </div>

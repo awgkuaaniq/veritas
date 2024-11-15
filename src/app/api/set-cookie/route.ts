@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     if (!visitedArticles.has(articleId)) {
       try {
         // Call the backend API to increment views using Axios
-        const res = await axios.post(`http://127.0.0.1:8000/api/increment-views`, {unique_hash: articleId});
+        const res = await axios.post(`http://127.0.0.1:8000/api/increment-views`, {_id: articleId});
         console.log("Increment views response:", res.data);
         
         // Add this articleId to the visitedArticles Set
