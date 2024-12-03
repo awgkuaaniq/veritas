@@ -1,58 +1,66 @@
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError } from "axios";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
-    const { articleId } = await request.json(); // Get article ID from request body
-    console.log(articleId);
-    
-    if (!articleId) {
-      return NextResponse.json({ message: "Article ID is missing" }, { status: 400 });
+    const { articleId, type } = await request.json(); // `type` can be "view", "like", or "dislike"
+
+    if (!articleId || !type) {
+      return NextResponse.json({ message: "Article ID or type is missing" }, { status: 400 });
     }
 
-    // Get the current cookies from the request headers
-    const existingCookie = request.headers.get("cookie")?.split(";").find(c => c.trim().startsWith("article_id="))?.split("=")[1];
-    
+    // Determine the cookie name based on the interaction type
+    const cookieName = `${type}_article_id`;
+
+    // Retrieve the current cookies from the request headers
+    const existingCookie = request.headers.get("cookie")?.split(";").find(c => c.trim().startsWith(`${cookieName}=`))?.split("=")[1];
+
     // Parse the cookie value (if it exists) into a Set of article IDs
-    const visitedArticles = new Set(existingCookie ? existingCookie.split(",") : []);
+    const interactedArticles = new Set(existingCookie ? existingCookie.split(",") : []);
 
-    // If the article has not been visited yet, increment the view count
-    if (!visitedArticles.has(articleId)) {
+    // Check if the article has already been interacted with
+    if (!interactedArticles.has(articleId)) {
       try {
-        // Call the backend API to increment views using Axios
-        const res = await axios.post(`http://127.0.0.1:8000/api/increment-views`, {_id: articleId});
-        console.log("Increment views response:", res.data);
-        
-        // Add this articleId to the visitedArticles Set
-        visitedArticles.add(articleId);
-        const updatedCookieValue = Array.from(visitedArticles).join(","); // Convert Set back to comma-separated string
+        // Call the appropriate backend API based on the interaction type
+        const apiUrl = `http://127.0.0.1:8000/api/increment-${type}s`;
+        const res = await axios.post(apiUrl, { _id: articleId });
 
-        // Set the article_id cookie with the updated value
-        const response = NextResponse.json({ message: "Cookie set and view incremented" });
+        console.log(`Increment ${type} response:`, res.data);
+
+        // Update the Set with the new article ID
+        interactedArticles.add(articleId);
+        const updatedCookieValue = Array.from(interactedArticles).join(",");
+
+        // Set the cookie with an expiration time of 1 day
+        const expires = new Date();
+        expires.setDate(expires.getDate() + 1); // Add 1 day to the current date
+       
+        // Set the updated cookie value
+        const response = NextResponse.json({ message: `${type} cookie set and count incremented` });
         response.cookies.set({
-          name: "article_id",
+          name: cookieName,
           value: updatedCookieValue,
           httpOnly: true,
           path: "/",
-          secure: process.env.NODE_ENV === "production", // Make it secure in production
+          secure: process.env.NODE_ENV === "production",
           sameSite: "strict",
+          expires
         });
 
         return response;
       } catch (error) {
-        // Handle Axios error
-        if (error instanceof AxiosError){
-          console.error("Error incrementing views:", error.response ? error.response.data : error.message);
-        }
-        else{
-          console.log('Unexpected error', error);
+        if (error instanceof AxiosError) {
+          console.error(`Error incrementing ${type}:`, error.response ? error.response.data : error.message);
+        } else {
+          console.log("Unexpected error", error);
         }
       }
     }
 
-    return NextResponse.json({ message: "Article already visited" });
+    // If the article has already been interacted with, return a message
+    return NextResponse.json({ message: `Article already ${type}d` });
   } catch (error) {
-    console.error("Error in /api/set-cookie:", error);
+    console.error(`Error in /api/set-cookie for ${type}:`, error);
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
   }
 }

@@ -65,7 +65,7 @@ export default function Home({ params }: any) {
     { src: "/dummyIMG/kanye.webp", alt: "Kanye West joins Neo Nazi Program" },
   ];
   return (
-    <main className="bg-gray-200">
+    <main className="bg-gray-200 min-h-screen">
       {/* Carousel Slider */}
 
       <div className="flex justify-center py-11">

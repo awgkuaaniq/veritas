@@ -1,3 +1,4 @@
+import { formatDate } from "@/utils/formatDate";
 import React from "react";
 
 interface Article {
@@ -44,7 +45,7 @@ const HomeArticle: React.FC<{ article: Article }> = ({ article }) => {
 
       {/* Article Info */}
       <div className="flex w-full gap-x-11 text-black font-extralight">
-        <div>1 hour ago</div>
+        <div>{formatDate(article.published_at)}</div>
         <div>CNN</div>
       </div>
     </div>

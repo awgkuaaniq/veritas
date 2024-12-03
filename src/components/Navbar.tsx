@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Menubar from "@/components/Menubar";
+import NavSearch from "@/components/NavSearch";
 import {
   Bars3Icon,
   CodeBracketSquareIcon,
@@ -39,18 +40,7 @@ const Navbar: React.FC = () => {
           </a>
         </div>
         {/* Search Bar */}
-        <div className="flex items-center h-10 bg-gray-200 focus-within:shadow-lg overflow-hidden">
-          <div className="grid place-items-center h-full w-12 text-gray-500">
-            <MagnifyingGlassIcon className="h-6 w-6" />
-          </div>
-
-          <input
-            className="bg-gray-200 outline-none text-sm text-black pr-2 placeholder-gray-700"
-            type="text"
-            id="search"
-            placeholder="Search something.."
-          />
-        </div>
+        <NavSearch />
         {/* Burger Menu */}
         <div className="flex h-full relative">
           <button className="hover:bg-gray-200" onClick={toggleMenu}>

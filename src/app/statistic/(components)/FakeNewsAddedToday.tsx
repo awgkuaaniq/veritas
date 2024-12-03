@@ -44,7 +44,7 @@ export default function FakeNewsAddedToday() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-2xl font-bold">+{articleCount}</p>
+        <p className="text-2xl font-semibold">+{articleCount}</p>
         <p className="text-gray-500 text-sm">{changeSinceYesterday} since yesterday</p>
       </CardContent>
       

@@ -37,7 +37,7 @@ export default function TrendingKeywords() {
           {keywords.slice(0, Math.ceil(keywords.length / 2)).map((keyword, index) => (
             <div key={index}>
               <p>{keyword.keyword}</p>
-              <p className='text-gray-500 font-thin text-sm'>{keyword.total_count} mentioned</p>
+              <p className='text-gray-500 font-normal text-sm'>{keyword.total_count} mentioned</p>
             </div>
           ))}
         </div>
@@ -47,7 +47,7 @@ export default function TrendingKeywords() {
           {keywords.slice(Math.ceil(keywords.length / 2)).map((keyword, index) => (
             <div key={index}>
               <p>{keyword.keyword}</p>
-              <p className='text-gray-500 font-thin text-sm'>{keyword.total_count} mentioned</p>
+              <p className='text-gray-500 font-normal text-sm'>{keyword.total_count} mentioned</p>
             </div>
           ))}
         </div>
