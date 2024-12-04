@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -6,8 +6,14 @@ import {
   Cog6ToothIcon,
   EnvelopeIcon,
 } from "@heroicons/react/24/outline";
+import SettingsPopup from "./SettingsPopup";
 
 const Menubar = () => {
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  const openSettings = () => setIsSettingsOpen(true);
+  const closeSettings = () => setIsSettingsOpen(false);
+
   return (
     <div className="flex flex-col w-60 h-fit items-center bg-gray-200 border border-black/25 rounded-lg">
       {/* Avatar Icon & Name */}
@@ -23,10 +29,10 @@ const Menubar = () => {
       </div>
       {/* Navigation Links */}
       {/* Settings */}
-      <div className="flex py-2 px-5 w-full space-x-5">
+      <button className="flex py-2 px-5 w-full space-x-5" onClick={openSettings}>
         <Cog6ToothIcon className="w-6" />
         <p>Settings</p>
-      </div>
+      </button>
       {/* Feedback */}
       <div className="flex py-2 px-5 w-full space-x-5">
         <EnvelopeIcon className="w-6" />
@@ -37,6 +43,8 @@ const Menubar = () => {
         <ArrowLeftStartOnRectangleIcon className="w-6" />
         <p>Sign Out</p>
       </div>
+      {/* Settings Modal */}
+      <SettingsPopup isOpen={isSettingsOpen} onClose={closeSettings} />
     </div>
   );
 };
