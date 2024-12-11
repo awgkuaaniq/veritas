@@ -7,12 +7,18 @@ import {
   EnvelopeIcon,
 } from "@heroicons/react/24/outline";
 import SettingsPopup from "./SettingsPopup";
+import FeedbackPopup from "./FeedbackPopup";
 
 const Menubar = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-
+  
   const openSettings = () => setIsSettingsOpen(true);
   const closeSettings = () => setIsSettingsOpen(false);
+
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+
+  const openFeedback = () => setIsFeedbackOpen(true);
+  const closeFeedback = () => setIsFeedbackOpen(false);
 
   return (
     <div className="flex flex-col w-60 h-fit items-center bg-gray-200 border border-black/25 rounded-lg">
@@ -34,10 +40,10 @@ const Menubar = () => {
         <p>Settings</p>
       </button>
       {/* Feedback */}
-      <div className="flex py-2 px-5 w-full space-x-5">
+      <button className="flex py-2 px-5 w-full space-x-5" onClick={openFeedback}>
         <EnvelopeIcon className="w-6" />
         <p>Feedback</p>
-      </div>
+      </button>
       {/* Sign Out */}
       <div className="flex py-2 px-5 w-full space-x-5">
         <ArrowLeftStartOnRectangleIcon className="w-6" />
@@ -45,6 +51,7 @@ const Menubar = () => {
       </div>
       {/* Settings Modal */}
       <SettingsPopup isOpen={isSettingsOpen} onClose={closeSettings} />
+      <FeedbackPopup isOpen={isFeedbackOpen} onClose={closeFeedback} />
     </div>
   );
 };
