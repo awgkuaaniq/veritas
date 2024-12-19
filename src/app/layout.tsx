@@ -7,7 +7,7 @@ import Navbar from "@/components/Navbar";
 const inter = Inter({ subsets: ["latin"] });
 const poppins = Poppins({
   subsets: ["latin"],
-  weight: "400"
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900']
 });
 
 export const metadata: Metadata = {
@@ -22,6 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html className="overflow-y-scroll" lang="en">
+      
       <body className={poppins.className}>
         <Navbar />
         {children}

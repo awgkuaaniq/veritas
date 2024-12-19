@@ -13,7 +13,7 @@ export default function TopFakeNewsSource() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <p className='text-2xl font-bold'>Reuters - 794</p>
+        <p className='text-2xl font-semibold'>Reuters - 794</p>
         <p className='text-gray-500 text-sm'>as of 30/3/2024</p>
       </CardContent>
       
