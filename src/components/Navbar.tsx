@@ -14,7 +14,6 @@ const Navbar: React.FC = () => {
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-  
 
   return (
     <nav className="bg-gray-50 relative">
@@ -37,6 +36,9 @@ const Navbar: React.FC = () => {
           </a>
           <a href="#" className="py-5 px-6 hover:bg-gray-200">
             About
+          </a>
+          <a href="/admin" className="py-5 px-6 hover:bg-gray-200">
+            Admin
           </a>
         </div>
         {/* Search Bar */}
