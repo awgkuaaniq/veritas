@@ -39,7 +39,7 @@ export default function Home({ params }: any) {
   const [articles, setArticles] = useState<Article[]>([]); // Initialize articles state
   const getArticleById = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/articles/");
+      const response = await axios.get("http://localhost:8000/api/articles");
       const fetchedArticles = response.data; // Assuming the response contains an array of articles
 
       setArticles(fetchedArticles); // Update state with fetched articles
