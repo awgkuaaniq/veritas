@@ -34,10 +34,13 @@ export default function Home({ params }: any) {
       <CardHeader>
         <CardTitle className="text-xl font-bold flex justify-between items-center">
           <span>Article Analytics</span>
-          <button className="flex items-center px-3 py-1 text-gray-600 text-sm rounded-md border border-gray-300 hover:bg-gray-100">
+          <a
+            href="/addArticle"
+            className="flex items-center px-3 py-1 text-gray-600 text-sm rounded-md border border-gray-300 hover:bg-gray-100"
+          >
             <PlusIcon className="w-4 h-4 mr-2" />
             Add Article
-          </button>
+          </a>
         </CardTitle>
       </CardHeader>
 

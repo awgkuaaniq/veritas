@@ -16,16 +16,17 @@ export const columns: ColumnDef<Feedback>[] = [
     accessorKey: "rating",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Rating
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        <div className="text-center">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Rating
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
       );
     },
-    // Modify the cell rendering for ratings
     cell: ({ row }) => {
       const rating = row.getValue("rating");
       return (
@@ -37,11 +38,11 @@ export const columns: ColumnDef<Feedback>[] = [
   },
   {
     accessorKey: "body",
+    header: () => {
+      return <div className="text-center">Comments</div>;
+    },
     cell: ({ row }) => {
       return <div className="text-center">{row.getValue("body")}</div>;
-    },
-    header: ({ column }) => {
-      return <div>Comments</div>;
     },
   },
 ];
