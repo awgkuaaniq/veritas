@@ -108,9 +108,41 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
 
   // Function to handle like/dislike actions
   const handleLikeDislike = async (type: "like" | "dislike") => {
+    if (!article) return;
     const updatedArticle = { ...article };
 
     try {
+      // If user has already performed this action, handle as an undo
+      if (
+        (type === "like" && hasLiked) ||
+        (type === "dislike" && hasDisliked)
+      ) {
+        // Decrement the count
+        if (type === "like") {
+          updatedArticle.likes -= 1;
+          setHasLiked(false);
+        } else {
+          updatedArticle.dislikes -= 1;
+          setHasDisliked(false);
+        }
+
+        // Call API to decrement count
+        await fetch(`/api/set-cookie`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            articleId: id,
+            type: `remove-${type}`,
+          }),
+        });
+
+        setArticle(updatedArticle);
+        return;
+      }
+
+      // Handle normal like/dislike action
       const response = await fetch("/api/set-cookie", {
         method: "POST",
         headers: {
@@ -209,7 +241,6 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
                 className={`rounded-full aspect-square h-fit p-1 ${
                   hasLiked ? "bg-green-700" : "bg-green-500 hover:bg-green-700"
                 }`}
-                disabled={hasLiked}
               >
                 <HandThumbUpIcon className="text-black size-8" />
               </Button>
@@ -218,7 +249,6 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
                 className={`rounded-full aspect-square h-fit p-1 ${
                   hasDisliked ? "bg-red-700" : "bg-red-500 hover:bg-red-700"
                 }`}
-                disabled={hasDisliked}
               >
                 <HandThumbDownIcon className="text-black size-8" />
               </Button>

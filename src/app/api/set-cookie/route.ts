@@ -1,5 +1,8 @@
+// src/app/api/set-cookie/route.ts
 import axios, { AxiosError } from "axios";
 import { NextResponse } from "next/server";
+
+const COOKIE_EXPIRY = 14 * 24 * 60 * 60 * 1000; // 14 days in milliseconds
 
 export async function POST(request: Request) {
   try {
@@ -12,48 +15,88 @@ export async function POST(request: Request) {
       );
     }
 
-    // Determine the cookie names
-    const cookieName = `${type}_article_id`;
-    const oppositeType = type === "like" ? "dislike" : "like";
-    const oppositeCookieName = `${oppositeType}_article_id`;
-
     const response = NextResponse.json({
       message: `${type} cookie set and count incremented`,
     });
 
     // For views, handle separately
     if (type === "view") {
-      const existingViewCookie = request.cookies.get(cookieName)?.value || "";
-
-      // Split by comma and filter out empty strings
-      const viewedArticles = existingViewCookie
-        ? existingViewCookie.split(",").filter(Boolean)
+      const cookieName = `${type}_article_id`;
+      const existingCookie = request.cookies.get(cookieName)?.value || "";
+      let articles = existingCookie
+        ? existingCookie.split(",").filter(Boolean)
         : [];
 
-      if (!viewedArticles.includes(articleId)) {
-        viewedArticles.push(articleId);
+      if (!articles.includes(articleId)) {
+        articles.push(articleId);
+        await axios.post(`http://127.0.0.1:8000/api/increment-views`, {
+          _id: articleId,
+        });
+
         response.cookies.set({
           name: cookieName,
-          value: viewedArticles.join(","), // Don't encode the comma
+          value: articles.join(","),
           httpOnly: true,
           path: "/",
           secure: process.env.NODE_ENV === "production",
           sameSite: "strict",
-          expires: new Date(Date.now() + 14 * 60 * 60 * 1000),
-        });
-        await axios.post(`http://127.0.0.1:8000/api/increment-views`, {
-          _id: articleId,
+          expires: new Date(Date.now() + COOKIE_EXPIRY), // 14 days
         });
       }
       return response;
     }
 
-    // Get both cookie values using the cookies API
+    // Handle remove actions
+    if (type.startsWith("remove-")) {
+      const actionType = type.replace("remove-", "");
+      const cookieName = `${actionType}_article_id`;
+
+      const existingCookie = request.cookies.get(cookieName)?.value || "";
+      let articles = existingCookie
+        ? existingCookie.split(",").filter(Boolean)
+        : [];
+
+      articles = articles.filter((id) => id !== articleId);
+
+      await axios.post(`http://127.0.0.1:8000/api/decrement-${actionType}s`, {
+        _id: articleId,
+      });
+
+      if (articles.length > 0) {
+        response.cookies.set({
+          name: cookieName,
+          value: articles.join(","),
+          httpOnly: true,
+          path: "/",
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+          expires: new Date(Date.now() + COOKIE_EXPIRY), // 14 days
+        });
+      } else {
+        response.cookies.set({
+          name: cookieName,
+          value: "",
+          httpOnly: true,
+          path: "/",
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+          expires: new Date(0),
+        });
+      }
+
+      return response;
+    }
+
+    // Handle like/dislike actions
+    const cookieName = `${type}_article_id`;
+    const oppositeType = type === "like" ? "dislike" : "like";
+    const oppositeCookieName = `${oppositeType}_article_id`;
+
+    // Get both cookie values
     const existingCookie = request.cookies.get(cookieName)?.value || "";
     const existingOppositeCookie =
       request.cookies.get(oppositeCookieName)?.value || "";
 
-    // Split by comma and filter out empty strings
     let currentArticles = existingCookie
       ? existingCookie.split(",").filter(Boolean)
       : [];
@@ -63,24 +106,21 @@ export async function POST(request: Request) {
 
     // Check if article is in opposite cookie and remove it
     if (oppositeArticles.includes(articleId)) {
-      // Remove from opposite array
       oppositeArticles = oppositeArticles.filter((id) => id !== articleId);
 
-      // Decrement the opposite type count
       await axios.post(`http://127.0.0.1:8000/api/decrement-${oppositeType}s`, {
         _id: articleId,
       });
 
-      // Update or remove opposite cookie
       if (oppositeArticles.length > 0) {
         response.cookies.set({
           name: oppositeCookieName,
-          value: oppositeArticles.join(","), // Don't encode the comma
+          value: oppositeArticles.join(","),
           httpOnly: true,
           path: "/",
           secure: process.env.NODE_ENV === "production",
           sameSite: "strict",
-          expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+          expires: new Date(Date.now() + COOKIE_EXPIRY), // 14 days
         });
       } else {
         response.cookies.set({
@@ -99,20 +139,18 @@ export async function POST(request: Request) {
     if (!currentArticles.includes(articleId)) {
       currentArticles.push(articleId);
 
-      // Increment the current type count
       await axios.post(`http://127.0.0.1:8000/api/increment-${type}s`, {
         _id: articleId,
       });
 
-      // Update current cookie
       response.cookies.set({
         name: cookieName,
-        value: currentArticles.join(","), // Don't encode the comma
+        value: currentArticles.join(","),
         httpOnly: true,
         path: "/",
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
-        expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        expires: new Date(Date.now() + COOKIE_EXPIRY), // 14 days
       });
     }
 
