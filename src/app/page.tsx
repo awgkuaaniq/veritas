@@ -47,6 +47,18 @@ export default function Home({ params }: any) {
       console.error("Error fetching articles:", error);
     }
   };
+  
+  useEffect(() => {
+    const trackVisitor = async () => {
+      try {
+        await axios.post("/api/track-visitor");
+      } catch (error) {
+        console.error("Error tracking visitor:", error);
+      }
+    };
+
+    trackVisitor();
+  }, []);
 
   useEffect(() => {
     getArticleById();

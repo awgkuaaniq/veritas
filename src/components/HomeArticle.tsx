@@ -22,6 +22,7 @@ interface Classification {
 }
 
 const HomeArticle: React.FC<{ article: Article }> = ({ article }) => {
+  console.log("Published at:", article.published_at); // Debugging line
   return (
     <div className="flex flex-col gap-4 w-fit">
       {/* Article Picture (assuming an image prop is available) */}
@@ -38,9 +39,7 @@ const HomeArticle: React.FC<{ article: Article }> = ({ article }) => {
 
       {/* Article Title */}
       <div className="text-black font-semibold text-base h-12">
-        <a href={`/article/${article._id}`}>
-          {article.title}
-        </a>
+        <a href={`/article/${article._id}`}>{article.title}</a>
       </div>
 
       {/* Article Info */}
