@@ -19,7 +19,7 @@ const FeedbackPopup = ({
   }) => {
     
 
-    const [rating, setRating] = useState(3);
+    const [rating, setRating] = useState<number | null>(3);
     const [error, setError] = useState("");
     const [body, setBody] = useState("");
     const [successMessage, setSuccessMessage] = useState(""); // Track success message
