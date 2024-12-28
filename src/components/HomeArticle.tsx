@@ -6,7 +6,7 @@ interface Article {
   title: string;
   body: string;
   url: string;
-  published_at?: Date;
+  published_at: Date | string;
   likes: number;
   dislikes: number;
   views: number;
@@ -22,7 +22,6 @@ interface Classification {
 }
 
 const HomeArticle: React.FC<{ article: Article }> = ({ article }) => {
-  console.log("Published at:", article.published_at); // Debugging line
   return (
     <div className="flex flex-col gap-4 w-fit">
       {/* Article Picture (assuming an image prop is available) */}

@@ -14,13 +14,14 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import DisclaimerPopup from "@/components/DisclaimerPopup";
 
 type Article = {
   _id: string;
   title: string;
   body: string;
   url: string;
-  published_at?: Date;
+  published_at: Date | string;
   likes: number;
   dislikes: number;
   views: number;
@@ -35,8 +36,10 @@ type Classification = {
   hasBeenChecked: boolean;
 };
 
-export default function Home({ params }: any) {
+export default function Home() {
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [articles, setArticles] = useState<Article[]>([]); // Initialize articles state
+
   const getArticleById = async () => {
     try {
       const response = await axios.get("http://localhost:8000/api/articles");
@@ -47,22 +50,28 @@ export default function Home({ params }: any) {
       console.error("Error fetching articles:", error);
     }
   };
-  
+
   useEffect(() => {
     const trackVisitor = async () => {
+      setShowDisclaimer(true);
       try {
-        await axios.post("/api/track-visitor");
+        const response = await axios.post("/api/track-visitor");
+        // If we get a message about tracking a new visitor, show the disclaimer
+        if (response.data.message === "Unique visitor tracked") {
+          
+        }
       } catch (error) {
         console.error("Error tracking visitor:", error);
       }
     };
 
     trackVisitor();
-  }, []);
-
-  useEffect(() => {
     getArticleById();
   }, []);
+
+  const handleCloseDisclaimer = () => {
+    setShowDisclaimer(false);
+  };
 
   // Array of image URLs
   const images = [
@@ -76,6 +85,7 @@ export default function Home({ params }: any) {
     },
     { src: "/dummyIMG/kanye.webp", alt: "Kanye West joins Neo Nazi Program" },
   ];
+
   return (
     <main className="bg-gray-200 min-h-screen">
       {/* Carousel Slider */}
@@ -127,6 +137,10 @@ export default function Home({ params }: any) {
           <div>Loading articles...</div>
         )}
       </div>
+      <DisclaimerPopup
+        isOpen={showDisclaimer}
+        onClose={handleCloseDisclaimer}
+      />
     </main>
   );
 }
