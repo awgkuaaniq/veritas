@@ -2,7 +2,7 @@ import { formatDate } from "@/utils/formatDate";
 import React from "react";
 
 interface Article {
-  _id: string
+  _id: string;
   title: string;
   body: string;
   url: string;
@@ -30,7 +30,7 @@ const HomeArticle: React.FC<{ article: Article }> = ({ article }) => {
           <a href={`/article/${article._id}`}>
             <img
               className="absolute inset-0 h-full w-full object-cover rounded-xl"
-              src="/dummyIMG/kanye.webp"
+              src={article.image_url}
             ></img>
           </a>
         </div>
