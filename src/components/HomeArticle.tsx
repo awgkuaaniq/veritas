@@ -6,7 +6,7 @@ interface Article {
   title: string;
   body: string;
   url: string;
-  published_at?: Date;
+  published_at: Date | string;
   likes: number;
   dislikes: number;
   views: number;
@@ -38,9 +38,7 @@ const HomeArticle: React.FC<{ article: Article }> = ({ article }) => {
 
       {/* Article Title */}
       <div className="text-black font-semibold text-base h-12">
-        <a href={`/article/${article._id}`}>
-          {article.title}
-        </a>
+        <a href={`/article/${article._id}`}>{article.title}</a>
       </div>
 
       {/* Article Info */}
