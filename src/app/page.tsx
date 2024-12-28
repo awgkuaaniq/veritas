@@ -53,12 +53,11 @@ export default function Home() {
 
   useEffect(() => {
     const trackVisitor = async () => {
-      setShowDisclaimer(true);
       try {
         const response = await axios.post("/api/track-visitor");
         // If we get a message about tracking a new visitor, show the disclaimer
         if (response.data.message === "Unique visitor tracked") {
-          
+          setShowDisclaimer(true);
         }
       } catch (error) {
         console.error("Error tracking visitor:", error);
