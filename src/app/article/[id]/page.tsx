@@ -29,7 +29,7 @@ type Classification = {
 export default function ArticleDetail({ params }: { params: { id: string } }) {
   const [article, setArticle] = useState<Article | null>(null); // State for fetched article
   const [isLoading, setIsLoading] = useState(true); // State for loading indicator
-  const [error, setError] = useState(null); // State for any error
+  const [error, setError] = useState<string | null>(null); // State for any error
   const [isCookieLoading, setIsCookieLoading] = useState(false);
   const { id } = params; // Dynamic article ID from the route
   const [hasLiked, setHasLiked] = useState(false);
@@ -37,30 +37,35 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
 
   const hasIncremented = useRef(false);
 
-  useEffect(() => {
-    const fetchArticle = async () => {
-      setIsLoading(true);
-      setError(null);
+useEffect(() => {
+  const fetchArticle = async () => {
+    setIsLoading(true);
+    setError(null);
 
-      try {
-        const response = await axios.get(
-          `http://localhost:8000/api/articles/${id}` // Fetch article details by ID
-        );
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/api/articles/${id}`
+      );
 
-        if (response.data) {
-          setArticle(response.data);
-        } else {
-          throw new Error("Article not found.");
-        }
-      } catch (error) {
-        setError(error);
-      } finally {
-        setIsLoading(false);
+      if (response.data) {
+        setArticle(response.data);
+      } else {
+        throw new Error("Article not found.");
       }
-    };
+    } catch (err) {
+      // Type guard to handle different error types
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    fetchArticle();
-  }, [id]);
+  fetchArticle();
+}, [id]);
 
   useEffect(() => {
     if (id && !hasIncremented.current) {
@@ -232,7 +237,9 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
         {/* Article AI Check and Thumbnail */}
         <div className="py-6">
           <div className="flex justify-between bg-black text-white items-center text-2xl font-bold py-4 px-5 rounded-3xl max-w-4xl mx-auto">
-            <h1>{Math.round(article?.classification.probability * 100)}%</h1>
+            <h1>
+              {Math.round((article?.classification?.probability ?? 0) * 100)}%
+            </h1>
             <h1>{article?.classification.category} News Detected</h1>
             {/* Like/Dislike Button Container */}
             <div className="flex gap-x-3">

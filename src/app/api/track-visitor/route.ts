@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
       path: "/",
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      expires: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 day expiration
+      expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 day expiration
     });
 
     // Call the backend API to increment the unique visitor count
