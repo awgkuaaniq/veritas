@@ -2,7 +2,7 @@
 import axios, { AxiosError } from "axios";
 import { NextResponse, NextRequest } from "next/server";
 
-const COOKIE_EXPIRY = 14 * 24 * 60 * 60 * 1000; // 14 days in milliseconds
+const COOKIE_EXPIRY = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
 
 export async function POST(request: NextRequest) {
   try {
