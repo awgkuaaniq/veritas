@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { requestForToken } from "../../firebase";
 import axios from "axios";
 import { getMessaging, deleteToken } from "firebase/messaging";
+import { useTheme } from "@/context/ThemeContext";
 
 const SettingsPopup = ({
   isOpen,
@@ -22,7 +23,13 @@ const SettingsPopup = ({
 }) => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  // Initialize theme from localStorage
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    if (typeof window !== "undefined") {
+      return (localStorage.getItem("theme") as "light" | "dark") || "light";
+    }
+    return "light";
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [uniqueVisitorId, setUniqueVisitorId] = useState<string | null>(null);
   const [existingToken, setExistingToken] = useState<string | null>(null);
@@ -42,9 +49,9 @@ const SettingsPopup = ({
         const preferenceResponse = await axios.get(
           `http://localhost:8000/api/preference/${uniqueVisitorId}`
         );
-        const { theme, notification, token } = preferenceResponse.data;
+        const { notification, token } = preferenceResponse.data;
 
-        setTheme(theme);
+        // Only update notification and token, not theme
         setNotificationsEnabled(notification);
         setExistingToken(token);
       } catch (err) {
@@ -67,112 +74,115 @@ const SettingsPopup = ({
     }
   }, []);
 
-const handleSave = async () => {
-  if (!uniqueVisitorId) {
-    console.error("Unique visitor ID not found");
-    return;
-  }
+  const handleSave = async () => {
+    if (!uniqueVisitorId) {
+      console.error("Unique visitor ID not found");
+      return;
+    }
 
-  setIsLoading(true);
+    setIsLoading(true);
 
-  try {
-    // First handle notification permission if it's being enabled
-    if (notificationsEnabled) {
-      if (!("serviceWorker" in navigator)) {
-        setError("Service Worker is not supported in this browser.");
-        setNotificationsEnabled(false);
-        setIsLoading(false);
-        return;
-      }
-      if (!("PushManager" in window)) {
-        setError("Push API is not supported in this browser.");
-        setNotificationsEnabled(false);
-        setIsLoading(false);
-        return;
-      }
+    try {
+      // Update theme in local storage and document class
+      localStorage.setItem("theme", theme);
+      document.documentElement.classList.toggle("dark", theme === "dark");
+      // First handle notification permission if it's being enabled
+      if (notificationsEnabled) {
+        if (!("serviceWorker" in navigator)) {
+          setError("Service Worker is not supported in this browser.");
+          setNotificationsEnabled(false);
+          setIsLoading(false);
+          return;
+        }
+        if (!("PushManager" in window)) {
+          setError("Push API is not supported in this browser.");
+          setNotificationsEnabled(false);
+          setIsLoading(false);
+          return;
+        }
 
-      const permission = await Notification.requestPermission();
-      if (permission !== "granted") {
-        setError("Notification permission denied.");
-        setNotificationsEnabled(false);
-        setIsLoading(false);
-        return;
-      }
+        const permission = await Notification.requestPermission();
+        if (permission !== "granted") {
+          setError("Notification permission denied.");
+          setNotificationsEnabled(false);
+          setIsLoading(false);
+          return;
+        }
 
-      try {
-        if (!existingToken) {
-          const token = await requestForToken();
-          if (token) {
-            if ("serviceWorker" in navigator) {
-              await navigator.serviceWorker.register(
-                "/firebase-messaging-sw.js"
+        try {
+          if (!existingToken) {
+            const token = await requestForToken();
+            if (token) {
+              if ("serviceWorker" in navigator) {
+                await navigator.serviceWorker.register(
+                  "/firebase-messaging-sw.js"
+                );
+              }
+              // Update all preferences including the token in a single request
+              await axios.put(
+                `http://localhost:8000/api/preference/${uniqueVisitorId}`,
+                {
+                  theme: theme,
+                  notification: notificationsEnabled,
+                  _id: uniqueVisitorId,
+                  token: token,
+                }
               );
+              setExistingToken(token);
             }
-            // Update all preferences including the token in a single request
+          } else {
+            // If token already exists, just update other preferences
             await axios.put(
               `http://localhost:8000/api/preference/${uniqueVisitorId}`,
               {
                 theme: theme,
                 notification: notificationsEnabled,
                 _id: uniqueVisitorId,
-                token: token,
+                token: existingToken, // Include existing token
               }
             );
-            setExistingToken(token);
           }
-        } else {
-          // If token already exists, just update other preferences
+        } catch (err) {
+          console.error("Error handling FCM token:", err);
+          setError("Error handling FCM token.");
+          setNotificationsEnabled(false);
+          setIsLoading(false);
+          return;
+        }
+      } else {
+        // Handle disabling notifications
+        try {
+          const messaging = getMessaging();
+          if (existingToken) {
+            await deleteToken(messaging);
+          }
+          // Update preferences with null token
           await axios.put(
             `http://localhost:8000/api/preference/${uniqueVisitorId}`,
             {
               theme: theme,
-              notification: notificationsEnabled,
+              notification: false,
               _id: uniqueVisitorId,
-              token: existingToken, // Include existing token
+              token: null,
             }
           );
+          setExistingToken(null);
+        } catch (err) {
+          console.error("Error deleting FCM token:", err);
+          setError("Error deleting FCM token.");
+          setIsLoading(false);
+          return;
         }
-      } catch (err) {
-        console.error("Error handling FCM token:", err);
-        setError("Error handling FCM token.");
-        setNotificationsEnabled(false);
-        setIsLoading(false);
-        return;
       }
-    } else {
-      // Handle disabling notifications
-      try {
-        const messaging = getMessaging();
-        if (existingToken) {
-          await deleteToken(messaging);
-        }
-        // Update preferences with null token
-        await axios.put(
-          `http://localhost:8000/api/preference/${uniqueVisitorId}`,
-          {
-            theme: theme,
-            notification: false,
-            _id: uniqueVisitorId,
-            token: null,
-          }
-        );
-        setExistingToken(null);
-      } catch (err) {
-        console.error("Error deleting FCM token:", err);
-        setError("Error deleting FCM token.");
-        setIsLoading(false);
-        return;
-      }
+    } catch (error) {
+      console.error("Error updating preferences:", error);
+      setError("Error updating preferences");
+      setIsLoading(false);
+      return;
     }
-  } catch (error) {
-    console.error("Error updating preferences:", error);
-    setError("Error updating preferences");
-    setIsLoading(false);
-    return;
-  }
 
-  setIsLoading(false);
-};
+    setIsLoading(false);
+  };
 
   const handleClose = async () => {
     onClose(); // Call the original onClose function
@@ -185,7 +195,7 @@ const handleSave = async () => {
         className="fixed inset-0 bg-black/30 w-screen"
       />
       <div className="fixed inset-0 flex flex-col items-center justify-center">
-        <DialogPanel className="fixed bg-white rounded border-black/25 border">
+        <DialogPanel className="fixed bg-white dark:bg-slate-900 rounded-lg border-black/25 dark:border-white/10 border shadow-md">
           <div className="px-16 py-12">
             <DialogTitle className="font-semibold text-2xl">
               Settings

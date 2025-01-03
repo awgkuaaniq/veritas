@@ -5,6 +5,7 @@ import SearchArticle from "@/components/SearchArticle";
 import { useRouter } from "next/navigation"; // To access query params in the URL
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { Input } from "@/components/ui/input";
 
 interface Article {
   _id: string;
@@ -68,43 +69,42 @@ export default function SearchResult() {
   };
 
   return (
-    <main className="bg-gray-200 min-h-screen">
-        {/* Upper Component */}
-        {/* Search Bar */}
-        <div className="flex justify-center mx-auto px-2 max-w-7xl py-11">
-          <input
-            className="border-black/25 w-full text-sm text-black placeholder-gray-700"
-            type="text"
-            id="search"
-            value={searchInput} // Sync input field with state
-            onChange={handleInputChange} // Update state and URL on change
-            onKeyDown={handleKeyDown} // Trigger router.push only on Enter key
-            placeholder={searchInput ||"Search news, terms and more"}
-          />
-        </div>
+    <main className="bg-gray-200 min-h-screen dark:bg-gray-950">
+      {/* Upper Component */}
+      {/* Search Bar */}
+      <div className="flex justify-center mx-auto px-2 max-w-7xl py-11">
+        <Input
+          className="border-black/25 w-full dark:border-white/10 dark:bg-slate-900 text-sm placeholder-gray-700"
+          type="text"
+          id="search"
+          value={searchInput} // Sync input field with state
+          onChange={handleInputChange} // Update state and URL on change
+          onKeyDown={handleKeyDown} // Trigger router.push only on Enter key
+          placeholder={searchInput || "Search news, terms and more"}
+        />
+      </div>
       {/* Bottom Component */}
       <div className="flex flex-col space-y-5 max-w-7xl mx-auto px-2">
-      {loading && <div>Loading...</div>}
-      {error && <div style={{ color: "red" }}>{error}</div>}
-      {results.length > 0 ? (
-        results.map((article) => (
-          <SearchArticle key={article._id} article={article} /> // Pass article data to SearchArticle
-        ))
-      ) : (
-        <div className="flex flex-col justify-items-center mx-auto items-center text-xl space-y-5">
-          <p>
-            Sorry, there are no results for <span className="flex-inline font-bold">'{q}'</span>
-          </p>
-          <p className="text-2xl font-bold pt-4">
-            Suggestions
-          </p>
-          <ul className="list-disc">
-            <li>Make sure all words are spelled correctly</li>
-            <li>Try different terms or keywords</li>
-            <li>Try more general keywords</li>
-          </ul>
-        </div>
-      )}
+        {loading && <div>Loading...</div>}
+        {error && <div style={{ color: "red" }}>{error}</div>}
+        {results.length > 0 ? (
+          results.map((article) => (
+            <SearchArticle key={article._id} article={article} /> // Pass article data to SearchArticle
+          ))
+        ) : (
+          <div className="flex flex-col justify-items-center mx-auto items-center text-xl space-y-5">
+            <p>
+              Sorry, there are no results for{" "}
+              <span className="flex-inline font-bold">'{q}'</span>
+            </p>
+            <p className="text-2xl font-bold pt-4">Suggestions</p>
+            <ul className="list-disc">
+              <li>Make sure all words are spelled correctly</li>
+              <li>Try different terms or keywords</li>
+              <li>Try more general keywords</li>
+            </ul>
+          </div>
+        )}
       </div>
     </main>
   );

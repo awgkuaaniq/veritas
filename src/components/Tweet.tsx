@@ -40,7 +40,7 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
     return (
       <div
         ref={ref}
-        className="flex flex-col h-fit w-full shadow-md border border-black/30 bg-white rounded-xl"
+        className="flex flex-col h-fit w-full shadow-md border border-black/30 bg-white dark:bg-slate-900 rounded-xl"
       >
         {/* Tweet */}
         <div className="flex min-h-28 h-fit">
@@ -62,10 +62,12 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
                 {/* name  */}
                 <p className="font-semibold">{tweet.name}</p>
                 {/* username  */}
-                <p className="font-light text-gray-700">@{tweet.username}</p>
+                <p className="font-light text-gray-700 dark:text-gray-400">
+                  @{tweet.username}
+                </p>
               </div>
               {/* datetime  */}
-              <div className="flex space-x-2.5 items-center w-fit h-fit font-light text-gray-700">
+              <div className="flex space-x-2.5 items-center w-fit h-fit font-light text-gray-700 dark:text-gray-400">
                 {/* formatted date and time */}
                 <p>{formattedDate}</p>
               </div>
@@ -78,7 +80,9 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
             <div className="flex p-2.5 justify-between content-end w-full h-full">
               <button
                 className={`rounded-full p-2 ${
-                  showInfo ? "bg-gray-300" : "hover:bg-gray-200"
+                  showInfo
+                    ? "bg-gray-300 dark:bg-gray-700"
+                    : "hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors ease-out duration-150"
                 }`}
                 onClick={toggleInfo}
                 title="Crosschecking Sources"
@@ -86,18 +90,8 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
                 <InformationCircleIcon className="w-6 h-6" />
               </button>
               <div className="flex space-x-5">
-                {tweet.article_url && (
-                  <a
-                    className="hover:bg-gray-200 rounded-full p-2"
-                    title="Embedded Article URL"
-                    href={tweet.article_url}
-                    target="_blank"
-                  >
-                    <NewspaperIcon className="h-6 w-6" />
-                  </a>
-                )}
                 <a
-                  className="hover:bg-gray-200 rounded-full p-2"
+                  className="hover:bg-gray-200 rounded-full p-2 dark:hover:bg-gray-700 transition-colors ease-out duration-150"
                   title="Tweet URL"
                   href={tweet.tweet_url}
                   target="_blank"
@@ -112,9 +106,9 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
         {showInfo && tweet.crosscheck && (
           <div className="flex flex-col py-4 justify-center items-center px-20 w-full border-black/30 rounded-b-lg h-fit">
             {/* Card  */}
-            <div className="flex flex-col border border-black/30 rounded-3xl w-full border-black/30">
+            <div className="flex flex-col border border-black/30 dark:border-white/10 rounded-3xl w-full border-black/30">
               {/* Info Header  */}
-              <div className="flex w-full justify-center rounded-t-3xl py-2.5 h-fit px-2.5 mx-auto bg-gray-100">
+              <div className="flex w-full justify-center rounded-t-3xl py-2.5 h-fit px-2.5 mx-auto bg-gray-100 dark:bg-slate-800">
                 {/* Source  */}
                 <p className="font-semibold">Source</p>
               </div>

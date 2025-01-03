@@ -21,7 +21,7 @@ const Menubar = () => {
   const closeFeedback = () => setIsFeedbackOpen(false);
 
   return (
-    <div className="flex flex-col w-60 h-fit items-center bg-gray-200 border border-black/25 rounded-lg">
+    <div className="flex flex-col w-60 h-fit items-center bg-gray-200 dark:bg-gray-900 border border-black/25 dark:border-black shadow-md rounded-lg">
       {/* Avatar Icon & Name */}
       <div className="flex flex-col w-full h-fit items-center space-y-1 border-b border-black/20 py-3 px-2">
         <Avatar className="aspect-square w-11 h-11">
@@ -30,25 +30,33 @@ const Menubar = () => {
         </Avatar>
         <div className="flex flex-col w-full items-center">
           <p className="text-base">ShadCN</p>
-          <p className="text-sm text-black/50">shadcn@gmail.com</p>
+          <p className="text-sm text-black/50 dark:text-white/50">
+            shadcn@gmail.com
+          </p>
         </div>
       </div>
       {/* Navigation Links */}
       {/* Settings */}
-      <button className="flex py-2 px-5 w-full space-x-5" onClick={openSettings}>
+      <button
+        className="flex py-2 px-5 w-full space-x-5 hover:bg-gray-300 dark:hover:bg-gray-700/30 transition-colors ease-out duration-150"
+        onClick={openSettings}
+      >
         <Cog6ToothIcon className="w-6" />
         <p>Settings</p>
       </button>
       {/* Feedback */}
-      <button className="flex py-2 px-5 w-full space-x-5" onClick={openFeedback}>
+      <button
+        className="flex py-2 px-5 w-full space-x-5 hover:bg-gray-300 dark:hover:bg-gray-700/30 transition-colors ease-out duration-150"
+        onClick={openFeedback}
+      >
         <EnvelopeIcon className="w-6" />
         <p>Feedback</p>
       </button>
       {/* Sign Out */}
-      <div className="flex py-2 px-5 w-full space-x-5">
+      <button className="flex py-2 px-5 w-full space-x-5 hover:bg-gray-300 dark:hover:bg-gray-700/30 transition-colors ease-out duration-150">
         <ArrowLeftStartOnRectangleIcon className="w-6" />
         <p>Sign Out</p>
-      </div>
+      </button>
       {/* Settings Modal */}
       <SettingsPopup isOpen={isSettingsOpen} onClose={closeSettings} />
       <FeedbackPopup isOpen={isFeedbackOpen} onClose={closeFeedback} />

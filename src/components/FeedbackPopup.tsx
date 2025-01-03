@@ -61,7 +61,7 @@ const FeedbackPopup = ({
         <Dialog open={isOpen} onClose={onClose} className="relative z-50">
       <DialogBackdrop transition className="fixed inset-0 bg-black/30 w-screen" />
       <div className="fixed inset-0 flex flex-col items-center justify-center">
-      <DialogPanel className="fixed bg-white rounded border-black/25 border">
+      <DialogPanel className="fixed bg-white dark:bg-slate-900 rounded-lg dark:border-white/10 border-black/25 border shadow-md">
         
           <div className="px-16 py-10">
             <DialogTitle className="font-semibold text-2xl">Feedback</DialogTitle>
@@ -74,7 +74,7 @@ const FeedbackPopup = ({
           </div>
           <div className="flex items-center justify-between py-3 px-16">
             <Rating 
-            classes={{icon: 'mx-8'}}
+            classes={{icon: 'mx-8 dark:text-yellow-500'}}
             size="large"
             defaultValue={3}
             value={rating}

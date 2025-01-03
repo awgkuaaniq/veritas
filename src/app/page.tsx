@@ -86,7 +86,7 @@ export default function Home() {
   ];
 
   return (
-    <main className="bg-gray-200 min-h-screen">
+    <main className="bg-gray-200 dark:bg-gray-950 min-h-screen">
       {/* Carousel Slider */}
 
       <div className="flex justify-center py-11">
@@ -112,15 +112,15 @@ export default function Home() {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselNext className="right-3 bg-gray-200/50 border-none disabled:hidden" />
-          <CarouselPrevious className="left-3 bg-gray-200/50 border-none disabled:hidden" />
+          <CarouselNext className="right-3 bg-gray-200/50 border-none disabled:hidden transition ease-out duration-300" />
+          <CarouselPrevious className="left-3 bg-gray-200/50 border-none disabled:hidden transition ease-out duration-300" />
         </Carousel>
       </div>
 
       {/*Display Article Section*/}
 
       <div className="flex flex-col justify-between max-w-7xl mx-auto px-2">
-        <div className="font-semibold text-black text-2xl py-5">
+        <div className="font-semibold text-black dark:text-white text-2xl py-5">
           Latest Fake News
         </div>
         {articles.length > 0 ? (

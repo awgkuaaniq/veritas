@@ -9,7 +9,7 @@ interface Article {
   title: string;
   body: string;
   url: string;
-  published_at?: Date;
+  published_at: Date | string;
   likes: number;
   dislikes: number;
   views: number;

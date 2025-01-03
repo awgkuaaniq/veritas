@@ -37,12 +37,12 @@ const HomeArticle: React.FC<{ article: Article }> = ({ article }) => {
       )}
 
       {/* Article Title */}
-      <div className="text-black font-semibold text-base h-12">
+      <div className="text-black dark:text-white font-semibold text-base h-12">
         <a href={`/article/${article._id}`}>{article.title}</a>
       </div>
 
       {/* Article Info */}
-      <div className="flex w-full gap-x-11 text-black font-extralight">
+      <div className="flex w-full gap-x-11 text-black dark:text-white font-extralight">
         <div>{formatDate(article.published_at)}</div>
         <div>CNN</div>
       </div>

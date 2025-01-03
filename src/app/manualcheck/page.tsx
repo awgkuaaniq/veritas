@@ -30,7 +30,8 @@ export default function ManualCheck() {
 
     try {
       const response = await axios.post(
-        `http://localhost:8000/api/predict?body=${userInput}`
+        "http://localhost:8000/api/predict",
+        { body: userInput } // Send the body in the request body, not as a query parameter
       );
       setPrediction(response.data);
       console.log(response.data); // Optional: Log API response for debugging
@@ -56,33 +57,43 @@ export default function ManualCheck() {
     }
   };
 
-  const sendFeedback = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); // Prevent page refresh
-    if (!feedback || thumbsUp === undefined) {
-      console.error("Feedback and thumbsUp state are required.");
-      return;
-    }
+   const sendFeedback = async (event: React.FormEvent<HTMLFormElement>) => {
+     let fake = 0;
+     if (predictionData?.category == "Fake") {
+       fake = 1;
+     }
+     console.log(fake);
+     event.preventDefault(); // Prevent page refresh
+     if (!feedback || thumbsUp === undefined) {
+       console.error("Feedback and thumbsUp state are required.");
+       return;
+     }
 
-    try {
-      const response = await axios.post("http://127.0.0.1:8000/api/manualcheckfeedback/", {
-        thumbs_up: thumbsUp,
-        body: feedback,
-      });
-      console.log("Feedback submitted successfully:", response.data);
-      // Optionally, reset feedback and thumbsUp state
-      setFeedback("");
-      setThumbsUp(undefined);
-    } catch (error) {
-      console.error("Error submitting feedback:", error);
-    }
-  };
+     try {
+       const response = await axios.post(
+         "http://127.0.0.1:8000/api/manualcheckfeedback/",
+         {
+           thumbs_up: thumbsUp,
+           body: userInput,
+           comments: feedback,
+           fake: fake,
+         }
+       );
+       console.log("Feedback submitted successfully:", response.data);
+       // Optionally, reset feedback and thumbsUp state
+       setFeedback("");
+       setThumbsUp(undefined);
+     } catch (error) {
+       console.error("Error submitting feedback:", error);
+     }
+   };
 
   return (
-    <main className="bg-gray-200 h-screen">
+    <main className="bg-gray-200 h-screen dark:bg-gray-950">
       {/* Input bar */}
       <div className="flex justify-center mx-auto px-2 max-w-7xl py-11">
         <Input
-          className="border-black/25"
+          className="border-black/25 dark:border-white/10 dark:bg-slate-900"
           placeholder="Enter URL or content"
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
@@ -93,7 +104,7 @@ export default function ManualCheck() {
       {predictionData !== null && (
         <div className="flex max-w-7xl mx-auto h-fit justify-center items-center px-2 py-3">
           {/* Fake News Card */}
-          <div className="flex flex-col w-full h-fit p-3 gap-y-2 bg-black rounded-3xl text-white">
+          <div className="flex flex-col w-full h-fit p-3 gap-y-2 bg-black dark:bg-slate-900 rounded-3xl text-white">
             {/* Card Title */}
             <div className="flex w-full h-fit px-4 py-3 justify-center items-center">
               <h1 className="text-2xl font-bold">
@@ -124,7 +135,7 @@ export default function ManualCheck() {
         <div className="flex max-w-7xl mx-auto h-fit justify-center items-center px-2 py-3">
           {/* Feedback Form */}
           <form 
-          className="flex flex-col w-full h-fit p-3 gap-y-2 bg-black rounded-3xl text-white"
+          className="flex flex-col w-full h-fit p-3 gap-y-2 bg-black dark:bg-slate-900 rounded-3xl text-white"
           onSubmit={sendFeedback}
           >
             {/* Form Title */}
@@ -156,13 +167,13 @@ export default function ManualCheck() {
                 <HandThumbDownIcon className="text-black size-8" />
               </Button>
               <Input
-                className="w-1/2 h-fit text-black"
+                className="w-1/2 h-fit text-black dark:text-white"
                 placeholder="Enter your feedback here"
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
               />
               <Button
-                className="border border-gray-700 hover:bg-black hover:border-gray-900"
+                className="border border-gray-700 bg-white text-black hover:bg-gray-300"
                 type="submit"
               >
                 Submit

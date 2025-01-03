@@ -17,28 +17,42 @@ const Navbar: React.FC = () => {
   
 
   return (
-    <nav className="bg-gray-50 relative">
+    <nav className="bg-gray-50 dark:bg-gray-900 relative shadow-md">
       {/* General Container */}
       <div className="flex justify-between max-w-7xl mx-auto items-center px-2 h-fit">
         {/* Logo */}
         <div>
           <a href=".." className="flex items-center">
-            <CodeBracketSquareIcon className="size-12 text-black mr-2" />
-            <span className="text-black text-xl font-bold">VERITAS</span>
+            <CodeBracketSquareIcon className="size-12 dark:text-white text-black mr-2" />
+            <span className="text-black dark:text-white text-xl font-bold">
+              VERITAS
+            </span>
           </a>
         </div>
         {/* Navigation */}
-        <div className="text-black flex justify-between items-center">
-          <a href="/tweet" className="py-5 px-6 hover:bg-gray-200">
+        <div className="text-black dark:text-white flex justify-between items-center">
+          <a
+            href="/tweet"
+            className="py-5 px-6 hover:bg-gray-200 dark:hover:bg-gray-700/30 rounded transition-colors ease-out duration-150"
+          >
             Tweets
           </a>
-          <a href="/statistic" className="py-5 px-6 hover:bg-gray-200">
+          <a
+            href="/statistic"
+            className="py-5 px-6 hover:bg-gray-200 dark:hover:bg-gray-700/30 rounded transition-colors ease-out duration-150"
+          >
             Statistics
           </a>
-          <a href="/manualcheck" className="py-5 px-6 hover:bg-gray-200">
+          <a
+            href="/manualcheck"
+            className="py-5 px-6 hover:bg-gray-200 dark:hover:bg-gray-700/30 rounded transition-colors ease-out duration-150"
+          >
             Manual Check
           </a>
-          <a href="/about" className="py-5 px-6 hover:bg-gray-200">
+          <a
+            href="/about"
+            className="py-5 px-6 hover:bg-gray-200 dark:hover:bg-gray-700/30 rounded transition-colors ease-out duration-150"
+          >
             About
           </a>
         </div>
@@ -46,8 +60,11 @@ const Navbar: React.FC = () => {
         <NavSearch />
         {/* Burger Menu */}
         <div className="flex h-full relative">
-          <button className="hover:bg-gray-200" onClick={toggleMenu}>
-            <Bars3Icon className="size-8 text-black" />
+          <button
+            className="hover:bg-gray-200 dark:hover:bg-gray-700/30 rounded transition-colors ease-out duration-150"
+            onClick={toggleMenu}
+          >
+            <Bars3Icon className="size-8 text-black dark:text-white" />
           </button>
           {/* Menubar */}
           {isMenuOpen && (
