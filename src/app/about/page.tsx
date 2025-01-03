@@ -129,12 +129,13 @@ export default function AboutPage() {
             Contact Us
           </h2>
           <p className="text-xl text-gray-600 mb-4">
-            Have any questions or feedback? We'd love to hear from you! Reach
-            out to us through our feedback form.
+            Have any questions or feedback? We&apos;d love to hear from you!
+            Reach out to us through our feedback form.
           </p>
           <p className="text-xl text-gray-600">
-            To access the feedback form. kindly go to the menu <Bars3Icon className="inline h-6 w-6"/> at the top right, 
-            located in the Navigation Bar.
+            To access the feedback form. kindly go to the menu{" "}
+            <Bars3Icon className="inline h-6 w-6" /> at the top right, located
+            in the Navigation Bar.
           </p>
         </div>
       </div>

@@ -28,6 +28,7 @@ type Article = {
   time_added: Date;
   unique_hash?: string;
   classification: Classification;
+  image_url: string;
 };
 
 type Classification = {

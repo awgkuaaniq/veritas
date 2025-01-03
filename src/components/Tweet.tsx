@@ -14,7 +14,7 @@ interface CrosscheckResult {
   source: string;
   probability: number;
 }
-    
+
 interface Tweets {
   id: string;
   name: string;
@@ -26,7 +26,6 @@ interface Tweets {
   published_at: Date;
   crosscheck: CrosscheckResult;
 }
-    
 
 const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
   ({ tweet }, ref) => {
@@ -150,5 +149,5 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
     );
   }
 );
-
+Tweet.displayName = "Tweet";
 export default Tweet;

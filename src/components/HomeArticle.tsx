@@ -12,6 +12,7 @@ interface Article {
   views: number;
   time_added: Date;
   unique_hash?: string;
+  image_url: string;
   classification: Classification;
 }
 

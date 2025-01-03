@@ -2,7 +2,10 @@
 
 import LikeDislikeBar from "@/components/LikeDislikeBar";
 import { Button } from "@/components/ui/button";
-import { HandThumbDownIcon, HandThumbUpIcon } from "@heroicons/react/24/outline";
+import {
+  HandThumbDownIcon,
+  HandThumbUpIcon,
+} from "@heroicons/react/24/outline";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 
@@ -37,35 +40,35 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
 
   const hasIncremented = useRef(false);
 
-useEffect(() => {
-  const fetchArticle = async () => {
-    setIsLoading(true);
-    setError(null);
+  useEffect(() => {
+    const fetchArticle = async () => {
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      const response = await axios.get(
-        `http://localhost:8000/api/articles/${id}`
-      );
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/api/articles/${id}`
+        );
 
-      if (response.data) {
-        setArticle(response.data);
-      } else {
-        throw new Error("Article not found.");
+        if (response.data) {
+          setArticle(response.data);
+        } else {
+          throw new Error("Article not found.");
+        }
+      } catch (err) {
+        // Type guard to handle different error types
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unknown error occurred");
+        }
+      } finally {
+        setIsLoading(false);
       }
-    } catch (err) {
-      // Type guard to handle different error types
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("An unknown error occurred");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
 
-  fetchArticle();
-}, [id]);
+    fetchArticle();
+  }, [id]);
 
   useEffect(() => {
     if (id && !hasIncremented.current) {
@@ -240,7 +243,7 @@ useEffect(() => {
             <h1>
               {Math.round((article?.classification?.probability ?? 0) * 100)}%
             </h1>
-            <h1>{article?.classification.category} News Detected</h1>
+            <h1>Possible Fake News Detected</h1>
             {/* Like/Dislike Button Container */}
             <div className="flex gap-x-3">
               <Button
