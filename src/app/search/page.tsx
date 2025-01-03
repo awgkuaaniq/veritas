@@ -43,7 +43,9 @@ function SearchContent() {
         setError(null);
         try {
           const response = await fetch(
-            `http://localhost:8000/api/get-search-article-result?search_query=${encodeURIComponent(
+            `${
+              process.env.NEXT_PUBLIC_BACKEND_URL
+            }/api/get-search-article-result?search_query=${encodeURIComponent(
               q as string
             )}`
           );

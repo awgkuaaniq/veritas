@@ -47,7 +47,7 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
 
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/articles/${id}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles/${id}`
         );
 
         if (response.data) {
