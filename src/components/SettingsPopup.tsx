@@ -40,7 +40,7 @@ const SettingsPopup = ({
 
         // Fetch preferences using the uniqueVisitorId
         const preferenceResponse = await axios.get(
-          `http://localhost:8000/api/preference/${uniqueVisitorId}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/preference/${uniqueVisitorId}`
         );
         const { theme, notification, token } = preferenceResponse.data;
 
@@ -67,112 +67,112 @@ const SettingsPopup = ({
     }
   }, []);
 
-const handleSave = async () => {
-  if (!uniqueVisitorId) {
-    console.error("Unique visitor ID not found");
-    return;
-  }
+  const handleSave = async () => {
+    if (!uniqueVisitorId) {
+      console.error("Unique visitor ID not found");
+      return;
+    }
 
-  setIsLoading(true);
+    setIsLoading(true);
 
-  try {
-    // First handle notification permission if it's being enabled
-    if (notificationsEnabled) {
-      if (!("serviceWorker" in navigator)) {
-        setError("Service Worker is not supported in this browser.");
-        setNotificationsEnabled(false);
-        setIsLoading(false);
-        return;
-      }
-      if (!("PushManager" in window)) {
-        setError("Push API is not supported in this browser.");
-        setNotificationsEnabled(false);
-        setIsLoading(false);
-        return;
-      }
+    try {
+      // First handle notification permission if it's being enabled
+      if (notificationsEnabled) {
+        if (!("serviceWorker" in navigator)) {
+          setError("Service Worker is not supported in this browser.");
+          setNotificationsEnabled(false);
+          setIsLoading(false);
+          return;
+        }
+        if (!("PushManager" in window)) {
+          setError("Push API is not supported in this browser.");
+          setNotificationsEnabled(false);
+          setIsLoading(false);
+          return;
+        }
 
-      const permission = await Notification.requestPermission();
-      if (permission !== "granted") {
-        setError("Notification permission denied.");
-        setNotificationsEnabled(false);
-        setIsLoading(false);
-        return;
-      }
+        const permission = await Notification.requestPermission();
+        if (permission !== "granted") {
+          setError("Notification permission denied.");
+          setNotificationsEnabled(false);
+          setIsLoading(false);
+          return;
+        }
 
-      try {
-        if (!existingToken) {
-          const token = await requestForToken();
-          if (token) {
-            if ("serviceWorker" in navigator) {
-              await navigator.serviceWorker.register(
-                "/firebase-messaging-sw.js"
+        try {
+          if (!existingToken) {
+            const token = await requestForToken();
+            if (token) {
+              if ("serviceWorker" in navigator) {
+                await navigator.serviceWorker.register(
+                  "/firebase-messaging-sw.js"
+                );
+              }
+              // Update all preferences including the token in a single request
+              await axios.put(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/preference/${uniqueVisitorId}`,
+                {
+                  theme: theme,
+                  notification: notificationsEnabled,
+                  _id: uniqueVisitorId,
+                  token: token,
+                }
               );
+              setExistingToken(token);
             }
-            // Update all preferences including the token in a single request
+          } else {
+            // If token already exists, just update other preferences
             await axios.put(
-              `http://localhost:8000/api/preference/${uniqueVisitorId}`,
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/preference/${uniqueVisitorId}`,
               {
                 theme: theme,
                 notification: notificationsEnabled,
                 _id: uniqueVisitorId,
-                token: token,
+                token: existingToken, // Include existing token
               }
             );
-            setExistingToken(token);
           }
-        } else {
-          // If token already exists, just update other preferences
+        } catch (err) {
+          console.error("Error handling FCM token:", err);
+          setError("Error handling FCM token.");
+          setNotificationsEnabled(false);
+          setIsLoading(false);
+          return;
+        }
+      } else {
+        // Handle disabling notifications
+        try {
+          const messaging = getMessaging();
+          if (existingToken) {
+            await deleteToken(messaging);
+          }
+          // Update preferences with null token
           await axios.put(
-            `http://localhost:8000/api/preference/${uniqueVisitorId}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/preference/${uniqueVisitorId}`,
             {
               theme: theme,
-              notification: notificationsEnabled,
+              notification: false,
               _id: uniqueVisitorId,
-              token: existingToken, // Include existing token
+              token: null,
             }
           );
+          setExistingToken(null);
+        } catch (err) {
+          console.error("Error deleting FCM token:", err);
+          setError("Error deleting FCM token.");
+          setIsLoading(false);
+          return;
         }
-      } catch (err) {
-        console.error("Error handling FCM token:", err);
-        setError("Error handling FCM token.");
-        setNotificationsEnabled(false);
-        setIsLoading(false);
-        return;
       }
-    } else {
-      // Handle disabling notifications
-      try {
-        const messaging = getMessaging();
-        if (existingToken) {
-          await deleteToken(messaging);
-        }
-        // Update preferences with null token
-        await axios.put(
-          `http://localhost:8000/api/preference/${uniqueVisitorId}`,
-          {
-            theme: theme,
-            notification: false,
-            _id: uniqueVisitorId,
-            token: null,
-          }
-        );
-        setExistingToken(null);
-      } catch (err) {
-        console.error("Error deleting FCM token:", err);
-        setError("Error deleting FCM token.");
-        setIsLoading(false);
-        return;
-      }
+    } catch (error) {
+      console.error("Error updating preferences:", error);
+      setError("Error updating preferences");
+      setIsLoading(false);
+      return;
     }
-  } catch (error) {
-    console.error("Error updating preferences:", error);
-    setError("Error updating preferences");
-    setIsLoading(false);
-    return;
-  }
 
-  setIsLoading(false);
-};
+    setIsLoading(false);
+  };
 
   const handleClose = async () => {
     onClose(); // Call the original onClose function

@@ -1,7 +1,13 @@
 "use client";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
-import React, {useEffect, useState} from 'react'
-import axios from 'axios';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 type Article = {
   _id: string;
@@ -27,7 +33,9 @@ export default function TopNewsThisWeek() {
   const [articles, setArticles] = useState<Article[]>([]); // Initialize articles state
   const getArticleById = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/get-top-articles/");
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/get-top-articles/`
+      );
       const fetchedArticles = response.data; // Assuming the response contains an array of articles
 
       setArticles(fetchedArticles); // Update state with fetched articles
@@ -39,10 +47,16 @@ export default function TopNewsThisWeek() {
   useEffect(() => {
     getArticleById();
   }, []);
-    // Array of image URLs
+  // Array of image URLs
   const images = [
-    { src: "/dummyIMG/corgi.webp", title: "Paw patrol: China's most popular new police officer is a corgi" },
-    { src: "/dummyIMG/chrisbrown.webp", title: "Chris Brown gets back with Rihanna and punches ASAP Wocky" },
+    {
+      src: "/dummyIMG/corgi.webp",
+      title: "Paw patrol: China's most popular new police officer is a corgi",
+    },
+    {
+      src: "/dummyIMG/chrisbrown.webp",
+      title: "Chris Brown gets back with Rihanna and punches ASAP Wocky",
+    },
     { src: "/dummyIMG/kanye.webp", title: "Kanye West joins Neo Nazi Program" },
   ];
   return (
