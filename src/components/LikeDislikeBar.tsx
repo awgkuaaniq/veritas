@@ -1,13 +1,15 @@
 "use client";
 import React, { useState } from 'react';
 
-const LikeDislikeBar = () => {
-  const [likes, setLikes] = useState(432);
-  const [dislikes, setDislikes] = useState(40);
+type LikeDislikeBarProps = {
+  likes: number;
+  dislikes: number;
+};
 
+const LikeDislikeBar: React.FC<LikeDislikeBarProps> = ({ likes, dislikes }) => {
   const total = likes + dislikes;
-  const likePercentage = (likes / total) * 100;
-  const dislikePercentage = (dislikes / total) * 100;
+  const likePercentage = (likes / total) * 100 || 0; // Handle divide by 0
+  const dislikePercentage = (dislikes / total) * 100 || 0;
 
   return (
     <div className="flex flex-col px-2 w-1/4">

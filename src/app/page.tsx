@@ -14,17 +14,21 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import DisclaimerPopup from "@/components/DisclaimerPopup";
 
 type Article = {
+  _id: string;
   title: string;
   body: string;
   url: string;
-  published_at?: Date;
+  published_at: Date | string;
   likes: number;
   dislikes: number;
+  views: number;
   time_added: Date;
   unique_hash?: string;
   classification: Classification;
+  image_url: string;
 };
 
 type Classification = {
@@ -33,11 +37,15 @@ type Classification = {
   hasBeenChecked: boolean;
 };
 
-export default function Home({ params }: any) {
+export default function Home() {
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [articles, setArticles] = useState<Article[]>([]); // Initialize articles state
+
   const getArticleById = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/articles/");
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles`
+      );
       const fetchedArticles = response.data; // Assuming the response contains an array of articles
 
       setArticles(fetchedArticles); // Update state with fetched articles
@@ -47,8 +55,25 @@ export default function Home({ params }: any) {
   };
 
   useEffect(() => {
+    const trackVisitor = async () => {
+      try {
+        const response = await axios.post("/api/track-visitor");
+        // If we get a message about tracking a new visitor, show the disclaimer
+        if (response.data.message === "Unique visitor tracked") {
+          setShowDisclaimer(true);
+        }
+      } catch (error) {
+        console.error("Error tracking visitor:", error);
+      }
+    };
+
+    trackVisitor();
     getArticleById();
   }, []);
+
+  const handleCloseDisclaimer = () => {
+    setShowDisclaimer(false);
+  };
 
   // Array of image URLs
   const images = [
@@ -62,8 +87,9 @@ export default function Home({ params }: any) {
     },
     { src: "/dummyIMG/kanye.webp", alt: "Kanye West joins Neo Nazi Program" },
   ];
+
   return (
-    <main className="bg-gray-200">
+    <main className="bg-gray-200 min-h-screen">
       {/* Carousel Slider */}
 
       <div className="flex justify-center py-11">
@@ -73,7 +99,7 @@ export default function Home({ params }: any) {
               <CarouselItem className="py-0" key={index}>
                 <Card className="flex items-center justify-center h-full">
                   <CardContent className="w-full h-full p-0 relative">
-                    <a href="/article">
+                    <a href="/article/[id]">
                       <img
                         className="object-fill w-full h-full"
                         src={image.src}
@@ -104,7 +130,7 @@ export default function Home({ params }: any) {
           <div className="grid grid-cols-3 gap-y-5">
             {articles.map((article) => (
               <HomeArticle
-                key={article.unique_hash || article.title}
+                key={article._id || article.title}
                 article={article}
               />
             ))}
@@ -113,6 +139,10 @@ export default function Home({ params }: any) {
           <div>Loading articles...</div>
         )}
       </div>
+      <DisclaimerPopup
+        isOpen={showDisclaimer}
+        onClose={handleCloseDisclaimer}
+      />
     </main>
   );
 }

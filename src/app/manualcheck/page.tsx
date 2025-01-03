@@ -17,6 +17,8 @@ type Prediction = {
 export default function ManualCheck() {
   const [userInput, setUserInput] = useState(""); // State to store user input
   const [predictionData, setPrediction] = useState<Prediction | null>(null); // State to store API response
+  const [thumbsUp, setThumbsUp] = useState<boolean>();
+  const [feedback, setFeedback] = useState("");
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserInput(event.target.value);
@@ -28,7 +30,7 @@ export default function ManualCheck() {
 
     try {
       const response = await axios.post(
-        `http://localhost:8000/api/predict?body=${userInput}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/predict?body=${userInput}`
       );
       setPrediction(response.data);
       console.log(response.data); // Optional: Log API response for debugging
@@ -42,6 +44,38 @@ export default function ManualCheck() {
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       handleCheck();
+    }
+  };
+
+  const checkThumbsUp = async (id: string) => {
+    if (id == "thumbs_up") {
+      setThumbsUp(true);
+    } else {
+      setThumbsUp(false);
+    }
+  };
+
+  const sendFeedback = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault(); // Prevent page refresh
+    if (!feedback || thumbsUp === undefined) {
+      console.error("Feedback and thumbsUp state are required.");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/manualcheckfeedback/`,
+        {
+          thumbs_up: thumbsUp,
+          body: feedback,
+        }
+      );
+      console.log("Feedback submitted successfully:", response.data);
+      // Optionally, reset feedback and thumbsUp state
+      setFeedback("");
+      setThumbsUp(undefined);
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
     }
   };
 
@@ -91,22 +125,49 @@ export default function ManualCheck() {
       {predictionData !== null && (
         <div className="flex max-w-7xl mx-auto h-fit justify-center items-center px-2 py-3">
           {/* Feedback Form */}
-          <form className="flex flex-col w-full h-fit p-3 gap-y-2 bg-black rounded-3xl text-white">
+          <form
+            className="flex flex-col w-full h-fit p-3 gap-y-2 bg-black rounded-3xl text-white"
+            onSubmit={sendFeedback}
+          >
             {/* Form Title */}
             <div className="flex w-full h-fit px-4 py-3 justify-center items-center">
               <h1 className="text-2xl font-bold">Feedback</h1>
             </div>
             {/* Form Content */}
             <div className="flex w-full h-fit p-3 gap-x-3 justify-center items-center">
-              <Button className="bg-green-500 rounded-full aspect-square h-fit p-1 hover:bg-green-700">
+              <Button
+                type="button"
+                className={`rounded-full aspect-square h-fit p-1 
+                ${
+                  thumbsUp
+                    ? "bg-green-700 text-white"
+                    : "bg-green-500 text-black"
+                } 
+                hover:bg-green-700`}
+                onClick={() => checkThumbsUp("thumbs_up")}
+              >
                 <HandThumbUpIcon className="text-black size-8" />
               </Button>
-              <Button className="bg-red-500 rounded-full aspect-square h-fit p-1 hover:bg-red-700">
+              <Button
+                type="button"
+                className={`rounded-full aspect-square h-fit p-1 
+                ${
+                  thumbsUp === undefined
+                    ? "bg-red-500 text-black" // Default color for the undefined state
+                    : thumbsUp === false
+                    ? "bg-red-700 text-white" // Color when thumbsUp is explicitly false
+                    : "bg-red-500 text-black"
+                } 
+                hover:bg-red-700`}
+                onClick={() => checkThumbsUp("thumbs_down")}
+              >
                 <HandThumbDownIcon className="text-black size-8" />
               </Button>
               <Input
                 className="w-1/2 h-fit text-black"
                 placeholder="Enter your feedback here"
+                value={feedback}
+                onChange={(e) => setFeedback(e.target.value)}
               />
               <Button
                 className="border border-gray-700 hover:bg-black hover:border-gray-900"
