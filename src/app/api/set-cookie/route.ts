@@ -60,7 +60,7 @@ export async function POST(request: Request) {
     // If the article has already been interacted with, return a message
     return NextResponse.json({ message: `Article already ${type}d` });
   } catch (error) {
-    console.error(`Error in /api/set-cookie for ${type}:`, error);
+    console.error(`Error in /api/set-cookie:`, error);
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
   }
 }
