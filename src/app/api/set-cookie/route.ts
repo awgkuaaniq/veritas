@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
 
       if (!articles.includes(articleId)) {
         articles.push(articleId);
-        await axios.post(`http://127.0.0.1:8000/api/increment-views`, {
+        await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/increment-views`, {
           _id: articleId,
         });
 
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
 
       articles = articles.filter((id) => id !== articleId);
 
-      await axios.post(`http://127.0.0.1:8000/api/decrement-${actionType}s`, {
+      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/decrement-${actionType}s`, {
         _id: articleId,
       });
 
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
     if (oppositeArticles.includes(articleId)) {
       oppositeArticles = oppositeArticles.filter((id) => id !== articleId);
 
-      await axios.post(`http://127.0.0.1:8000/api/decrement-${oppositeType}s`, {
+      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/decrement-${oppositeType}s`, {
         _id: articleId,
       });
 
@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
     if (!currentArticles.includes(articleId)) {
       currentArticles.push(articleId);
 
-      await axios.post(`http://127.0.0.1:8000/api/increment-${type}s`, {
+      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/increment-${type}s`, {
         _id: articleId,
       });
 
