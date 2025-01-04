@@ -46,9 +46,14 @@ export default function EditArticle() {
           image_url: data.image_url || "", // Set the current image URL
         });
       } catch (err) {
-        setError(
-          err.message || "An error occurred while fetching the article."
-        );
+        // Handle the error properly
+        if (err instanceof Error) {
+          setError(
+            err.message || "An error occurred while fetching the article."
+          );
+        } else {
+          setError("An unknown error occurred.");
+        }
       }
     };
 
@@ -103,7 +108,14 @@ export default function EditArticle() {
       console.log("Article updated successfully:", data);
       router.push("/"); // Redirect to homepage or another route
     } catch (err) {
-      setError(err.message || "An error occurred while updating the article.");
+      // Handle the error properly
+      if (err instanceof Error) {
+        setError(
+          err.message || "An error occurred while updating the article."
+        );
+      } else {
+        setError("An unknown error occurred.");
+      }
     } finally {
       setLoading(false);
     }
