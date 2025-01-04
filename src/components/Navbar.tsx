@@ -20,6 +20,7 @@ const Navbar: React.FC = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const { user, isLoading } = useUser(); // Get user and loading state
 
   const toggleSmallScreenMenu = () => {
     setIsSmallScreenMenuOpen(!isSmallScreenMenuOpen);
@@ -85,7 +86,10 @@ const Navbar: React.FC = () => {
           </a>
           {/* Conditionally Render Admin Link */}
           {!isLoading && user && (
-            <a href="/admin" className="py-5 px-6 hover:bg-gray-200">
+            <a
+              href="/admin"
+              className="py-5 px-6 hover:bg-gray-200 dark:hover:bg-gray-800"
+            >
               Admin
             </a>
           )}
@@ -127,7 +131,7 @@ const Navbar: React.FC = () => {
             </div>
 
             {/* Mobile Navigation Links */}
-            <div className="flex flex-col justify-center text-center items-center">
+            <div className="flex divide-y divide-black/15 border-b border-black/15 shadow-2xl flex-col justify-center text-center items-center">
               <a
                 href="/tweet"
                 className="px-4 w-full py-2 hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white"
@@ -152,6 +156,15 @@ const Navbar: React.FC = () => {
               >
                 About
               </a>
+              {/* Conditionally Render Admin Link */}
+              {!isLoading && user && (
+                <a
+                  href="/admin"
+                  className="px-4 w-full py-2 hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white"
+                >
+                  Admin
+                </a>
+              )}
 
               {/* Settings, Feedback, and Sign Out */}
               <button
@@ -166,9 +179,15 @@ const Navbar: React.FC = () => {
               >
                 Feedback
               </button>
-              <button className="flex w-full px-4 py-2 space-x-3 hover:bg-gray-200 dark:hover:bg-gray-800 justify-center dark:text-white">
-                Sign Out
-              </button>
+              {/* Conditionally Render Sign Out */}
+              {!isLoading && user && (
+                <a
+                  href="/api/auth/logout" // Redirect to Auth0 logout endpoint
+                  className="flex w-full px-4 py-2 space-x-3 hover:bg-gray-200 dark:hover:bg-gray-800 justify-center dark:text-white"
+                >
+                  <p>Sign Out</p>
+                </a>
+              )}
             </div>
           </div>
         </div>
