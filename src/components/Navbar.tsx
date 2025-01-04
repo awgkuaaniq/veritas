@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Menubar from "@/components/Menubar";
 import NavSearch from "@/components/NavSearch";
+import { useUser } from "@auth0/nextjs-auth0/client"; // Import useUser
 import {
   ArrowLeftStartOnRectangleIcon,
   Bars3Icon,
@@ -82,6 +83,12 @@ const Navbar: React.FC = () => {
           >
             About
           </a>
+          {/* Conditionally Render Admin Link */}
+          {!isLoading && user && (
+            <a href="/admin" className="py-5 px-6 hover:bg-gray-200">
+              Admin
+            </a>
+          )}
         </div>
 
         {/* Desktop Search Bar - Hidden on mobile */}

@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Call the backend API to increment the unique visitor count
-    const uniqueVisitorApiUrl = `http://127.0.0.1:8000/api/add-unique-visitor`;
+    const uniqueVisitorApiUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/add-unique-visitor`;
     await axios.post(uniqueVisitorApiUrl, {
       unique_visitor_id: uniqueVisitorId,
     });

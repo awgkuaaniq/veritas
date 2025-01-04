@@ -1,11 +1,11 @@
 "use client";
 
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import React, { useState} from 'react';
-import { useRouter } from "next/navigation";  // For Next.js 13+ with app directory
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation"; // For Next.js 13+ with app directory
 
 const NavSearch = () => {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const router = useRouter();
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {

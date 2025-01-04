@@ -3,11 +3,12 @@ import { Inter } from "next/font/google";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import { UserProvider } from "@auth0/nextjs-auth0/client"; // Import UserProvider
 
 const inter = Inter({ subsets: ["latin"] });
 const poppins = Poppins({
   subsets: ["latin"],
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900']
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -22,11 +23,14 @@ export default function RootLayout({
 }>) {
   return (
     <html className="overflow-y-scroll" lang="en">
-      
       <body className={poppins.className}>
-        <Navbar />
-        {children}
-        </body>
+        <UserProvider>
+          {" "}
+          {/* Wrap the entire app with UserProvider */}
+          <Navbar />
+          {children}
+        </UserProvider>
+      </body>
     </html>
   );
 }
