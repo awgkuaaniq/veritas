@@ -1,0 +1,50 @@
+// veritas/firebase.ts
+import { initializeApp } from "firebase/app";
+import { getMessaging, getToken, isSupported } from "firebase/messaging";
+import axios from "axios";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAcXDk_cyXelkWxuCmPwRi_LEcgqEIqnPs",
+  authDomain: "veritas-fecf5.firebaseapp.com",
+  projectId: "veritas-fecf5",
+  storageBucket: "veritas-fecf5.firebasestorage.app",
+  messagingSenderId: "428186617574",
+  appId: "1:428186617574:web:7d4269c602631cd4a5dd27",
+};
+
+const app = initializeApp(firebaseConfig);
+const messaging = async () => {
+  const supported = await isSupported();
+  console.log("Is messaging supported:", supported);
+  return supported && getMessaging(app);
+};
+
+export const requestForToken = async () => {
+  try {
+    console.log("Getting messaging instance...");
+    const messagingInstance = await messaging();
+    if (!messagingInstance) {
+      console.log("Messaging is not supported.");
+      return null;
+    }
+    console.log("Requesting token...");
+    const currentToken = await getToken(messagingInstance, {
+      vapidKey:
+        "BHuPnDOHHq_BrCqBOOa85-O0nHmnkvKyq0tCOU1PL0CQZCOx92SABAqg4gJIwy5drg0ViihO2ICkeKjwM2Ma8NQ",
+    });
+    if (currentToken) {
+      console.log("Current token for client: ", currentToken);
+      return currentToken;
+    } else {
+      console.log(
+        "No registration token available. Request permission to generate one."
+      );
+      return null;
+    }
+  } catch (err) {
+    console.log("An error occurred while retrieving token. ", err);
+    return null;
+  }
+};
+
+export { app, messaging };

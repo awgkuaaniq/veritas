@@ -16,23 +16,23 @@ const NavSearch = () => {
     }
   };
 
-  return (
-    <div className="flex items-center h-10 bg-gray-200 border-black/25 border rounded-lg">
-      <div className="grid place-items-center h-full w-12 text-gray-500">
-        <MagnifyingGlassIcon className="h-6 w-6" />
-      </div>
+    return (
+      <div className="flex items-center h-10 bg-gray-200 border-black/25 border rounded-lg">
+        <div className="grid place-items-center h-full w-12 text-gray-500">
+          <MagnifyingGlassIcon className="h-6 w-6" />
+        </div>
 
-      <form onSubmit={handleSearch}>
-        <input
-          className="bg-gray-200 border-0 text-sm text-black pr-2 placeholder-gray-700 ro"
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search something.."
-        />
-      </form>
-    </div>
-  );
+        <form onSubmit={handleSearch}>
+          <input
+            className="bg-gray-200 border-0 text-sm text-black pr-2 placeholder-gray-700 rounded-lg focus:ring-0"
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search something.."
+          />
+        </form>
+      </div>
+    );
 };
 
 export default NavSearch;

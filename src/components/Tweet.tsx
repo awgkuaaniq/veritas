@@ -1,0 +1,154 @@
+import React, { forwardRef } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  InformationCircleIcon,
+  LinkIcon,
+  NewspaperIcon,
+} from "@heroicons/react/24/outline";
+import { useState } from "react";
+import { formatDate } from "@/utils/formatDate";
+
+interface CrosscheckResult {
+  title: string;
+  content: string;
+  source: string;
+  probability: number;
+}
+    
+interface Tweets {
+  id: string;
+  name: string;
+  username: string;
+  avatar: string;
+  body: string;
+  tweet_url: string;
+  article_url?: string;
+  published_at: Date;
+  crosscheck: CrosscheckResult;
+}
+    
+
+const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
+  ({ tweet }, ref) => {
+    const formattedDate = formatDate(tweet.published_at);
+    const [showInfo, setShowInfo] = useState(false);
+
+    const toggleInfo = () => {
+      setShowInfo((prev) => !prev);
+    };
+
+    return (
+      <div
+        ref={ref}
+        className="flex flex-col h-fit w-full shadow-md border border-black/30 bg-white rounded-xl"
+      >
+        {/* Tweet */}
+        <div className="flex min-h-28 h-fit">
+          {/* Tweet Icon */}
+          <div className="flex flex-col h-full p-2.5">
+            <Avatar className="aspect-square w-11 h-11">
+              <AvatarImage src={tweet.avatar} alt={`@${tweet.username}`} />
+              <AvatarFallback>
+                {`${tweet.name[0]}${tweet.name[1]}`}
+              </AvatarFallback>
+            </Avatar>
+          </div>
+          {/* Tweet Content */}
+          <div className="flex flex-col pr-2.5 w-full h-full">
+            {/* Tweet Header */}
+            <div className="flex space-x-2.5 px-2.5 pt-2.5 w-full h-fit">
+              {/* user  */}
+              <div className="flex space-x-1 w-fit h-fit items-center">
+                {/* name  */}
+                <p className="font-semibold">{tweet.name}</p>
+                {/* username  */}
+                <p className="font-light text-gray-700">@{tweet.username}</p>
+              </div>
+              {/* datetime  */}
+              <div className="flex space-x-2.5 items-center w-fit h-fit font-light text-gray-700">
+                {/* formatted date and time */}
+                <p>{formattedDate}</p>
+              </div>
+            </div>
+            {/* Tweet Body */}
+            <div className="flex px-2.5 w-full h-fit">
+              <p className="w-fit h-fit">{tweet.body}</p>
+            </div>
+            {/* Tweet Footer */}
+            <div className="flex p-2.5 justify-between content-end w-full h-full">
+              <button
+                className={`rounded-full p-2 ${
+                  showInfo ? "bg-gray-300" : "hover:bg-gray-200"
+                }`}
+                onClick={toggleInfo}
+                title="Crosschecking Sources"
+              >
+                <InformationCircleIcon className="w-6 h-6" />
+              </button>
+              <div className="flex space-x-5">
+                {tweet.article_url && (
+                  <a
+                    className="hover:bg-gray-200 rounded-full p-2"
+                    title="Embedded Article URL"
+                    href={tweet.article_url}
+                    target="_blank"
+                  >
+                    <NewspaperIcon className="h-6 w-6" />
+                  </a>
+                )}
+                <a
+                  className="hover:bg-gray-200 rounded-full p-2"
+                  title="Tweet URL"
+                  href={tweet.tweet_url}
+                  target="_blank"
+                >
+                  <LinkIcon className="w-6 h-6" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* Tweet Info  */}
+        {showInfo && tweet.crosscheck && (
+          <div className="flex flex-col py-4 justify-center items-center px-20 w-full border-black/30 rounded-b-lg h-fit">
+            {/* Card  */}
+            <div className="flex flex-col border border-black/30 rounded-3xl w-full border-black/30">
+              {/* Info Header  */}
+              <div className="flex w-full justify-center rounded-t-3xl py-2.5 h-fit px-2.5 mx-auto bg-gray-100">
+                {/* Source  */}
+                <p className="font-semibold">Source</p>
+              </div>
+              {/* Info Body  */}
+              <div className="flex w-full h-fit p-2.5">
+                <div className="flex w-full h-fit p-3 gap-x-3 items-center">
+                  <h1
+                    className="text-xl text-nowrap font-semibold"
+                    title="How similar the tweet is to the source"
+                  >
+                    Similarity Level:
+                  </h1>
+                  <h1 className="text-4xl w-fit text-green-500 font-bold">
+                    {(tweet.crosscheck.probability * 100).toFixed(2)}%
+                  </h1>
+                  <div className="flex flex-col">
+                    <a
+                      className="text-base font-semibold w-full text-blue-500"
+                      href={tweet.crosscheck.source}
+                    >
+                      {tweet.crosscheck.title}
+                    </a>
+                    <h2 className="text-sm font-light text-justify">
+                      {tweet.crosscheck.content}
+                    </h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+);
+
+export default Tweet;

@@ -29,36 +29,43 @@ type Classification = {
 export default function ArticleDetail({ params }: { params: { id: string } }) {
   const [article, setArticle] = useState<Article | null>(null); // State for fetched article
   const [isLoading, setIsLoading] = useState(true); // State for loading indicator
-  const [error, setError] = useState(null); // State for any error
+  const [error, setError] = useState<string | null>(null); // State for any error
   const [isCookieLoading, setIsCookieLoading] = useState(false);
   const { id } = params; // Dynamic article ID from the route
+  const [hasLiked, setHasLiked] = useState(false);
+  const [hasDisliked, setHasDisliked] = useState(false);
 
   const hasIncremented = useRef(false);
 
-  useEffect(() => {
-    const fetchArticle = async () => {
-      setIsLoading(true);
-      setError(null);
+useEffect(() => {
+  const fetchArticle = async () => {
+    setIsLoading(true);
+    setError(null);
 
-      try {
-        const response = await axios.get(
-          `http://localhost:8000/api/articles/${id}` // Fetch article details by ID
-        );
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/api/articles/${id}`
+      );
 
-        if (response.data) {
-          setArticle(response.data);
-        } else {
-          throw new Error("Article not found.");
-        }
-      } catch (error) {
-        setError(error);
-      } finally {
-        setIsLoading(false);
+      if (response.data) {
+        setArticle(response.data);
+      } else {
+        throw new Error("Article not found.");
       }
-    };
+    } catch (err) {
+      // Type guard to handle different error types
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    fetchArticle();
-  }, [id]);
+  fetchArticle();
+}, [id]);
 
   useEffect(() => {
     if (id && !hasIncremented.current) {
@@ -70,17 +77,116 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
     }
   }, [id]);
 
+  useEffect(() => {
+    const checkLikesDislikes = async () => {
+      const liked = await checkCookieStatus("like", id);
+      const disliked = await checkCookieStatus("dislike", id);
+
+      setHasLiked(liked);
+      setHasDisliked(disliked);
+    };
+
+    checkLikesDislikes();
+  }, [id]);
+
+  // Separate function to only check cookie status without setting
+  async function checkCookieStatus(
+    type: "like" | "dislike",
+    articleId: string
+  ) {
+    try {
+      const res = await fetch(`/api/get-cookie?type=${type}`);
+      const data = await res.json();
+      const interactedArticles = data.articleId
+        ? data.articleId.split(",")
+        : [];
+      return interactedArticles.includes(articleId);
+    } catch (err) {
+      console.error(`Error checking cookie for ${type}:`, err);
+      return false;
+    }
+  }
+
   if (isCookieLoading) return <div>Processing cookies...</div>;
   if (isLoading) return <div>Loading article...</div>;
   if (error) return <div>Error fetching article.</div>;
 
-  // Function to check and set cookies dynamically based on type
-  async function manageCookieForType(type: "view" | "like" | "dislike", articleId: string) {
-    try {
-      const res = await fetch(`/api/get-cookie?type=${type}`); // Check if cookie exists for the type
-      const data = await res.json();
+  // Function to handle like/dislike actions
+  const handleLikeDislike = async (type: "like" | "dislike") => {
+    if (!article) return;
+    const updatedArticle = { ...article };
 
-      const interactedArticles = data.articleId ? data.articleId.split(",") : [];
+    try {
+      // If user has already performed this action, handle as an undo
+      if (
+        (type === "like" && hasLiked) ||
+        (type === "dislike" && hasDisliked)
+      ) {
+        // Decrement the count
+        if (type === "like") {
+          updatedArticle.likes -= 1;
+          setHasLiked(false);
+        } else {
+          updatedArticle.dislikes -= 1;
+          setHasDisliked(false);
+        }
+
+        // Call API to decrement count
+        await fetch(`/api/set-cookie`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            articleId: id,
+            type: `remove-${type}`,
+          }),
+        });
+
+        setArticle(updatedArticle);
+        return;
+      }
+
+      // Handle normal like/dislike action
+      const response = await fetch("/api/set-cookie", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ articleId: id, type }),
+      });
+
+      if (response.ok) {
+        if (type === "like") {
+          updatedArticle.likes += 1;
+          if (hasDisliked) {
+            updatedArticle.dislikes -= 1;
+            setHasDisliked(false);
+          }
+          setHasLiked(true);
+        } else {
+          updatedArticle.dislikes += 1;
+          if (hasLiked) {
+            updatedArticle.likes -= 1;
+            setHasLiked(false);
+          }
+          setHasDisliked(true);
+        }
+        setArticle(updatedArticle);
+      }
+    } catch (err) {
+      console.error(`Error handling ${type}:`, err);
+    }
+  };
+
+  // Function to handle view counts
+  async function manageCookieForType(type: "view", articleId: string) {
+    try {
+      const res = await fetch(`/api/get-cookie?type=${type}`);
+      const data = await res.json();
+      const interactedArticles = data.articleId
+        ? data.articleId.split(",")
+        : [];
 
       if (!interactedArticles.includes(articleId)) {
         await fetch("/api/set-cookie", {
@@ -88,11 +194,11 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ articleId, type }), // Pass type and articleId to set the cookie
+          body: JSON.stringify({ articleId, type }),
         });
       }
     } catch (err) {
-      console.error(`Error managing cookie for ${type}:`, err);
+      console.error(`Error managing view cookie:`, err);
     }
   }
 
@@ -131,19 +237,25 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
         {/* Article AI Check and Thumbnail */}
         <div className="py-6">
           <div className="flex justify-between bg-black text-white items-center text-2xl font-bold py-4 px-5 rounded-3xl max-w-4xl mx-auto">
-            <h1>{Math.round(article?.classification.probability * 100)}%</h1>
+            <h1>
+              {Math.round((article?.classification?.probability ?? 0) * 100)}%
+            </h1>
             <h1>{article?.classification.category} News Detected</h1>
             {/* Like/Dislike Button Container */}
             <div className="flex gap-x-3">
               <Button
-                onClick={() => manageCookieForType("like", id)}
-                className="bg-green-500 rounded-full aspect-square h-fit p-1 hover:bg-green-700"
+                onClick={() => handleLikeDislike("like")}
+                className={`rounded-full aspect-square h-fit p-1 ${
+                  hasLiked ? "bg-green-700" : "bg-green-500 hover:bg-green-700"
+                }`}
               >
                 <HandThumbUpIcon className="text-black size-8" />
               </Button>
               <Button
-                onClick={() => manageCookieForType("dislike", id)}
-                className="bg-red-500 rounded-full aspect-square h-fit p-1 hover:bg-red-700"
+                onClick={() => handleLikeDislike("dislike")}
+                className={`rounded-full aspect-square h-fit p-1 ${
+                  hasDisliked ? "bg-red-700" : "bg-red-500 hover:bg-red-700"
+                }`}
               >
                 <HandThumbDownIcon className="text-black size-8" />
               </Button>
@@ -152,7 +264,12 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
 
           {/* Article Like/Dislike Bar */}
           <div className="flex justify-end py-5 pr-12 w-full py-2">
-            {article && <LikeDislikeBar likes={article.likes} dislikes={article.dislikes} />}
+            {article && (
+              <LikeDislikeBar
+                likes={article.likes}
+                dislikes={article.dislikes}
+              />
+            )}
           </div>
 
           {/* Article Thumbnail and Description */}

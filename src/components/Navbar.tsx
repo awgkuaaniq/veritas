@@ -28,13 +28,16 @@ const Navbar: React.FC = () => {
         </div>
         {/* Navigation */}
         <div className="text-black flex justify-between items-center">
-          <a href="/statistic" className="py-5 px-6 rounded hover:bg-gray-200">
+          <a href="/tweet" className="py-5 px-6 hover:bg-gray-200">
+            Tweets
+          </a>
+          <a href="/statistic" className="py-5 px-6 hover:bg-gray-200">
             Statistics
           </a>
           <a href="/manualcheck" className="py-5 px-6 hover:bg-gray-200">
             Manual Check
           </a>
-          <a href="#" className="py-5 px-6 hover:bg-gray-200">
+          <a href="/about" className="py-5 px-6 hover:bg-gray-200">
             About
           </a>
           <a href="/admin" className="py-5 px-6 hover:bg-gray-200">
