@@ -29,9 +29,9 @@ export default function ManualCheck() {
     if (!body) return; // Check if input is empty
 
     try {
-      const response = await axios.post("http://localhost:8000/api/predict", {
-        body,
-      });
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/predict?body=${userInput}`
+      );
       setPrediction(response.data);
       console.log(response.data); // Optional: Log API response for debugging
     } catch (error) {
@@ -72,7 +72,7 @@ export default function ManualCheck() {
         "http://127.0.0.1:8000/api/manualcheckfeedback/",
         {
           thumbs_up: thumbsUp,
-          body: body,
+          body: feedback,
           comments: feedback,
           fake: fake,
         }

@@ -1,10 +1,9 @@
 "use client";
 
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import MagnifyingGlassIcon from "@heroicons/react/24/outline/MagnifyingGlassIcon";
 import SearchArticle from "@/components/SearchArticle";
-import { useRouter } from "next/navigation"; // To access query params in the URL
-import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 
 interface Article {
   _id: string;
@@ -26,14 +25,15 @@ interface Classification {
   hasBeenChecked: boolean;
 }
 
-export default function SearchResult() {
-  const q = useSearchParams().get('q'); // Extract the search query
+// Child component that uses useSearchParams
+function SearchContent() {
+  const searchParams = useSearchParams();
+  const q = searchParams.get("q"); // Extract the search query
   const router = useRouter();
-  const [searchInput, setSearchInput] = useState('');
+  const [searchInput, setSearchInput] = useState("");
   const [results, setResults] = useState<Article[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
 
   useEffect(() => {
     if (q) {
@@ -42,8 +42,14 @@ export default function SearchResult() {
         setLoading(true);
         setError(null);
         try {
-          const response = await fetch(`http://localhost:8000/api/get-search-article-result?search_query=${encodeURIComponent(q as string)}`);
-          if (!response.ok) throw new Error('Failed to fetch search results');
+          const response = await fetch(
+            `${
+              process.env.NEXT_PUBLIC_BACKEND_URL
+            }/api/get-search-article-result?search_query=${encodeURIComponent(
+              q as string
+            )}`
+          );
+          if (!response.ok) throw new Error("Failed to fetch search results");
           const data: Article[] = await response.json();
           setResults(data);
         } catch (err: any) {
@@ -55,7 +61,7 @@ export default function SearchResult() {
 
       fetchResults();
     }
-  }, [q]);  // Trigger search when searchQuery changes
+  }, [q]); // Trigger search when searchQuery changes
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
@@ -69,43 +75,51 @@ export default function SearchResult() {
 
   return (
     <main className="bg-gray-200 min-h-screen">
-        {/* Upper Component */}
-        {/* Search Bar */}
-        <div className="flex justify-center mx-auto px-2 max-w-7xl py-11">
-          <input
-            className="border-black/25 w-full text-sm text-black placeholder-gray-700"
-            type="text"
-            id="search"
-            value={searchInput} // Sync input field with state
-            onChange={handleInputChange} // Update state and URL on change
-            onKeyDown={handleKeyDown} // Trigger router.push only on Enter key
-            placeholder={searchInput ||"Search news, terms and more"}
-          />
-        </div>
+      {/* Upper Component */}
+      {/* Search Bar */}
+      <div className="flex justify-center mx-auto px-2 max-w-7xl py-11">
+        <input
+          className="border-black/25 w-full text-sm text-black placeholder-gray-700"
+          type="text"
+          id="search"
+          value={searchInput} // Sync input field with state
+          onChange={handleInputChange} // Update state and URL on change
+          onKeyDown={handleKeyDown} // Trigger router.push only on Enter key
+          placeholder={searchInput || "Search news, terms and more"}
+        />
+      </div>
       {/* Bottom Component */}
       <div className="flex flex-col space-y-5 max-w-7xl mx-auto px-2">
-      {loading && <div>Loading...</div>}
-      {error && <div style={{ color: "red" }}>{error}</div>}
-      {results.length > 0 ? (
-        results.map((article) => (
-          <SearchArticle key={article._id} article={article} /> // Pass article data to SearchArticle
-        ))
-      ) : (
-        <div className="flex flex-col justify-items-center mx-auto items-center text-xl space-y-5">
-          <p>
-            Sorry, there are no results for <span className="flex-inline font-bold">'{q}'</span>
-          </p>
-          <p className="text-2xl font-bold pt-4">
-            Suggestions
-          </p>
-          <ul className="list-disc">
-            <li>Make sure all words are spelled correctly</li>
-            <li>Try different terms or keywords</li>
-            <li>Try more general keywords</li>
-          </ul>
-        </div>
-      )}
+        {loading && <div>Loading...</div>}
+        {error && <div style={{ color: "red" }}>{error}</div>}
+        {results.length > 0 ? (
+          results.map((article) => (
+            <SearchArticle key={article._id} article={article} /> // Pass article data to SearchArticle
+          ))
+        ) : (
+          <div className="flex flex-col justify-items-center mx-auto items-center text-xl space-y-5">
+            <p>
+              Sorry, there are no results for{" "}
+              <span className="flex-inline font-bold">&apos;{q}&apos;</span>
+            </p>
+            <p className="text-2xl font-bold pt-4">Suggestions</p>
+            <ul className="list-disc">
+              <li>Make sure all words are spelled correctly</li>
+              <li>Try different terms or keywords</li>
+              <li>Try more general keywords</li>
+            </ul>
+          </div>
+        )}
       </div>
     </main>
+  );
+}
+
+// Parent component that wraps SearchContent in Suspense
+export default function SearchResult() {
+  return (
+    <Suspense fallback={<div>Loading search results...</div>}>
+      <SearchContent />
+    </Suspense>
   );
 }
