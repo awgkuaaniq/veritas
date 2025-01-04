@@ -88,9 +88,14 @@ export default function AddArticle() {
         content: "",
       });
     } catch (err) {
-      setError(
-        err.message || "An error occurred while submitting the article."
-      );
+      // Handle the error properly
+      if (err instanceof Error) {
+        setError(
+          err.message || "An error occurred while submitting the article."
+        );
+      } else {
+        setError("An unknown error occurred.");
+      }
     } finally {
       setLoading(false);
     }

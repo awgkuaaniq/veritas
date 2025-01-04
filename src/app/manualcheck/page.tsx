@@ -15,22 +15,21 @@ type Prediction = {
 };
 
 export default function ManualCheck() {
-  const [body, setbody] = useState(""); // State to store user input
+  const [body, setBody] = useState(""); // State to store user input
   const [predictionData, setPrediction] = useState<Prediction | null>(null); // State to store API response
   const [thumbsUp, setThumbsUp] = useState<boolean>();
   const [feedback, setFeedback] = useState("");
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setbody(event.target.value);
+    setBody(event.target.value);
   };
 
   const handleCheck = async () => {
-    // Consider using a more specific event type
     if (!body) return; // Check if input is empty
 
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/predict?body=${userInput}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/predict?body=${body}` // Use `body` instead of `userInput`
       );
       setPrediction(response.data);
       console.log(response.data); // Optional: Log API response for debugging
@@ -48,7 +47,7 @@ export default function ManualCheck() {
   };
 
   const checkThumbsUp = async (id: string) => {
-    if (id == "thumbs_up") {
+    if (id === "thumbs_up") {
       setThumbsUp(true);
     } else {
       setThumbsUp(false);
@@ -56,15 +55,18 @@ export default function ManualCheck() {
   };
 
   const sendFeedback = async (event: React.FormEvent<HTMLFormElement>) => {
-    let fake = 0;
-    if (predictionData.category == "Fake") {
-      fake = 1;
-    }
-    console.log(fake);
     event.preventDefault(); // Prevent page refresh
-    if (!feedback || thumbsUp === undefined) {
-      console.error("Feedback and thumbsUp state are required.");
+
+    if (!feedback || thumbsUp === undefined || !predictionData) {
+      console.error(
+        "Feedback, thumbsUp state, and prediction data are required."
+      );
       return;
+    }
+
+    let fake = 0;
+    if (predictionData.category === "Fake") {
+      fake = 1;
     }
 
     try {
@@ -118,7 +120,7 @@ export default function ManualCheck() {
                 {Math.round(predictionData.confidence * 100)}%
               </h1>
               <h1 className="text-xl w-full font-semibold">
-                This article has been flagged as potentialy{" "}
+                This article has been flagged as potentially{" "}
                 {predictionData.category.toLowerCase()} because it contains
                 specific flags which our machine learning model has deemed to
                 relate to {predictionData.category.toLowerCase()} news.

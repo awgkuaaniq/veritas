@@ -2,17 +2,11 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation"; // Import useRouter
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import ActionsCell from "./actionsCell";
 
+// Define the Article type
 export type Article = {
-  _id: string; // Ensure your Article type includes _id
+  _id: string;
   title: string;
   views: number;
   likes: number;
@@ -20,6 +14,7 @@ export type Article = {
   time_added: Date;
 };
 
+// Define the columns function
 export const columns = (
   deleteArticle: (articleId: string) => void
 ): ColumnDef<Article>[] => [
@@ -130,34 +125,7 @@ export const columns = (
     id: "actions",
     cell: ({ row }) => {
       const article = row.original;
-      const router = useRouter(); // Define useRouter inside the cell function
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => router.push(`/article/${article._id}`)}
-            >
-              View Article
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => router.push(`/edit-article/${article._id}`)} // Use router here
-            >
-              Edit Article
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => deleteArticle(article._id)}>
-              Delete Article
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+      return <ActionsCell article={article} deleteArticle={deleteArticle} />;
     },
   },
 ];
