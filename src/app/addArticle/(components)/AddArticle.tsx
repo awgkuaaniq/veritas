@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { useRouter } from "next/navigation";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // Next.js router for navigation
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
   Card,
   CardHeader,
@@ -13,15 +13,16 @@ import {
 } from "@/components/ui/card";
 
 export default function AddArticle() {
-  const router = useRouter(); // Next.js router instance
+  const router = useRouter();
   const [formData, setFormData] = useState({
-    media: null,
+    media: null as File | null,
     author: "",
     source: "",
     title: "",
-    summary: "",
     content: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const onDrop = (acceptedFiles: File[]) => {
     setFormData({ ...formData, media: acceptedFiles[0] });
@@ -36,18 +37,55 @@ export default function AddArticle() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = () => {
-    console.log("Submitting form:", formData);
-    // Perform your API request here
+  const handleSubmit = async () => {
+    if (
+      !formData.media ||
+      !formData.author ||
+      !formData.title ||
+      !formData.content
+    ) {
+      setError("Please fill out all required fields.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    const formPayload = new FormData();
+    formPayload.append("media", formData.media);
+    formPayload.append("author", formData.author);
+    formPayload.append("source", formData.source);
+    formPayload.append("title", formData.title);
+    formPayload.append("content", formData.content);
+
+    try {
+      const response = await fetch("http://localhost:8000/api/articles", {
+        method: "POST",
+        body: formPayload,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit article.");
+      }
+
+      const data = await response.json();
+      console.log("Article submitted successfully:", data);
+      router.push("/"); // Redirect to homepage or another route
+    } catch (err) {
+      setError(
+        err.message || "An error occurred while submitting the article."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <Card className="flex flex-col h-full p-6 space-y-6">
       <CardHeader className="flex items-center justify-between">
-        {/* Back Button */}
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 p-2 mb-4 text-sm text-white border rounded-lg bg-black hover:bg-blue-100 self-start"
+          className="flex items-center gap-2 p-2 mb-4 text-gray-600 text-sm rounded-md border border-gray-300 hover:bg-gray-100 self-start"
         >
           <ArrowBackIcon />
           Back
@@ -85,10 +123,11 @@ export default function AddArticle() {
           <input
             type="text"
             name="author"
-            placeholder="Author"
+            placeholder="Author *"
             value={formData.author}
             onChange={handleChange}
             className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            required
           />
           <input
             type="text"
@@ -105,44 +144,38 @@ export default function AddArticle() {
           <input
             type="text"
             name="title"
-            placeholder="Title"
+            placeholder="Title *"
             value={formData.title}
             onChange={handleChange}
             className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            required
           />
-        </div>
-
-        {/* Summary Section */}
-        <div>
-          <textarea
-            name="summary"
-            placeholder="Summary"
-            value={formData.summary}
-            onChange={handleChange}
-            rows={4}
-            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-          ></textarea>
         </div>
 
         {/* Content Section */}
         <div>
           <textarea
             name="content"
-            placeholder="Content"
+            placeholder="Content *"
             value={formData.content}
             onChange={handleChange}
             rows={8}
             className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            required
           ></textarea>
         </div>
+
+        {/* Error Message */}
+        {error && <p className="text-red-500 text-center">{error}</p>}
       </CardContent>
 
       <CardFooter>
         <button
           onClick={handleSubmit}
-          className="w-full p-3 text-white bg-black rounded-lg hover:bg-blue-600"
+          disabled={loading}
+          className="w-full p-3 text-white bg-black rounded-lg hover:bg-blue-600 disabled:bg-gray-400"
         >
-          Save
+          {loading ? "Submitting..." : "Save"}
         </button>
       </CardFooter>
     </Card>
