@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Menubar from "@/components/Menubar";
 import NavSearch from "@/components/NavSearch";
+import { useUser } from "@auth0/nextjs-auth0/client"; // Import useUser
 import {
   Bars3Icon,
   CodeBracketSquareIcon,
@@ -10,6 +11,7 @@ import {
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, isLoading } = useUser(); // Get user and loading state
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -40,9 +42,12 @@ const Navbar: React.FC = () => {
           <a href="/about" className="py-5 px-6 hover:bg-gray-200">
             About
           </a>
-          <a href="/admin" className="py-5 px-6 hover:bg-gray-200">
-            Admin
-          </a>
+          {/* Conditionally Render Admin Link */}
+          {!isLoading && user && (
+            <a href="/admin" className="py-5 px-6 hover:bg-gray-200">
+              Admin
+            </a>
+          )}
         </div>
         {/* Search Bar */}
         <NavSearch />
