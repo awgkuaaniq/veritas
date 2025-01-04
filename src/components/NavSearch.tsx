@@ -17,7 +17,7 @@ const NavSearch = () => {
   };
 
     return (
-      <div className="flex items-center h-10 bg-gray-200 border-black/25 border rounded-lg">
+      <div className="flex items-center h-10 bg-gray-200 focus:ring border rounded-lg">
         <div className="grid place-items-center h-full w-12 text-gray-500">
           <MagnifyingGlassIcon className="h-6 w-6" />
         </div>
@@ -28,7 +28,7 @@ const NavSearch = () => {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search something.."
+            placeholder="Search Veritas..."
           />
         </form>
       </div>

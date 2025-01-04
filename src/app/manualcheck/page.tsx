@@ -89,7 +89,7 @@ export default function ManualCheck() {
   };
 
   return (
-    <main className="bg-gray-200 h-screen">
+    <main className="bg-gray-100 h-screen">
       {/* Input bar */}
       <div className="flex justify-center mx-auto px-2 max-w-7xl py-11">
         <Input
