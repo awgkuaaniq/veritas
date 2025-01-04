@@ -23,10 +23,11 @@ interface Classification {
 }
 
 const HomeArticle: React.FC<{ article: Article }> = ({ article }) => {
+  console.log("Image URL:", article.image_url);
   return (
     <div className="flex flex-col gap-4 w-fit">
       {/* Article Picture (assuming an image prop is available) */}
-      {article.url && (
+      {article.image_url && (
         <div className="relative w-96 aspect-video">
           <a href={`/article/${article._id}`}>
             <img

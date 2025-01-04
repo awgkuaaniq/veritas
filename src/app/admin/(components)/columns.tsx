@@ -1,21 +1,18 @@
 "use client";
-
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
-import { ArrowUpDown } from "lucide-react";
+import { MoreHorizontal, ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation"; // Import useRouter
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
 export type Article = {
+  _id: string; // Ensure your Article type includes _id
   title: string;
   views: number;
   likes: number;
@@ -23,7 +20,9 @@ export type Article = {
   time_added: Date;
 };
 
-export const columns: ColumnDef<Article>[] = [
+export const columns = (
+  deleteArticle: (articleId: string) => void
+): ColumnDef<Article>[] => [
   {
     accessorKey: "title",
     header: ({ column }) => {
@@ -130,7 +129,9 @@ export const columns: ColumnDef<Article>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const payment = row.original;
+      const article = row.original;
+      const router = useRouter(); // Define useRouter inside the cell function
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -141,9 +142,19 @@ export const columns: ColumnDef<Article>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>View Article </DropdownMenuItem>
-            <DropdownMenuItem>Edit Article</DropdownMenuItem>
-            <DropdownMenuItem>Delete Article</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => router.push(`/article/${article._id}`)}
+            >
+              View Article
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => router.push(`/edit-article/${article._id}`)} // Use router here
+            >
+              Edit Article
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => deleteArticle(article._id)}>
+              Delete Article
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

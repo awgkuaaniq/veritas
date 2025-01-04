@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
   Card,
@@ -12,18 +12,48 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 
-export default function AddArticle() {
+export default function EditArticle() {
   const router = useRouter();
+  const { id } = useParams(); // Get the article ID from the URL
   const [formData, setFormData] = useState({
     media: null as File | null,
     author: "",
     source: "",
     title: "",
-    content: "",
+    body: "",
+    image_url: "", // Add image_url to the formData state
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+
+  // Fetch article details on component mount
+  useEffect(() => {
+    const fetchArticle = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles/${id}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch article.");
+        }
+        const data = await response.json();
+        setFormData({
+          media: null, // You can handle media separately if needed
+          author: data.author || "",
+          source: data.source || "",
+          title: data.title || "",
+          body: data.body || "",
+          image_url: data.image_url || "", // Set the current image URL
+        });
+      } catch (err) {
+        setError(
+          err.message || "An error occurred while fetching the article."
+        );
+      }
+    };
+
+    fetchArticle();
+  }, [id]);
 
   const onDrop = (acceptedFiles: File[]) => {
     setFormData({ ...formData, media: acceptedFiles[0] });
@@ -39,58 +69,41 @@ export default function AddArticle() {
   };
 
   const handleSubmit = async () => {
-    if (
-      !formData.media ||
-      !formData.author ||
-      !formData.title ||
-      !formData.content
-    ) {
+    if (!formData.author || !formData.title || !formData.body) {
       setError("Please fill out all required fields.");
       return;
     }
 
     setLoading(true);
     setError("");
-    setSuccessMessage("");
 
     const formPayload = new FormData();
-    formPayload.append("media", formData.media);
+    if (formData.media) {
+      formPayload.append("media", formData.media);
+    }
     formPayload.append("author", formData.author);
     formPayload.append("source", formData.source);
     formPayload.append("title", formData.title);
-    formPayload.append("content", formData.content);
+    formPayload.append("body", formData.body);
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles/${id}`,
         {
-          method: "POST",
+          method: "PUT", // Use PUT or PATCH for updating
           body: formPayload,
         }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to submit article.");
+        throw new Error("Failed to update article.");
       }
 
       const data = await response.json();
-      console.log("Article submitted successfully:", data);
-
-      // Display success message
-      setSuccessMessage("Article submitted successfully!");
-
-      // Clear the form
-      setFormData({
-        media: null,
-        author: "",
-        source: "",
-        title: "",
-        content: "",
-      });
+      console.log("Article updated successfully:", data);
+      router.push("/"); // Redirect to homepage or another route
     } catch (err) {
-      setError(
-        err.message || "An error occurred while submitting the article."
-      );
+      setError(err.message || "An error occurred while updating the article.");
     } finally {
       setLoading(false);
     }
@@ -107,11 +120,22 @@ export default function AddArticle() {
           Back
         </button>
         <CardTitle className="text-2xl font-bold self-start text-gray-800">
-          Add Article
+          Edit Article
         </CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-6">
+        {/* Display Current Image */}
+        {formData.image_url && (
+          <div className="w-3/4 mx-auto">
+            <img
+              src={formData.image_url}
+              alt="Current Article Image"
+              className="w-full h-auto rounded-lg shadow-sm"
+            />
+          </div>
+        )}
+
         {/* Media Upload Section */}
         <div
           {...getRootProps()}
@@ -173,7 +197,7 @@ export default function AddArticle() {
           <textarea
             name="content"
             placeholder="Content *"
-            value={formData.content}
+            value={formData.body}
             onChange={handleChange}
             rows={8}
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
@@ -185,13 +209,6 @@ export default function AddArticle() {
         {error && (
           <p className="text-red-500 text-center text-sm mt-2">{error}</p>
         )}
-
-        {/* Success Message */}
-        {successMessage && (
-          <p className="text-green-500 text-center text-sm mt-2">
-            {successMessage}
-          </p>
-        )}
       </CardContent>
 
       <CardFooter>
@@ -200,7 +217,7 @@ export default function AddArticle() {
           disabled={loading}
           className="w-full p-3 text-white bg-black rounded-lg hover:bg-blue-700 disabled:bg-gray-400 transition-colors duration-200"
         >
-          {loading ? "Submitting..." : "Save"}
+          {loading ? "Updating..." : "Save Changes"}
         </button>
       </CardFooter>
     </Card>

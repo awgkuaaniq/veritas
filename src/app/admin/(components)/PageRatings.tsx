@@ -15,7 +15,9 @@ export default function Home({ params }: any) {
 
   const getArticleById = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/feedbacks");
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/feedbacks`
+      );
       const fetchedFeedbacks = response.data;
       // Calculate average rating
       const ratings = fetchedFeedbacks.map(

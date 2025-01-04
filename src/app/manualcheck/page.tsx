@@ -69,7 +69,7 @@ export default function ManualCheck() {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/manualcheckfeedback/",
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/manualcheckfeedback/`,
         {
           thumbs_up: thumbsUp,
           body: feedback,

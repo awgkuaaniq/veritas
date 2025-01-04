@@ -16,7 +16,7 @@ export default function Home({ params }: any) {
   const getArticleById = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8000/api/manualcheckfeedbacks"
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}api/manualcheckfeedbacks`
       );
       const fetchedFeedbacks = response.data;
 

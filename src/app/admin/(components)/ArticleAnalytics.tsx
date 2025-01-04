@@ -13,15 +13,31 @@ import axios from "axios";
 import { PlusIcon } from "@radix-ui/react-icons";
 
 export default function Home({ params }: any) {
-  const [articles, setArticles] = useState<Article[]>([]); // Initialize articles state
+  const [articles, setArticles] = useState<Article[]>([]);
+
+  // Fetch articles
   const getArticleById = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/articles");
-      const fetchedArticles = response.data; // Assuming the response contains an array of articles
-
-      setArticles(fetchedArticles); // Update state with fetched articles
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles`
+      );
+      const fetchedArticles = response.data;
+      setArticles(fetchedArticles);
     } catch (error) {
       console.error("Error fetching articles:", error);
+    }
+  };
+
+  // Delete article
+  const deleteArticle = async (articleId: string) => {
+    try {
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles/${articleId}`
+      );
+      // Refresh the articles list after deletion
+      getArticleById();
+    } catch (error) {
+      console.error("Error deleting article:", error);
     }
   };
 
@@ -44,7 +60,8 @@ export default function Home({ params }: any) {
         </CardTitle>
       </CardHeader>
 
-      <DataTable columns={columns} data={articles} />
+      {/* Pass columns and data to DataTable */}
+      <DataTable columns={columns(deleteArticle)} data={articles} />
       <CardContent className="grid grid-cols-3 gap-6"></CardContent>
     </Card>
   );
