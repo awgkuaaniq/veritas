@@ -15,18 +15,18 @@ type Prediction = {
 };
 
 export default function ManualCheck() {
-  const [userInput, setUserInput] = useState(""); // State to store user input
+  const [body, setbody] = useState(""); // State to store user input
   const [predictionData, setPrediction] = useState<Prediction | null>(null); // State to store API response
   const [thumbsUp, setThumbsUp] = useState<boolean>();
   const [feedback, setFeedback] = useState("");
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUserInput(event.target.value);
+    setbody(event.target.value);
   };
 
   const handleCheck = async () => {
     // Consider using a more specific event type
-    if (!userInput) return; // Check if input is empty
+    if (!body) return; // Check if input is empty
 
     try {
       const response = await axios.post(
@@ -56,6 +56,11 @@ export default function ManualCheck() {
   };
 
   const sendFeedback = async (event: React.FormEvent<HTMLFormElement>) => {
+    let fake = 0;
+    if (predictionData.category == "Fake") {
+      fake = 1;
+    }
+    console.log(fake);
     event.preventDefault(); // Prevent page refresh
     if (!feedback || thumbsUp === undefined) {
       console.error("Feedback and thumbsUp state are required.");
@@ -68,6 +73,8 @@ export default function ManualCheck() {
         {
           thumbs_up: thumbsUp,
           body: feedback,
+          comments: feedback,
+          fake: fake,
         }
       );
       console.log("Feedback submitted successfully:", response.data);
