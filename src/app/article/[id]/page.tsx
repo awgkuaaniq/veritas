@@ -16,8 +16,10 @@ type Article = {
   url: string;
   published_at?: Date;
   likes: number;
+  source: string;
   dislikes: number;
   views: number;
+  image_url: string;
   time_added: Date;
   unique_hash?: string;
   classification: Classification;
@@ -205,41 +207,49 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
     }
   }
 
-  const articleDetail = {
-    src: "/dummyIMG/corgi.webp",
-    desc: "In this screen grab taken from a video released by the Weifang public security bureau, Fuzai is seen wearing a police dog vest, in eastern China's Shandong province",
+  // Function to split text into chunks of 3 sentences and add paragraphs
+  const formatBody = (text: string | undefined) => {
+    if (!text) return "";
+
+    // Split by period and filter empty strings
+    const sentences = text
+      .split(".")
+      .filter((sentence) => sentence.trim() !== "");
+
+    // Group sentences into chunks of 3
+    const chunkedSentences = [];
+    for (let i = 0; i < sentences.length; i += 3) {
+      chunkedSentences.push(sentences.slice(i, i + 3).join(".") + ".");
+    }
+
+    // Join chunks with <p> tags and add margin-bottom for spacing between paragraphs
+    return chunkedSentences
+      .map((chunk, index) => `<p key=${index} class="mb-4">${chunk.trim()}</p>`)
+      .join("");
   };
 
   return (
-    <main className="bg-gray-200">
-      {/* Main Container */}
-      <div className="flex flex-col mx-auto px-2 max-w-5xl">
+    <main className="bg-gray-100 py-8">
+      <div className="flex flex-col mx-auto px-4 max-w-4xl overflow-hidden">
         {/* Article Title */}
-        <div className="flex text-3xl font-semibold py-6">
-          <h1>{article?.title}</h1>
-        </div>
+        <h1 className="text-4xl font-semibold text-gray-800 py-6">
+          {article?.title}
+        </h1>
 
         {/* Article Details */}
-        <div className="flex justify-between text-sm font-light h-fit">
-          {/* Article Source and Date */}
+        <div className="flex justify-between text-sm text-gray-600 mb-4">
           <div>
-            <div>
-              <h1>By Jessie Yeung and Hassan Tayir, CNN</h1>
-            </div>
-            <div>
-              <h1>Fri, 29 March 2024</h1>
-            </div>
+            <p className="font-medium">By {article?.source}</p>
+            <p>{new Date(article?.published_at ?? "").toLocaleDateString()}</p>
           </div>
-
-          {/* Article Views */}
-          <div className="flex flex-col min-h-full justify-end">
-            <h1 className="">{article?.views} views</h1>
+          <div className="flex flex-col items-end">
+            <p className="text-lg font-medium">{article?.views} views</p>
           </div>
         </div>
 
         {/* Article AI Check and Thumbnail */}
         <div className="py-6">
-          <div className="flex justify-between bg-black text-white items-center text-2xl font-bold py-4 px-5 rounded-3xl max-w-4xl mx-auto">
+          <div className="flex justify-between bg-black text-white items-center max-w-4xl text-2xl font-bold py-4 px-5 rounded-3xl max-w-4xl mx-auto">
             <h1>
               {Math.round((article?.classification?.probability ?? 0) * 100)}%
             </h1>
@@ -266,7 +276,7 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
           </div>
 
           {/* Article Like/Dislike Bar */}
-          <div className="flex justify-end py-5 pr-12 w-full py-2">
+          <div className="flex justify-end max-w-4xl w-full py-2">
             {article && (
               <LikeDislikeBar
                 likes={article.likes}
@@ -274,17 +284,23 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
               />
             )}
           </div>
+        </div>
 
-          {/* Article Thumbnail and Description */}
-          <div className="flex flex-col mx-auto max-w-3xl text-sm text-justify font-light gap-y-5">
-            <img src={articleDetail.src} alt="" />
-            <span>{articleDetail.desc}</span>
-          </div>
+        {/* Article Thumbnail and Description */}
+        <div className="py-6">
+          <img
+            src={article?.image_url}
+            alt="Thumbnail"
+            className="w-full rounded-lg shadow-md"
+          />
         </div>
 
         {/* Article Content */}
-        <div className="flex flex-col gap-y-5 py-5 max-w-2xl mx-auto">
-          {article?.body}
+        <div className="prose lg:prose-xl text-gray-800 mb-6">
+          <div
+            className="flex flex-col space-y-8"
+            dangerouslySetInnerHTML={{ __html: formatBody(article?.body) }}
+          />
         </div>
       </div>
     </main>

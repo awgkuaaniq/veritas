@@ -74,7 +74,7 @@ function SearchContent() {
   };
 
   return (
-    <main className="bg-gray-200 min-h-screen">
+    <main className="bg-gray-100 min-h-screen">
       {/* Upper Component */}
       {/* Search Bar */}
       <div className="flex justify-center mx-auto px-2 max-w-7xl py-11">

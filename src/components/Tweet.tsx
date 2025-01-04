@@ -85,16 +85,6 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
                 <InformationCircleIcon className="w-6 h-6" />
               </button>
               <div className="flex space-x-5">
-                {tweet.article_url && (
-                  <a
-                    className="hover:bg-gray-200 rounded-full p-2"
-                    title="Embedded Article URL"
-                    href={tweet.article_url}
-                    target="_blank"
-                  >
-                    <NewspaperIcon className="h-6 w-6" />
-                  </a>
-                )}
                 <a
                   className="hover:bg-gray-200 rounded-full p-2"
                   title="Tweet URL"
@@ -109,7 +99,7 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
         </div>
         {/* Tweet Info  */}
         {showInfo && tweet.crosscheck && (
-          <div className="flex flex-col py-4 justify-center items-center px-20 w-full border-black/30 rounded-b-lg h-fit">
+          <div className="flex flex-col py-4 justify-center items-center md:px-20 w-full border-black/30 rounded-b-lg h-fit">
             {/* Card  */}
             <div className="flex flex-col border border-black/30 rounded-3xl w-full border-black/30">
               {/* Info Header  */}
@@ -119,7 +109,7 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
               </div>
               {/* Info Body  */}
               <div className="flex w-full h-fit p-2.5">
-                <div className="flex w-full h-fit p-3 gap-x-3 items-center">
+                <div className="md:flex-row flex flex-col w-full h-fit p-3 gap-x-3 items-center">
                   <h1
                     className="text-xl text-nowrap font-semibold"
                     title="How similar the tweet is to the source"
