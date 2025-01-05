@@ -21,6 +21,7 @@ type Article = {
   title: string;
   body: string;
   url: string;
+  source: string;
   published_at: Date | string;
   likes: number;
   dislikes: number;
