@@ -105,30 +105,38 @@ export default function UserAnalytics() {
   };
 
   return (
-    <Card className="flex flex-col h-full">
+    <Card className="flex flex-col h-full dark:bg-offgray">
       <CardHeader>
-        <CardTitle className="text-xl font-bold">User Analytics</CardTitle>
+        <CardTitle className="text-xl font-bold dark:text-gray-100">
+          User Analytics
+        </CardTitle>
       </CardHeader>
 
       <CardContent className="grid grid-cols-3 gap-6">
         {/* Page Visitors Section */}
-        <div className="flex items-center gap-4 border p-4 rounded-lg shadow-sm bg-white">
-          <div className="flex items-center justify-center w-16 h-16 rounded-full">
+        <div className="flex items-center gap-4 border p-4 rounded-lg shadow-sm bg-white dark:bg-gray-800/50 dark:border-gray-700">
+          <div className="flex items-center justify-center w-16 h-16 rounded-full dark:bg-gray-700">
             <img
               src="/Visitors.svg"
               alt="Visitor Icon"
-              className="w-10 h-10 text-black"
+              className="w-10 h-10 text-black dark:text-gray-300"
             />
           </div>
           <div>
-            <p className="text-lg font-medium">Page Visitors</p>
+            <p className="text-lg font-medium dark:text-gray-200">
+              Page Visitors
+            </p>
             {loading ? (
-              <p className="text-lg font-medium">Loading...</p>
+              <p className="text-lg font-medium dark:text-gray-300">
+                Loading...
+              </p>
             ) : error ? (
-              <p className="text-lg font-medium text-red-500">{error}</p>
+              <p className="text-lg font-medium text-red-500 dark:text-red-400">
+                {error}
+              </p>
             ) : (
               <>
-                <p className="text-lg font-medium">
+                <p className="text-lg font-medium dark:text-gray-100">
                   {visitorData?.currentWeek ?? "N/A"}
                 </p>
                 <p
@@ -139,8 +147,8 @@ export default function UserAnalytics() {
                       visitorData.currentWeek,
                       visitorData.previousWeek
                     ) < 0
-                      ? "text-red-500"
-                      : "text-green-500"
+                      ? "text-red-500 dark:text-red-400"
+                      : "text-green-500 dark:text-green-400"
                   }`}
                 >
                   {visitorData?.currentWeek && visitorData?.previousWeek
@@ -156,18 +164,20 @@ export default function UserAnalytics() {
         </div>
 
         {/* Search Trends Section */}
-        <div className="flex flex-col gap-4 border p-4 rounded-lg shadow-sm bg-white">
+        <div className="flex flex-col gap-4 border p-4 rounded-lg shadow-sm bg-white dark:bg-gray-800/50 dark:border-gray-700">
           <div className="flex items-center gap-4">
-            <div className="flex items-center justify-center w-16 h-16 rounded-full">
+            <div className="flex items-center justify-center w-16 h-16 rounded-full dark:bg-gray-700">
               <img
                 src="/Trends.svg"
                 alt="Trends Icon"
-                className="w-10 h-10 text-black"
+                className="w-10 h-10 text-black dark:text-gray-300"
               />
             </div>
-            <p className="text-lg font-medium">Search Trends</p>
+            <p className="text-lg font-medium dark:text-gray-200">
+              Search Trends
+            </p>
           </div>
-          <ul className="pl-6 list-disc space-y-1">
+          <ul className="pl-6 list-disc space-y-1 dark:text-gray-300">
             {/* Placeholder for search trends */}
             <li className="text-sm font-medium">No data available</li>
           </ul>

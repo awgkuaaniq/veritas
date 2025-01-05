@@ -113,7 +113,7 @@ export default function AboutPage() {
             <div className="flex flex-col items-center">
               <img
                 className="w-32 h-32 rounded-full shadow-lg mb-4"
-                src=""
+                src="https://storage.googleapis.com/veritas-image-bucket/WhatsApp%20Image%202024-11-06%20at%2011.56.10%20AM.jpeg"
                 alt="Developer 1"
               />
               <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
@@ -150,8 +150,8 @@ export default function AboutPage() {
             Contact Us
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 mb-4">
-            Have any questions or feedback? We&apos;d love to hear from you! Reach
-            out to us through our feedback form.
+            Have any questions or feedback? We&apos;d love to hear from you!
+            Reach out to us through our feedback form.
           </p>
           <p className="text-xl text-gray-600 dark:text-gray-300">
             To access the feedback form. kindly go to the menu{" "}

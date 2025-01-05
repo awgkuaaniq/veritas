@@ -40,31 +40,33 @@ export default function Home({ params }: any) {
   }, []);
 
   return (
-    <div className="flex items-center gap-4 border p-4 rounded-lg shadow-sm bg-white">
+    <div className="flex items-center gap-4 border p-4 rounded-lg shadow-sm bg-white dark:bg-gray-800/50 dark:border-gray-700">
       {/* Left: Icon */}
       <div className="flex items-center justify-center w-16 h-16 rounded-full">
         <img
           src="/Ratings.svg"
           alt="Ratings Icon"
-          className="w-10 h-10 text-black"
+          className="w-10 h-10 text-black  dark:text-gray-300"
         />
       </div>
 
       {/* Right: Ratings Content */}
       <div>
         {loading ? (
-          <p className="text-sm font-medium text-gray-500">Loading...</p>
+          <p className="text-sm font-medium text-gray-500  dark:text-gray-200">
+            Loading...
+          </p>
         ) : averageRating !== null ? (
           <>
             <p className="text-lg font-medium">
               {averageRating.toFixed(2)} / 5
             </p>
-            <p className="text-sm font-medium text-gray-500">
+            <p className="text-sm font-medium text-gray-500  dark:text-gray-200">
               {feedbacks.length} Ratings
             </p>
           </>
         ) : (
-          <p className="text-sm font-medium text-gray-500">
+          <p className="text-sm font-medium text-gray-500  dark:text-gray-200">
             No ratings available
           </p>
         )}

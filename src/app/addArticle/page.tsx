@@ -11,7 +11,7 @@ import AddArticle from "./(components)/AddArticle";
 
 export default function StatisticsPage() {
   return (
-    <main className="bg-gray-200">
+    <main className="bg-gray-200  dark:bg-offgray">
       {/* Main Container */}
       <div className="flex flex-col mx-auto px-2 max-w-7xl py-11">
         {/* Grid Container */}
