@@ -192,10 +192,10 @@ const SettingsPopup = ({
     <Dialog open={isOpen} onClose={handleClose} className="relative z-50">
       <DialogBackdrop
         transition
-        className="fixed inset-0 bg-black/30 w-screen"
+        className="fixed inset-0 bg-black/50 w-screen"
       />
       <div className="fixed inset-0 flex flex-col items-center justify-center">
-        <DialogPanel className="fixed bg-white dark:bg-slate-900 rounded-lg border-black/25 dark:border-white/10 border shadow-md">
+        <DialogPanel className="fixed bg-white dark:bg-offblack rounded-lg border-black/25 dark:border-white/10 border shadow-md">
           <div className="px-16 py-12">
             <DialogTitle className="font-semibold text-2xl">
               Settings

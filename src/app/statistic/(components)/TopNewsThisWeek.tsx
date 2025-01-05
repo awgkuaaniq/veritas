@@ -60,7 +60,7 @@ export default function TopNewsThisWeek() {
     { src: "/dummyIMG/kanye.webp", title: "Kanye West joins Neo Nazi Program" },
   ];
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col h-full dark:bg-offgray">
       <CardHeader>
         <CardTitle className="">Top News This Week</CardTitle>
       </CardHeader>
@@ -81,7 +81,7 @@ export default function TopNewsThisWeek() {
             </a>
           ))
         ) : (
-          <p className="text-gray-500">No articles available</p>
+          <p className="text-gray-500 font-light text-center my-auto dark:text-gray-400">No articles available</p>
         )}
       </CardContent>
       <CardFooter></CardFooter>

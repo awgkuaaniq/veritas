@@ -15,31 +15,31 @@ import VolumeFakeNews from "./(components)/VolumeFakeNews";
 
 export default function StatisticsPage() {
   return (
-    <main className="bg-gray-100 dark:bg-gray-950">
+    <main className="bg-gray-100 dark:bg-offblack">
       {/* Main Container */}
       <div className="flex flex-col mx-auto px-2 max-w-7xl py-11">
         {/* Grid Container */}
-        <div className="grid grid-cols-10 grid-rows-9 gap-4">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-1 lg:grid-cols-10 grid-rows-auto">
           {/* Top Left Component spanning 4x6 */}
-          <div className="col-span-6 row-span-4 rounded-lg shadow-md">
+          <div className="rounded-lg shadow-2xl lg:col-span-6 lg:row-span-4">
             <TrendingKeywords />
           </div>
 
           {/* Top Right Components */}
-          <div className="col-span-4 row-span-2 rounded-lg shadow-md">
+          <div className="rounded-lg shadow-2xl lg:col-span-4 lg:row-span-2">
             <FakeNewsAddedToday />
           </div>
-          <div className="col-span-4 row-span-2 rounded-lg shadow-md">
+          <div className="rounded-lg shadow-2xl lg:col-span-4 lg:row-span-2">
             <TopFakeNewsSource />
           </div>
 
           {/* Bottom Left Component spanning 5x4 */}
-          <div className="col-span-4 row-span-5 rounded-lg shadow-md">
+          <div className="rounded-lg shadow-2xl lg:col-span-4 lg:row-span-5">
             <TopNewsThisWeek />
           </div>
 
           {/* Bottom Right Component spanning 5x6 */}
-          <div className="col-span-6 row-span-5 rounded-lg shadow-md">
+          <div className="rounded-lg shadow-2xl lg:col-span-6 lg:row-span-5">
             <VolumeFakeNews />
           </div>
         </div>

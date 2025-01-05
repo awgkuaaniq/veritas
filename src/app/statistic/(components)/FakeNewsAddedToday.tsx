@@ -37,7 +37,7 @@ export default function FakeNewsAddedToday() {
     fetchArticleCount();
   }, []);
   return (
-    <Card className="flex flex-col h-full">
+    <Card className="flex flex-col h-full dark:bg-offgray">
       <CardHeader>
         <CardTitle className="flex items-center justify-between gap-x-5">
           Fake News Added Today
@@ -48,7 +48,7 @@ export default function FakeNewsAddedToday() {
       </CardHeader>
       <CardContent>
         <p className="text-2xl font-semibold">+{articleCount}</p>
-        <p className="text-gray-500 text-sm">
+        <p className="text-gray-500 dark:text-gray-400 text-sm">
           {changeSinceYesterday} since yesterday
         </p>
       </CardContent>

@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import MagnifyingGlassIcon from "@heroicons/react/24/outline/MagnifyingGlassIcon";
 import SearchArticle from "@/components/SearchArticle";
 import { Input } from "@/components/ui/input";
+import TestArticle from "@/components/test";
 
 interface Article {
   _id: string;
@@ -13,6 +14,8 @@ interface Article {
   url: string;
   published_at: Date;
   likes: number;
+  source: string;
+  image_url: string;
   dislikes: number;
   views: number;
   time_added: Date;
@@ -46,7 +49,7 @@ function SearchContent() {
           const response = await fetch(
             `${
               process.env.NEXT_PUBLIC_BACKEND_URL
-            }/api/get-search-article-result?search_query=${encodeURIComponent(
+            }/api/get-search-article-result/?search_query=${encodeURIComponent(
               q as string
             )}`
           );
@@ -75,12 +78,12 @@ function SearchContent() {
   };
 
   return (
-    <main className="bg-gray-100 min-h-screen dark:bg-gray-950">
+    <main className="bg-gray-100 min-h-screen pb-10 dark:bg-offblack">
       {/* Upper Component */}
       {/* Search Bar */}
       <div className="flex justify-center mx-auto px-2 max-w-7xl py-11">
         <Input
-          className="border-black/25 w-full dark:border-white/10 dark:bg-slate-900 text-sm placeholder-gray-700"
+          className="border-black/25 w-full dark:border-white/10 dark:bg-offgray text-sm placeholder-gray-700 dark:placeholder-gray-400"
           type="text"
           id="search"
           value={searchInput} // Sync input field with state
@@ -90,12 +93,12 @@ function SearchContent() {
         />
       </div>
       {/* Bottom Component */}
-      <div className="flex flex-col space-y-5 max-w-7xl mx-auto px-2">
+      <div className="flex divide-y divide-black/15 flex-col *:py-5 max-w-7xl mx-auto px-2">
         {loading && <div>Loading...</div>}
         {error && <div style={{ color: "red" }}>{error}</div>}
         {results.length > 0 ? (
           results.map((article) => (
-            <SearchArticle key={article._id} article={article} /> // Pass article data to SearchArticle
+            <TestArticle key={article._id} article={article} /> // Pass article data to SearchArticle
           ))
         ) : (
           <div className="flex flex-col justify-items-center mx-auto items-center text-xl space-y-5">

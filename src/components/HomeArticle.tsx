@@ -58,7 +58,7 @@ const HomeArticle: React.FC<HomeArticleProps> = ({ article }) => {
           <h3 className="text-xl font-base group-hover:text-blue-600 mb-2">
             {article.title}
           </h3>
-          <p className="text-sm text-gray-600 uppercase mb-4">
+          <p className="text-sm text-gray-600 dark:text-gray-400 uppercase mb-4">
             {article.source}
           </p>
         </div>

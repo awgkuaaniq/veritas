@@ -39,7 +39,11 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
     return (
       <div
         ref={ref}
-        className="flex flex-col h-fit w-full shadow-md border border-black/30 bg-white dark:bg-slate-900 rounded-xl"
+        className={`flex flex-col h-fit w-full ${
+          showInfo
+            ? "bg-gray-200 dark:bg-offgray shadow"
+            : ""
+        }transition-colors hover:bg-gray-200 dark:hover:bg-offgray ease-out duration-150`}
       >
         {/* Tweet */}
         <div className="flex min-h-28 h-fit">
@@ -80,8 +84,8 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
               <button
                 className={`rounded-full p-2 ${
                   showInfo
-                    ? "bg-gray-300 dark:bg-gray-700"
-                    : "hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors ease-out duration-150"
+                    ? "bg-gray-300 dark:bg-sage"
+                    : "hover:bg-gray-300 dark:hover:bg-sage transition-colors ease-out duration-150"
                 }`}
                 onClick={toggleInfo}
                 title="Crosschecking Sources"
@@ -90,7 +94,7 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
               </button>
               <div className="flex space-x-5">
                 <a
-                  className="hover:bg-gray-200 rounded-full p-2 dark:hover:bg-gray-700 transition-colors ease-out duration-150"
+                  className="hover:bg-gray-300 rounded-full p-2 dark:hover:bg-sage transition-colors ease-out duration-150"
                   title="Tweet URL"
                   href={tweet.tweet_url}
                   target="_blank"
@@ -103,11 +107,11 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
         </div>
         {/* Tweet Info  */}
         {showInfo && tweet.crosscheck && (
-          <div className="flex flex-col py-4 justify-center items-center md:px-20 w-full border-black/30 rounded-b-lg h-fit">
+          <div className="flex flex-col pb-8 justify-center items-center md:px-20 w-full h-fit">
             {/* Card  */}
-            <div className="flex flex-col border border-black/30 dark:border-white/10 rounded-3xl w-full border-black/30">
+            <div className="flex flex-col shadow-2xl rounded-3xl w-full">
               {/* Info Header  */}
-              <div className="flex w-full justify-center rounded-t-3xl py-2.5 h-fit px-2.5 mx-auto bg-gray-100 dark:bg-slate-800">
+              <div className="flex w-full justify-center rounded-t-3xl py-2.5 h-fit px-2.5 mx-auto bg-gray-100 dark:bg-offblack">
                 {/* Source  */}
                 <p className="font-semibold">Source</p>
               </div>
@@ -125,7 +129,7 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
                   </h1>
                   <div className="flex flex-col">
                     <a
-                      className="text-base font-semibold w-full text-blue-500"
+                      className="text-base font-semibold w-full hover:text-sky-600"
                       href={tweet.crosscheck.source}
                     >
                       {tweet.crosscheck.title}

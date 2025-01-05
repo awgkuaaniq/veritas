@@ -24,11 +24,11 @@ const Menubar = () => {
   const closeFeedback = () => setIsFeedbackOpen(false);
 
   return (
-    <div className="hidden md:flex flex-col w-60 h-fit shadow-2xl items-center divide-y divide-black/15 bg-gray-100 border border-black/15 dark:bg-gray-900 dark:border-black rounded-lg">
+    <div className="hidden md:flex flex-col w-60 h-fit shadow-2xl items-center divide-y divide-black/15 bg-gray-200 border border-black/15 dark:bg-offgray dark:border shadow-2xl rounded-lg">
       {/* Navigation Links */}
       {/* Settings */}
       <button
-        className="flex py-2 px-5 w-full space-x-5 hover:bg-gray-300 dark:hover:bg-gray-700/30 transition-colors ease-out duration-150"
+        className="flex py-2 px-5 w-full space-x-5 hover:bg-gray-300 dark:hover:bg-sage transition-colors ease-out duration-150"
         onClick={openSettings}
       >
         <Cog6ToothIcon className="w-6" />
@@ -36,7 +36,7 @@ const Menubar = () => {
       </button>
       {/* Feedback */}
       <button
-        className="flex py-2 px-5 w-full space-x-5 hover:bg-gray-300 dark:hover:bg-gray-700/30 transition-colors ease-out duration-150"
+        className="flex py-2 px-5 w-full space-x-5 hover:bg-gray-300 dark:hover:bg-sage transition-colors ease-out duration-150"
         onClick={openFeedback}
       >
         <EnvelopeIcon className="w-6" />
@@ -46,7 +46,7 @@ const Menubar = () => {
       {!isLoading && user && (
         <a
           href="/api/auth/logout" // Redirect to Auth0 logout endpoint
-          className="flex py-2 px-5 w-full space-x-5 hover:bg-gray-300 dark:hover:bg-gray-700/30 transition-colors ease-out duration-150"
+          className="flex py-2 px-5 w-full space-x-5 hover:bg-gray-300 dark:hover:bg-sage transition-colors ease-out duration-150"
         >
           <ArrowLeftStartOnRectangleIcon className="w-6" />
           <p>Sign Out</p>

@@ -22,7 +22,7 @@ interface Classification {
   hasBeenChecked: boolean;
 }
 
-const HomeArticle: React.FC<{ article: Article }> = ({ article }) => {
+const TestArticle: React.FC<{ article: Article }> = ({ article }) => {
   // Truncate the article body at the first full stop
   const truncateBody = (body: string): string => {
     const firstFullStopIndex = body.indexOf(".");
@@ -32,7 +32,7 @@ const HomeArticle: React.FC<{ article: Article }> = ({ article }) => {
   };
 
   return (
-    <article className="border-b border-gray-200 pb-8">
+    <article className="hover:bg-gray-200 dark:hover:bg-offgray">
       <a
         href={`/article/${article._id}`}
         className="flex flex-wrap lg:flex-nowrap gap-6 group"
@@ -52,10 +52,10 @@ const HomeArticle: React.FC<{ article: Article }> = ({ article }) => {
             {article.title}
           </h3>
 
-          <p className="text-base text-gray-700 mb-4">
+          <p className="text-base text-gray-700 dark:text-gray-400 mb-4">
             {truncateBody(article.body)}
           </p>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-500">
             {formatDate(article.published_at)}
           </p>
         </div>
@@ -64,4 +64,4 @@ const HomeArticle: React.FC<{ article: Article }> = ({ article }) => {
   );
 };
 
-export default HomeArticle;
+export default TestArticle;

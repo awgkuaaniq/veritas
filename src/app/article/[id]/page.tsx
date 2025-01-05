@@ -229,15 +229,15 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
   };
 
   return (
-    <main className="bg-gray-100 py-8 dark:bg-gray-950">
+    <main className="bg-gray-100 py-8 dark:bg-offblack">
       <div className="flex flex-col mx-auto px-4 max-w-4xl overflow-hidden">
         {/* Article Title */}
-        <h1 className="text-4xl font-semibold text-gray-800 py-6">
+        <h1 className="text-4xl font-semibold text-gray-800 dark:text-white py-6">
           {article?.title}
         </h1>
 
         {/* Article Details */}
-        <div className="flex justify-between text-sm text-gray-600 mb-4">
+        <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-4">
           <div>
             <p className="font-medium">By {article?.source}</p>
             <p>{new Date(article?.published_at ?? "").toLocaleDateString()}</p>
@@ -249,7 +249,7 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
 
         {/* Article AI Check and Thumbnail */}
         <div className="py-6">
-          <div className="flex justify-between bg-black dark:bg-slate-900 text-white items-center text-2xl font-bold py-4 px-5 rounded-3xl max-w-4xl mx-auto">
+          <div className="flex justify-between bg-black dark:bg-offgray text-white items-center text-2xl font-bold py-4 px-5 rounded-3xl max-w-4xl mx-auto">
             <h1>
               {Math.round((article?.classification?.probability ?? 0) * 100)}%
             </h1>
@@ -291,16 +291,16 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
         </div>
 
         {/* Article Thumbnail and Description */}
-        <div className="py-6">
+        <div className="flex py-6 justify-center w-full items-center">
           <img
             src={article?.image_url}
             alt="Thumbnail"
-            className="w-full rounded-lg shadow-md"
+            className="max-h-[600px] rounded-lg shadow-md"
           />
         </div>
 
         {/* Article Content */}
-        <div className="prose lg:prose-xl text-gray-800 mb-6">
+        <div className="prose lg:prose-xl text-gray-800 dark:text-white mb-6">
           <div
             className="flex flex-col space-y-8"
             dangerouslySetInnerHTML={{ __html: formatBody(article?.body) }}

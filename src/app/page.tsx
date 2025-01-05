@@ -89,10 +89,10 @@ export default function Home() {
   ];
 
   return (
-    <main className="bg-gray-100 dark:bg-gray-950 min-h-screen py-10">
-      <div className="grid grid-cols-1 lg:grid-cols-12 divide-x divide-black/15 gap-3 max-w-screen-xl px-4 border-b border-black/15 mx-auto">
+    <main className="bg-gray-100 dark:bg-offblack min-h-screen py-10">
+      <div className="grid grid-cols-1 lg:grid-cols-12 divide-x divide-black/15 dark:divide-offgray gap-3 max-w-screen-xl px-4 border-b border-black/15 dark:border-white/15 mx-auto">
         {/* Left Side Articles */}
-        <div className="lg:col-span-3 [&>*:last-child]:pt-3 divide-y divide-black/15 flex flex-col gap-3">
+        <div className="lg:col-span-3 [&>*:last-child]:pt-3 divide-y divide-black/15 dark:divide-offgray flex flex-col gap-3">
           {articles.slice(0, 2).map((article) => (
             <HomeArticle key={article._id} article={article} />
           ))}
@@ -104,9 +104,9 @@ export default function Home() {
             <Carousel className="w-full">
               <CarouselContent>
                 {images.map((image, index) => (
-                  <CarouselItem className="" key={index}>
+                  <CarouselItem className="group" key={index}>
                     <Card className="border-0">
-                      <CardContent className="p-0">
+                      <CardContent className="p-0 group-hover:text-blue-600 dark:group-hover:text-blue-600">
                         {/* Image */}
                         <a href="/article/[id]">
                           <div className="h-full relative">
@@ -116,17 +116,17 @@ export default function Home() {
                               alt={image.alt}
                             />
                           </div>
-                        </a>
 
-                        {/* Title Below the Image */}
-                        <div className="p-4 h-full bg-gray-100">
-                          <h3 className="text-xl font-base group-hover:text-blue-600 mb-2">
-                            {image.alt}
-                          </h3>
-                          <p className="text-sm text-gray-600 uppercase mb-4">
-                            {image.source}
-                          </p>
-                        </div>
+                          {/* Title Below the Image */}
+                          <div className="p-4 h-full bg-gray-100 dark:bg-offblack">
+                            <h3 className="text-xl font-base mb-2">
+                              {image.alt}
+                            </h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 uppercase mb-4">
+                              {image.source}
+                            </p>
+                          </div>
+                        </a>
                       </CardContent>
                     </Card>
                   </CarouselItem>
@@ -139,7 +139,7 @@ export default function Home() {
         </div>
 
         {/* Right Side Articles */}
-        <div className="lg:col-span-3 [&>*:last-child]:pt-3 divide-y divide-black/15 lg:pl-3 flex flex-col gap-3">
+        <div className="lg:col-span-3 [&>*:last-child]:pt-3 divide-y divide-black/15 dark:divide-offgray lg:pl-3 flex flex-col gap-3">
           {articles.slice(2, 4).map((article) => (
             <HomeArticle key={article._id} article={article} />
           ))}
@@ -151,7 +151,7 @@ export default function Home() {
         {articles.slice(4).map((article) => (
           <div
             key={article._id}
-            className="[&:nth-child(4n+1)]:pl-0 [&:nth-child(4n+1)]:border-l-0 [&:nth-child(-n+4)]:pt-0 *:pt-3 *:border-b border-l *:border-black/15 border-black/15 pl-3 h-100%"
+            className="[&:nth-child(4n+1)]:pl-0 [&:nth-child(4n+1)]:border-l-0 [&:nth-child(-n+4)]:pt-0 *:pt-3 *:border-b border-l *:border-black/15 dark:border-offgray dark:*:border-offgray border-black/15 pl-3 h-100%"
           >
             <HomeArticle article={article} />
           </div>

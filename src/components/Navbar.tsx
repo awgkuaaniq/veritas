@@ -45,7 +45,7 @@ const Navbar: React.FC = () => {
   }, []);
 
   return (
-    <nav className="bg-gray-100 dark:bg-gray-900 border-b border-black/15 shadow-lg relative">
+    <nav className="bg-gray-100 dark:bg-offblack border-b border-black/15 shadow-lg relative">
       {/* General Container */}
       <div className="flex justify-between max-w-7xl mx-auto items-center px-2 h-fit">
         {/* Logo */}
@@ -62,25 +62,25 @@ const Navbar: React.FC = () => {
         <div className="hidden md:flex text-black dark:text-white justify-between items-center">
           <a
             href="/tweet"
-            className="py-5 px-6 hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors ease-out duration-150"
+            className="py-5 px-6 hover:bg-gray-200 dark:hover:bg-offgray transition-colors ease-out duration-150"
           >
             Tweets
           </a>
           <a
             href="/statistic"
-            className="py-5 px-6 hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors ease-out duration-150"
+            className="py-5 px-6 hover:bg-gray-200 dark:hover:bg-offgray transition-colors ease-out duration-150"
           >
             Statistics
           </a>
           <a
             href="/manualcheck"
-            className="py-5 px-6 hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors ease-out duration-150"
+            className="py-5 px-6 hover:bg-gray-200 dark:hover:bg-offgray transition-colors ease-out duration-150"
           >
             Manual Check
           </a>
           <a
             href="/about"
-            className="py-5 px-6 hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors ease-out duration-150"
+            className="py-5 px-6 hover:bg-gray-200 dark:hover:bg-offgray transition-colors ease-out duration-150"
           >
             About
           </a>
@@ -88,7 +88,7 @@ const Navbar: React.FC = () => {
           {!isLoading && user && (
             <a
               href="/admin"
-              className="py-5 px-6 hover:bg-gray-200 dark:hover:bg-gray-800"
+              className="py-5 px-6 hover:bg-gray-200 dark:hover:bg-offgray transition-colors ease-out duration-150"
             >
               Admin
             </a>
@@ -103,7 +103,11 @@ const Navbar: React.FC = () => {
         {/* Burger Menu Button */}
         <div className="relative">
           <button
-            className="hover:bg-gray-200 dark:hover:bg-gray-800 p-2 rounded-md transition-colors ease-out duration-150"
+            className={`p-2 rounded-md transition-colors ease-out duration-150 ${
+              isLargeScreenMenuOpen
+                ? "bg-gray-200 dark:bg-offgray dark:bg-offgray"
+                : "hover:bg-gray-200 dark:hover:bg-offgray"
+            }`}
             onClick={
               isSmallScreen ? toggleSmallScreenMenu : toggleLargeScreenMenu
             }
@@ -124,35 +128,35 @@ const Navbar: React.FC = () => {
       {isSmallScreen && isSmallScreenMenuOpen && (
         <div className="absolute left-0 top-full mt-0 md:mt-4 md:left-auto z-50 w-full">
           <Menubar />
-          <div className="md:hidden bg-gray-100 dark:bg-gray-900 py-2">
+          <div className="md:hidden bg-gray-100 dark:bg-offblack shadow-2xl py-2">
             {/* Mobile Search */}
             <div className="px-4 pb-2">
               <NavSearch />
             </div>
 
             {/* Mobile Navigation Links */}
-            <div className="flex divide-y divide-black/15 border-b border-black/15 shadow-2xl flex-col justify-center text-center items-center">
+            <div className="flex divide-y divide-black/15 dark:divide-white/15 border-b border-black/15 shadow-2xl flex-col justify-center text-center items-center">
               <a
                 href="/tweet"
-                className="px-4 w-full py-2 hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white"
+                className="px-4 w-full py-2 hover:bg-gray-200 dark:hover:bg-offgray transition-colors ease-out duration-150 dark:text-white"
               >
                 Tweets
               </a>
               <a
                 href="/statistic"
-                className="px-4 w-full py-2 hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white"
+                className="px-4 w-full py-2 hover:bg-gray-200 dark:hover:bg-offgray transition-colors ease-out duration-150 dark:text-white"
               >
                 Statistics
               </a>
               <a
                 href="/manualcheck"
-                className="px-4 w-full py-2 hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white"
+                className="px-4 w-full py-2 hover:bg-gray-200 dark:hover:bg-offgray transition-colors ease-out duration-150 dark:text-white"
               >
                 Manual Check
               </a>
               <a
                 href="/about"
-                className="px-4 w-full py-2 hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white"
+                className="px-4 w-full py-2 hover:bg-gray-200 dark:hover:bg-offgray transition-colors ease-out duration-150 dark:text-white"
               >
                 About
               </a>
@@ -160,7 +164,7 @@ const Navbar: React.FC = () => {
               {!isLoading && user && (
                 <a
                   href="/admin"
-                  className="px-4 w-full py-2 hover:bg-gray-200 dark:hover:bg-gray-800 dark:text-white"
+                  className="px-4 w-full py-2 hover:bg-gray-200 dark:hover:bg-offgray transition-colors ease-out duration-150 dark:text-white"
                 >
                   Admin
                 </a>
@@ -168,13 +172,13 @@ const Navbar: React.FC = () => {
 
               {/* Settings, Feedback, and Sign Out */}
               <button
-                className="flex w-full px-4 py-2 space-x-3 hover:bg-gray-200 dark:hover:bg-gray-800 justify-center dark:text-white"
+                className="flex w-full px-4 py-2 space-x-3 hover:bg-gray-200 dark:hover:bg-offgray transition-colors ease-out duration-150 justify-center dark:text-white"
                 onClick={() => setIsSettingsOpen(true)}
               >
                 Settings
               </button>
               <button
-                className="flex w-full px-4 py-2 space-x-3 hover:bg-gray-200 dark:hover:bg-gray-800 justify-center dark:text-white"
+                className="flex w-full px-4 py-2 space-x-3 hover:bg-gray-200 dark:hover:bg-offgray transition-colors ease-out duration-150 justify-center dark:text-white"
                 onClick={() => setIsFeedbackOpen(true)}
               >
                 Feedback
@@ -183,7 +187,7 @@ const Navbar: React.FC = () => {
               {!isLoading && user && (
                 <a
                   href="/api/auth/logout" // Redirect to Auth0 logout endpoint
-                  className="flex w-full px-4 py-2 space-x-3 hover:bg-gray-200 dark:hover:bg-gray-800 justify-center dark:text-white"
+                  className="flex w-full px-4 py-2 space-x-3 hover:bg-gray-200 dark:hover:bg-offgray transition-colors ease-out duration-150 justify-center dark:text-white"
                 >
                   <p>Sign Out</p>
                 </a>

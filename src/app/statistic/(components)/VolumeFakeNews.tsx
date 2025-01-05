@@ -45,7 +45,7 @@ export default function VolumeFakeNews() {
   }, [granularity]);
   console.log("Chart Data State:", chartData); // Log chart data whenever it changes
   return (
-    <Card>
+    <Card className="dark:bg-offgray">
       <CardHeader>
         <CardTitle>Volume of Fake News</CardTitle>
       </CardHeader>
@@ -54,7 +54,7 @@ export default function VolumeFakeNews() {
           <p>Loading...</p> // Show loading state
         ) : (
           <LineChart
-            className="h-80"
+            className="h-80 text-white"
             data={chartData} // Transformed data
             index="date" // X-axis key
             categories={["Count"]} // Y-axis values
@@ -70,9 +70,9 @@ export default function VolumeFakeNews() {
               key={range}
               className={`px-4 py-2 rounded-2xl shadow-md border font-medium text-sm ${
                 granularity === range
-                  ? "bg-gray-400 text-white dark:bg-slate-500"
-                  : "bg-gray-200 dark:bg-slate-800"
-              } hover:bg-gray-400 dark:hover:bg-slate-500 hover:text-white transition-colors ease-out duration-150`}
+                  ? "bg-gray-400 text-white dark:bg-slate-800"
+                  : "bg-gray-200 dark:bg-offblack"
+              } hover:bg-gray-400 dark:hover:bg-slate-800 hover:text-white transition-colors ease-out duration-150`}
               onClick={() => setGranularity(range)} // Update granularity state
             >
               {range.charAt(0).toUpperCase() + range.slice(1)}{" "}

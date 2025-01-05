@@ -89,11 +89,11 @@ export default function ManualCheck() {
   };
 
   return (
-    <main className="bg-gray-100 dark:bg-gray-950 h-screen">
+    <main className="bg-gray-100 dark:bg-offblack h-screen">
       {/* Input bar */}
       <div className="flex justify-center mx-auto px-2 max-w-7xl py-11">
         <Input
-          className="border-black/25 dark:border-white/10 dark:bg-slate-900"
+          className="border-black/25 dark:border-white/10 dark:bg-offgray dark:placeholder-gray-400"
           placeholder="Enter URL or content"
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
