@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useState, Suspense, lazy, useRef, useCallback } from "react";
+import {
+  useEffect,
+  useState,
+  Suspense,
+  lazy,
+  useRef,
+  useCallback,
+} from "react";
 import axios from "axios";
 
 interface CrosscheckResult {
@@ -35,7 +42,7 @@ export default function TweetsPage() {
     setLoading(true);
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/tweets?page=${page}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/tweets/?page=${page}`
       );
       setTweets((prevTweets) => [...prevTweets, ...response.data]);
       // Set hasMore based on the response length
@@ -67,7 +74,7 @@ export default function TweetsPage() {
   );
 
   return (
-    <main className="bg-gray-200 dark:bg-gray-950 min-h-screen">
+    <main className="bg-gray-100 dark:bg-gray-950 min-h-screen">
       {/* Main Container */}
       <div className="flex flex-col mx-auto px-2 space-y-2 max-w-7xl py-11">
         <Suspense fallback={<div>Loading tweets...</div>}>

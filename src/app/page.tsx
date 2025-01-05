@@ -1,5 +1,4 @@
 "use client";
-import Navbar from "@/components/Navbar";
 import HomeArticle from "@/components/HomeArticle";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -24,10 +23,12 @@ type Article = {
   published_at: Date | string;
   likes: number;
   dislikes: number;
+  source: string;
   views: number;
   time_added: Date;
   unique_hash?: string;
   classification: Classification;
+  image_url: string;
 };
 
 type Classification = {
@@ -38,14 +39,14 @@ type Classification = {
 
 export default function Home() {
   const [showDisclaimer, setShowDisclaimer] = useState(false);
-  const [articles, setArticles] = useState<Article[]>([]); // Initialize articles state
+  const [articles, setArticles] = useState<Article[]>([]);
 
   const getArticleById = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/articles");
-      const fetchedArticles = response.data; // Assuming the response contains an array of articles
-
-      setArticles(fetchedArticles); // Update state with fetched articles
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles`
+      );
+      setArticles(response.data);
     } catch (error) {
       console.error("Error fetching articles:", error);
     }
@@ -55,7 +56,6 @@ export default function Home() {
     const trackVisitor = async () => {
       try {
         const response = await axios.post("/api/track-visitor");
-        // If we get a message about tracking a new visitor, show the disclaimer
         if (response.data.message === "Unique visitor tracked") {
           setShowDisclaimer(true);
         }
@@ -72,70 +72,93 @@ export default function Home() {
     setShowDisclaimer(false);
   };
 
-  // Array of image URLs
   const images = [
     {
       src: "/dummyIMG/corgi.webp",
       alt: "Paw patrol: China's most popular new police officer is a corgi",
+      source: "CNN",
     },
     {
       src: "/dummyIMG/chrisbrown.webp",
       alt: "Chris Brown gets back with Rihanna and punches ASAP Wocky",
+      source: "BBC",
     },
-    { src: "/dummyIMG/kanye.webp", alt: "Kanye West joins Neo Nazi Program" },
+    { src: "/dummyIMG/kanye.webp", alt: "Kanye West joins Neo Nazi Program",
+      source: "Meowkie",
+     },
   ];
 
   return (
-    <main className="bg-gray-200 dark:bg-gray-950 min-h-screen">
-      {/* Carousel Slider */}
-
-      <div className="flex justify-center py-11">
-        <Carousel className="flex max-w-4xl max-h-fit min-w-xs relative">
-          <CarouselContent className="max-h-full">
-            {images.map((image, index) => (
-              <CarouselItem className="py-0" key={index}>
-                <Card className="flex items-center justify-center h-full">
-                  <CardContent className="w-full h-full p-0 relative">
-                    <a href="/article/[id]">
-                      <img
-                        className="object-fill w-full h-full"
-                        src={image.src}
-                        alt={image.alt}
-                      />
-                      {/* News Title */}
-                      <div className="absolute w-full h-max bottom-0 bg-black/65 text-justify text-white font-semibold text-2xl px-4 py-4">
-                        {image.alt}
-                      </div>
-                    </a>
-                  </CardContent>
-                </Card>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselNext className="right-3 bg-gray-200/50 border-none disabled:hidden transition ease-out duration-300" />
-          <CarouselPrevious className="left-3 bg-gray-200/50 border-none disabled:hidden transition ease-out duration-300" />
-        </Carousel>
-      </div>
-
-      {/*Display Article Section*/}
-
-      <div className="flex flex-col justify-between max-w-7xl mx-auto px-2">
-        <div className="font-semibold text-black dark:text-white text-2xl py-5">
-          Latest Fake News
+    <main className="bg-gray-100 dark:bg-gray-950 min-h-screen py-10">
+      <div className="grid grid-cols-1 lg:grid-cols-12 divide-x divide-black/15 gap-3 max-w-screen-xl px-4 border-b border-black/15 mx-auto">
+        {/* Left Side Articles */}
+        <div className="lg:col-span-3 [&>*:last-child]:pt-3 divide-y divide-black/15 flex flex-col gap-3">
+          {articles.slice(0, 2).map((article) => (
+            <HomeArticle key={article._id} article={article} />
+          ))}
         </div>
-        {articles.length > 0 ? (
-          <div className="grid grid-cols-3 gap-y-5">
-            {articles.map((article) => (
-              <HomeArticle
-                key={article._id || article.title}
-                article={article}
-              />
-            ))}
+
+        {/* Carousel Section */}
+        <div className="lg:col-span-6 lg:pl-3">
+          <div className="w-full overflow-hidden rounded-lg">
+            <Carousel className="w-full">
+              <CarouselContent>
+                {images.map((image, index) => (
+                  <CarouselItem className="" key={index}>
+                    <Card className="border-0">
+                      <CardContent className="p-0">
+                        {/* Image */}
+                        <a href="/article/[id]">
+                          <div className="h-full relative">
+                            <img
+                              className="object-cover w-full h-[400px] lg:h-[565px]"
+                              src={image.src}
+                              alt={image.alt}
+                            />
+                          </div>
+                        </a>
+
+                        {/* Title Below the Image */}
+                        <div className="p-4 h-full bg-gray-100">
+                          <h3 className="text-xl font-base group-hover:text-blue-600 mb-2">
+                            {image.alt}
+                          </h3>
+                          <p className="text-sm text-gray-600 uppercase mb-4">
+                            {image.source}
+                          </p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselNext className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-gray-200/50 border-none disabled:hidden" />
+              <CarouselPrevious className="absolute left-3 top-1/2 transform -translate-y-1/2 bg-gray-200/50 border-none disabled:hidden" />
+            </Carousel>
           </div>
-        ) : (
-          <div>Loading articles...</div>
-        )}
+        </div>
+
+        {/* Right Side Articles */}
+        <div className="lg:col-span-3 [&>*:last-child]:pt-3 divide-y divide-black/15 lg:pl-3 flex flex-col gap-3">
+          {articles.slice(2, 4).map((article) => (
+            <HomeArticle key={article._id} article={article} />
+          ))}
+        </div>
       </div>
+
+      {/* Bottom Articles */}
+      <div className="max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mt-3 px-4">
+        {articles.slice(4).map((article) => (
+          <div
+            key={article._id}
+            className="[&:nth-child(4n+1)]:pl-0 [&:nth-child(4n+1)]:border-l-0 [&:nth-child(-n+4)]:pt-0 *:pt-3 *:border-b border-l *:border-black/15 border-black/15 pl-3 h-100%"
+          >
+            <HomeArticle article={article} />
+          </div>
+        ))}
+      </div>
+
+      {/* Disclaimer Popup */}
       <DisclaimerPopup
         isOpen={showDisclaimer}
         onClose={handleCloseDisclaimer}

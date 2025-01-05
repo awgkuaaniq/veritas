@@ -14,7 +14,7 @@ interface CrosscheckResult {
   source: string;
   probability: number;
 }
-    
+
 interface Tweets {
   id: string;
   name: string;
@@ -26,7 +26,6 @@ interface Tweets {
   published_at: Date;
   crosscheck: CrosscheckResult;
 }
-    
 
 const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
   ({ tweet }, ref) => {
@@ -104,7 +103,7 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
         </div>
         {/* Tweet Info  */}
         {showInfo && tweet.crosscheck && (
-          <div className="flex flex-col py-4 justify-center items-center px-20 w-full border-black/30 rounded-b-lg h-fit">
+          <div className="flex flex-col py-4 justify-center items-center md:px-20 w-full border-black/30 rounded-b-lg h-fit">
             {/* Card  */}
             <div className="flex flex-col border border-black/30 dark:border-white/10 rounded-3xl w-full border-black/30">
               {/* Info Header  */}
@@ -114,7 +113,7 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
               </div>
               {/* Info Body  */}
               <div className="flex w-full h-fit p-2.5">
-                <div className="flex w-full h-fit p-3 gap-x-3 items-center">
+                <div className="md:flex-row flex flex-col w-full h-fit p-3 gap-x-3 items-center">
                   <h1
                     className="text-xl text-nowrap font-semibold"
                     title="How similar the tweet is to the source"
@@ -144,5 +143,5 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
     );
   }
 );
-
+Tweet.displayName = "Tweet";
 export default Tweet;

@@ -7,7 +7,7 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { NewspaperIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 
@@ -19,7 +19,9 @@ export default function FakeNewsAddedToday() {
     // Fetch article count data from FastAPI
     const fetchArticleCount = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/count-articles-added-today");
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/count-articles-added-today`
+        );
         const data = response.data;
 
         setArticleCount(data.today_article_count);
@@ -37,17 +39,19 @@ export default function FakeNewsAddedToday() {
   return (
     <Card className="flex flex-col h-full">
       <CardHeader>
-        <CardTitle className="flex items-center justify-between gap-x-5">Fake News Added Today
-            <span>
-                <NewspaperIcon className="size-6"/>
-            </span>
+        <CardTitle className="flex items-center justify-between gap-x-5">
+          Fake News Added Today
+          <span>
+            <NewspaperIcon className="size-6" />
+          </span>
         </CardTitle>
       </CardHeader>
       <CardContent>
         <p className="text-2xl font-semibold">+{articleCount}</p>
-        <p className="text-gray-500 text-sm">{changeSinceYesterday} since yesterday</p>
+        <p className="text-gray-500 text-sm">
+          {changeSinceYesterday} since yesterday
+        </p>
       </CardContent>
-      
     </Card>
   );
 }

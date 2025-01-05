@@ -1,10 +1,9 @@
 "use client";
 
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import MagnifyingGlassIcon from "@heroicons/react/24/outline/MagnifyingGlassIcon";
 import SearchArticle from "@/components/SearchArticle";
-import { useRouter } from "next/navigation"; // To access query params in the URL
-import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 
 interface Article {
@@ -27,14 +26,15 @@ interface Classification {
   hasBeenChecked: boolean;
 }
 
-export default function SearchResult() {
-  const q = useSearchParams().get('q'); // Extract the search query
+// Child component that uses useSearchParams
+function SearchContent() {
+  const searchParams = useSearchParams();
+  const q = searchParams.get("q"); // Extract the search query
   const router = useRouter();
-  const [searchInput, setSearchInput] = useState('');
+  const [searchInput, setSearchInput] = useState("");
   const [results, setResults] = useState<Article[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
 
   useEffect(() => {
     if (q) {
@@ -43,8 +43,14 @@ export default function SearchResult() {
         setLoading(true);
         setError(null);
         try {
-          const response = await fetch(`http://localhost:8000/api/get-search-article-result?search_query=${encodeURIComponent(q as string)}`);
-          if (!response.ok) throw new Error('Failed to fetch search results');
+          const response = await fetch(
+            `${
+              process.env.NEXT_PUBLIC_BACKEND_URL
+            }/api/get-search-article-result?search_query=${encodeURIComponent(
+              q as string
+            )}`
+          );
+          if (!response.ok) throw new Error("Failed to fetch search results");
           const data: Article[] = await response.json();
           setResults(data);
         } catch (err: any) {
@@ -56,7 +62,7 @@ export default function SearchResult() {
 
       fetchResults();
     }
-  }, [q]);  // Trigger search when searchQuery changes
+  }, [q]); // Trigger search when searchQuery changes
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
@@ -69,7 +75,7 @@ export default function SearchResult() {
   };
 
   return (
-    <main className="bg-gray-200 min-h-screen dark:bg-gray-950">
+    <main className="bg-gray-100 min-h-screen dark:bg-gray-950">
       {/* Upper Component */}
       {/* Search Bar */}
       <div className="flex justify-center mx-auto px-2 max-w-7xl py-11">
@@ -95,7 +101,7 @@ export default function SearchResult() {
           <div className="flex flex-col justify-items-center mx-auto items-center text-xl space-y-5">
             <p>
               Sorry, there are no results for{" "}
-              <span className="flex-inline font-bold">'{q}'</span>
+              <span className="flex-inline font-bold">&apos;{q}&apos;</span>
             </p>
             <p className="text-2xl font-bold pt-4">Suggestions</p>
             <ul className="list-disc">
@@ -107,5 +113,14 @@ export default function SearchResult() {
         )}
       </div>
     </main>
+  );
+}
+
+// Parent component that wraps SearchContent in Suspense
+export default function SearchResult() {
+  return (
+    <Suspense fallback={<div>Loading search results...</div>}>
+      <SearchContent />
+    </Suspense>
   );
 }

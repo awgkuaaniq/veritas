@@ -15,23 +15,21 @@ type Prediction = {
 };
 
 export default function ManualCheck() {
-  const [userInput, setUserInput] = useState(""); // State to store user input
+  const [body, setBody] = useState(""); // State to store user input
   const [predictionData, setPrediction] = useState<Prediction | null>(null); // State to store API response
   const [thumbsUp, setThumbsUp] = useState<boolean>();
   const [feedback, setFeedback] = useState("");
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUserInput(event.target.value);
+    setBody(event.target.value);
   };
 
   const handleCheck = async () => {
-    // Consider using a more specific event type
-    if (!userInput) return; // Check if input is empty
+    if (!body) return; // Check if input is empty
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/predict",
-        { body: userInput } // Send the body in the request body, not as a query parameter
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/predict?body=${body}` // Use `body` instead of `userInput`
       );
       setPrediction(response.data);
       console.log(response.data); // Optional: Log API response for debugging
@@ -49,47 +47,49 @@ export default function ManualCheck() {
   };
 
   const checkThumbsUp = async (id: string) => {
-    if (id == "thumbs_up"){
+    if (id === "thumbs_up") {
       setThumbsUp(true);
-    }
-    else{
+    } else {
       setThumbsUp(false);
     }
   };
 
-   const sendFeedback = async (event: React.FormEvent<HTMLFormElement>) => {
-     let fake = 0;
-     if (predictionData?.category == "Fake") {
-       fake = 1;
-     }
-     console.log(fake);
-     event.preventDefault(); // Prevent page refresh
-     if (!feedback || thumbsUp === undefined) {
-       console.error("Feedback and thumbsUp state are required.");
-       return;
-     }
+  const sendFeedback = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault(); // Prevent page refresh
 
-     try {
-       const response = await axios.post(
-         "http://127.0.0.1:8000/api/manualcheckfeedback/",
-         {
-           thumbs_up: thumbsUp,
-           body: userInput,
-           comments: feedback,
-           fake: fake,
-         }
-       );
-       console.log("Feedback submitted successfully:", response.data);
-       // Optionally, reset feedback and thumbsUp state
-       setFeedback("");
-       setThumbsUp(undefined);
-     } catch (error) {
-       console.error("Error submitting feedback:", error);
-     }
-   };
+    if (!feedback || thumbsUp === undefined || !predictionData) {
+      console.error(
+        "Feedback, thumbsUp state, and prediction data are required."
+      );
+      return;
+    }
+
+    let fake = 0;
+    if (predictionData.category === "Fake") {
+      fake = 1;
+    }
+
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/manualcheckfeedback/`,
+        {
+          thumbs_up: thumbsUp,
+          body: feedback,
+          comments: feedback,
+          fake: fake,
+        }
+      );
+      console.log("Feedback submitted successfully:", response.data);
+      // Optionally, reset feedback and thumbsUp state
+      setFeedback("");
+      setThumbsUp(undefined);
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+    }
+  };
 
   return (
-    <main className="bg-gray-200 h-screen dark:bg-gray-950">
+    <main className="bg-gray-100 dark:bg-gray-950 h-screen">
       {/* Input bar */}
       <div className="flex justify-center mx-auto px-2 max-w-7xl py-11">
         <Input
@@ -120,7 +120,7 @@ export default function ManualCheck() {
                 {Math.round(predictionData.confidence * 100)}%
               </h1>
               <h1 className="text-xl w-full font-semibold">
-                This article has been flagged as potentialy{" "}
+                This article has been flagged as potentially{" "}
                 {predictionData.category.toLowerCase()} because it contains
                 specific flags which our machine learning model has deemed to
                 relate to {predictionData.category.toLowerCase()} news.
@@ -145,24 +145,30 @@ export default function ManualCheck() {
             {/* Form Content */}
             <div className="flex w-full h-fit p-3 gap-x-3 justify-center items-center">
               <Button
-              type="button"
-              className={`rounded-full aspect-square h-fit p-1 
-                ${thumbsUp ? 'bg-green-700 text-white' : 'bg-green-500 text-black'} 
+                type="button"
+                className={`rounded-full aspect-square h-fit p-1 
+                ${
+                  thumbsUp
+                    ? "bg-green-700 text-white"
+                    : "bg-green-500 text-black"
+                } 
                 hover:bg-green-700`}
-              onClick={() => checkThumbsUp("thumbs_up")}
+                onClick={() => checkThumbsUp("thumbs_up")}
               >
                 <HandThumbUpIcon className="text-black size-8" />
               </Button>
-              <Button 
-              type="button"
-              className={`rounded-full aspect-square h-fit p-1 
-                ${thumbsUp === undefined 
-                  ? 'bg-red-500 text-black' // Default color for the undefined state
-                  : thumbsUp === false 
-                    ? 'bg-red-700 text-white' // Color when thumbsUp is explicitly false
-                    : 'bg-red-500 text-black'} 
+              <Button
+                type="button"
+                className={`rounded-full aspect-square h-fit p-1 
+                ${
+                  thumbsUp === undefined
+                    ? "bg-red-500 text-black" // Default color for the undefined state
+                    : thumbsUp === false
+                    ? "bg-red-700 text-white" // Color when thumbsUp is explicitly false
+                    : "bg-red-500 text-black"
+                } 
                 hover:bg-red-700`}
-              onClick={() => checkThumbsUp("thumbs_down")}
+                onClick={() => checkThumbsUp("thumbs_down")}
               >
                 <HandThumbDownIcon className="text-black size-8" />
               </Button>

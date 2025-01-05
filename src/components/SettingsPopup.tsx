@@ -47,7 +47,7 @@ const SettingsPopup = ({
 
         // Fetch preferences using the uniqueVisitorId
         const preferenceResponse = await axios.get(
-          `http://localhost:8000/api/preference/${uniqueVisitorId}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/preference/${uniqueVisitorId}`
         );
         const { notification, token } = preferenceResponse.data;
 
@@ -120,7 +120,7 @@ const SettingsPopup = ({
               }
               // Update all preferences including the token in a single request
               await axios.put(
-                `http://localhost:8000/api/preference/${uniqueVisitorId}`,
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/preference/${uniqueVisitorId}`,
                 {
                   theme: theme,
                   notification: notificationsEnabled,
@@ -133,7 +133,7 @@ const SettingsPopup = ({
           } else {
             // If token already exists, just update other preferences
             await axios.put(
-              `http://localhost:8000/api/preference/${uniqueVisitorId}`,
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/preference/${uniqueVisitorId}`,
               {
                 theme: theme,
                 notification: notificationsEnabled,
@@ -158,7 +158,7 @@ const SettingsPopup = ({
           }
           // Update preferences with null token
           await axios.put(
-            `http://localhost:8000/api/preference/${uniqueVisitorId}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/preference/${uniqueVisitorId}`,
             {
               theme: theme,
               notification: false,

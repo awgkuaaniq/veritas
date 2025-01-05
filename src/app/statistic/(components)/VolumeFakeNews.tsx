@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import {
   Card,
   CardHeader,
@@ -7,13 +7,13 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import axios from'axios';
-import React, {useEffect, useState} from "react";
-import { LineChart } from '@tremor/react';
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { LineChart } from "@tremor/react";
 
 export default function VolumeFakeNews() {
   const [chartData, setChartData] = useState([]);
-  const [granularity, setGranularity] = useState('month'); // Default to 'month'
+  const [granularity, setGranularity] = useState("month"); // Default to 'month'
   const [isLoading, setIsLoading] = useState(false); // Loading state for better UX
 
   // Transform API Data
@@ -23,25 +23,27 @@ export default function VolumeFakeNews() {
       Count: item.count, // Use the `count` field for the y-axis
     }));
   };
-  
+
   // Fetch Data from API using Axios
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true); // Start loading
       try {
-        const response = await axios.get(`http://localhost:8000/api/get-article-graph-data/?range=${granularity}`);
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/get-article-graph-data/?range=${granularity}`
+        );
 
         const transformedData = transformData(response.data);
         setChartData(transformedData);
         setIsLoading(false); // Start loading
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
     };
 
     fetchData();
   }, [granularity]);
-  console.log('Chart Data State:', chartData); // Log chart data whenever it changes
+  console.log("Chart Data State:", chartData); // Log chart data whenever it changes
   return (
     <Card>
       <CardHeader>

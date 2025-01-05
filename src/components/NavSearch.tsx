@@ -1,11 +1,11 @@
 "use client";
 
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import React, { useState} from 'react';
-import { useRouter } from "next/navigation";  // For Next.js 13+ with app directory
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation"; // For Next.js 13+ with app directory
 
 const NavSearch = () => {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const router = useRouter();
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
@@ -17,7 +17,7 @@ const NavSearch = () => {
   };
 
     return (
-      <div className="flex items-center h-10 bg-gray-200 dark:bg-gray-950 border-black/25 dark:border-white/20 border rounded-lg">
+      <div className="flex items-center h-10 bg-gray-200 dark:bg-gray-950 border-black/15 dark:border-white/15 border rounded-lg">
         <div className="grid place-items-center h-full w-12 text-gray-500">
           <MagnifyingGlassIcon className="h-6 w-6" />
         </div>
@@ -28,7 +28,7 @@ const NavSearch = () => {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search something.."
+            placeholder="Search Veritas..."
           />
         </form>
       </div>
