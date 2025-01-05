@@ -55,8 +55,8 @@ export default function FakeNewsChecker() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 dark:bg-offblack">
+      <Card className="w-full max-w-2xl  dark:bg-offgray">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
             Fake News Checker
@@ -68,9 +68,13 @@ export default function FakeNewsChecker() {
               placeholder="Enter text to check..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded dark:bg-gray-700  dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400 focus:ring-blue-500 focus:border-transparent"
             />
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button
+              type="submit"
+              className="w-full  dark:bg-gray-600 dark:hover:bg-gray-500 dark: text-white"
+              disabled={isLoading}
+            >
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
