@@ -3,6 +3,7 @@ import HomeArticle from "@/components/HomeArticle";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
+
 import * as React from "react";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -83,9 +84,11 @@ export default function Home() {
       alt: "Chris Brown gets back with Rihanna and punches ASAP Wocky",
       source: "BBC",
     },
-    { src: "/dummyIMG/kanye.webp", alt: "Kanye West joins Neo Nazi Program",
+    {
+      src: "/dummyIMG/kanye.webp",
+      alt: "Kanye West joins Neo Nazi Program",
       source: "Meowkie",
-     },
+    },
   ];
 
   return (

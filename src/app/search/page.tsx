@@ -2,7 +2,6 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import MagnifyingGlassIcon from "@heroicons/react/24/outline/MagnifyingGlassIcon";
 import SearchArticle from "@/components/SearchArticle";
 import { Input } from "@/components/ui/input";
 import TestArticle from "@/components/test";
@@ -15,11 +14,11 @@ interface Article {
   published_at: Date;
   likes: number;
   source: string;
-  image_url: string;
   dislikes: number;
   views: number;
   time_added: Date;
   unique_hash?: string;
+  image_url: string;
   classification: Classification;
 }
 
@@ -34,14 +33,13 @@ function SearchContent() {
   const searchParams = useSearchParams();
   const q = searchParams.get("q"); // Extract the search query
   const router = useRouter();
-  const [searchInput, setSearchInput] = useState("");
+  const [searchInput, setSearchInput] = useState(q || "");
   const [results, setResults] = useState<Article[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (q) {
-      setSearchInput(q);
       const fetchResults = async () => {
         setLoading(true);
         setError(null);
@@ -54,8 +52,16 @@ function SearchContent() {
             )}`
           );
           if (!response.ok) throw new Error("Failed to fetch search results");
+
           const data: Article[] = await response.json();
-          setResults(data);
+
+          // Sanitize any http:// URLs in the response
+          const sanitizedData = data.map((article) => ({
+            ...article,
+            image_url: article.image_url?.replace("http://", "https://"),
+          }));
+
+          setResults(sanitizedData);
         } catch (err: any) {
           setError(err.message);
         } finally {
@@ -86,10 +92,10 @@ function SearchContent() {
           className="border-black/25 w-full dark:border-white/10 dark:bg-offgray text-sm placeholder-gray-700 dark:placeholder-gray-400"
           type="text"
           id="search"
-          value={searchInput} // Sync input field with state
-          onChange={handleInputChange} // Update state and URL on change
-          onKeyDown={handleKeyDown} // Trigger router.push only on Enter key
-          placeholder={searchInput || "Search news, terms and more"}
+          value={searchInput}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+          placeholder="Search news, terms and more"
         />
       </div>
       {/* Bottom Component */}
