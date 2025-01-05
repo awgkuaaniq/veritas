@@ -89,11 +89,11 @@ export default function ManualCheck() {
   };
 
   return (
-    <main className="bg-gray-200 h-screen">
+    <main className="bg-gray-100 dark:bg-offblack h-screen">
       {/* Input bar */}
       <div className="flex justify-center mx-auto px-2 max-w-7xl py-11">
         <Input
-          className="border-black/25"
+          className="border-black/25 dark:border-white/10 dark:bg-offgray dark:placeholder-gray-400"
           placeholder="Enter URL or content"
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
@@ -104,7 +104,7 @@ export default function ManualCheck() {
       {predictionData !== null && (
         <div className="flex max-w-7xl mx-auto h-fit justify-center items-center px-2 py-3">
           {/* Fake News Card */}
-          <div className="flex flex-col w-full h-fit p-3 gap-y-2 bg-black rounded-3xl text-white">
+          <div className="flex flex-col w-full h-fit p-3 gap-y-2 bg-black dark:bg-slate-900 rounded-3xl text-white">
             {/* Card Title */}
             <div className="flex w-full h-fit px-4 py-3 justify-center items-center">
               <h1 className="text-2xl font-bold">
@@ -134,9 +134,9 @@ export default function ManualCheck() {
       {predictionData !== null && (
         <div className="flex max-w-7xl mx-auto h-fit justify-center items-center px-2 py-3">
           {/* Feedback Form */}
-          <form
-            className="flex flex-col w-full h-fit p-3 gap-y-2 bg-black rounded-3xl text-white"
-            onSubmit={sendFeedback}
+          <form 
+          className="flex flex-col w-full h-fit p-3 gap-y-2 bg-black dark:bg-slate-900 rounded-3xl text-white"
+          onSubmit={sendFeedback}
           >
             {/* Form Title */}
             <div className="flex w-full h-fit px-4 py-3 justify-center items-center">
@@ -173,13 +173,13 @@ export default function ManualCheck() {
                 <HandThumbDownIcon className="text-black size-8" />
               </Button>
               <Input
-                className="w-1/2 h-fit text-black"
+                className="w-1/2 h-fit text-black dark:text-white"
                 placeholder="Enter your feedback here"
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
               />
               <Button
-                className="border border-gray-700 hover:bg-black hover:border-gray-900"
+                className="border border-gray-700 bg-white text-black hover:bg-gray-300"
                 type="submit"
               >
                 Submit

@@ -74,9 +74,9 @@ export default function TweetsPage() {
   );
 
   return (
-    <main className="bg-gray-200 min-h-screen">
+    <main className="bg-gray-100 dark:bg-offblack min-h-screen">
       {/* Main Container */}
-      <div className="flex flex-col mx-auto px-2 space-y-2 max-w-7xl py-11">
+      <div className="flex flex-col divide-y divide-black/15 dark:divide-offgray mx-auto px-2 max-w-7xl py-11">
         <Suspense fallback={<div>Loading tweets...</div>}>
           {tweets.map((tweet, index) => {
             if (tweets.length === index + 1) {

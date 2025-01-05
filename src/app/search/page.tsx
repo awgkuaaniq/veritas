@@ -2,8 +2,9 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import MagnifyingGlassIcon from "@heroicons/react/24/outline/MagnifyingGlassIcon";
 import SearchArticle from "@/components/SearchArticle";
+import { Input } from "@/components/ui/input";
+import TestArticle from "@/components/test";
 
 interface Article {
   _id: string;
@@ -12,10 +13,12 @@ interface Article {
   url: string;
   published_at: Date;
   likes: number;
+  source: string;
   dislikes: number;
   views: number;
   time_added: Date;
   unique_hash?: string;
+  image_url: string;
   classification: Classification;
 }
 
@@ -30,14 +33,13 @@ function SearchContent() {
   const searchParams = useSearchParams();
   const q = searchParams.get("q"); // Extract the search query
   const router = useRouter();
-  const [searchInput, setSearchInput] = useState("");
+  const [searchInput, setSearchInput] = useState(q || "");
   const [results, setResults] = useState<Article[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (q) {
-      setSearchInput(q);
       const fetchResults = async () => {
         setLoading(true);
         setError(null);
@@ -45,13 +47,21 @@ function SearchContent() {
           const response = await fetch(
             `${
               process.env.NEXT_PUBLIC_BACKEND_URL
-            }/api/get-search-article-result?search_query=${encodeURIComponent(
+            }/api/get-search-article-result/?search_query=${encodeURIComponent(
               q as string
             )}`
           );
           if (!response.ok) throw new Error("Failed to fetch search results");
+
           const data: Article[] = await response.json();
-          setResults(data);
+
+          // Sanitize any http:// URLs in the response
+          const sanitizedData = data.map((article) => ({
+            ...article,
+            image_url: article.image_url?.replace("http://", "https://"),
+          }));
+
+          setResults(sanitizedData);
         } catch (err: any) {
           setError(err.message);
         } finally {
@@ -74,27 +84,27 @@ function SearchContent() {
   };
 
   return (
-    <main className="bg-gray-200 min-h-screen">
+    <main className="bg-gray-100 min-h-screen pb-10 dark:bg-offblack">
       {/* Upper Component */}
       {/* Search Bar */}
       <div className="flex justify-center mx-auto px-2 max-w-7xl py-11">
-        <input
-          className="border-black/25 w-full text-sm text-black placeholder-gray-700"
+        <Input
+          className="border-black/25 w-full dark:border-white/10 dark:bg-offgray text-sm placeholder-gray-700 dark:placeholder-gray-400"
           type="text"
           id="search"
-          value={searchInput} // Sync input field with state
-          onChange={handleInputChange} // Update state and URL on change
-          onKeyDown={handleKeyDown} // Trigger router.push only on Enter key
-          placeholder={searchInput || "Search news, terms and more"}
+          value={searchInput}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+          placeholder="Search news, terms and more"
         />
       </div>
       {/* Bottom Component */}
-      <div className="flex flex-col space-y-5 max-w-7xl mx-auto px-2">
+      <div className="flex divide-y divide-black/15 flex-col *:py-5 max-w-7xl mx-auto px-2">
         {loading && <div>Loading...</div>}
         {error && <div style={{ color: "red" }}>{error}</div>}
         {results.length > 0 ? (
           results.map((article) => (
-            <SearchArticle key={article._id} article={article} /> // Pass article data to SearchArticle
+            <TestArticle key={article._id} article={article} /> // Pass article data to SearchArticle
           ))
         ) : (
           <div className="flex flex-col justify-items-center mx-auto items-center text-xl space-y-5">

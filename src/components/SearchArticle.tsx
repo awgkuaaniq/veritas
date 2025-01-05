@@ -1,7 +1,6 @@
 import { formatDate } from "@/utils/formatDate";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
-import { AlertOctagon } from "lucide-react";
-
+import { CodeBracketSquareIcon } from "@heroicons/react/24/solid";
 import React from "react";
 
 interface Article {
@@ -9,12 +8,14 @@ interface Article {
   title: string;
   body: string;
   url: string;
-  published_at?: Date;
+  source: string;
+  published_at: Date | string;
   likes: number;
   dislikes: number;
   views: number;
   time_added: Date;
   unique_hash?: string;
+  image_url: string;
   classification: Classification;
 }
 
@@ -26,39 +27,59 @@ interface Classification {
 
 const SearchArticle: React.FC<{ article: Article }> = ({ article }) => {
   return (
-    <div className="flex space-x-6">
+    <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
       {/* Thumbnail */}
-      <div className="flex h-60 aspect-[3/2]">
+      <div className="relative w-full sm:w-72 h-60 aspect-[3/2] overflow-hidden rounded-lg">
         <a href={`/article/${article._id}`}>
-          <img
-            className="h-full w-full rounded-lg object-cover"
-            src="/dummyIMG/kanye.webp"
-          ></img>
+          <div className="relative h-full w-full bg-gray-100 rounded-lg">
+            {article.image_url ? (
+              <img
+                className="h-full w-full object-cover rounded-lg"
+                src={article.image_url}
+                alt={article.title}
+                onError={(e) => {
+                  // Fallback if the image fails to load
+                  e.currentTarget.style.display = "none";
+                }}
+              />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg">
+                <CodeBracketSquareIcon className="w-12 h-12 text-gray-400" />
+                <span className="text-gray-600 text-xl font-bold ml-2">
+                  VERITAS
+                </span>
+              </div>
+            )}
+          </div>
         </a>
       </div>
+
       {/* Details */}
-      <a href={`/article/${article._id}`}>
-        <div className="flex flex-col space-y-1 py-2 px-4">
-          <div className="text-xl font-semibold">{article.title}</div>
-          <div className="flex space-x-5 pb-7 font-light">
-            <div>{article.views} views</div>
-            <div className="list-disc">
-              <li>
+      <div className="flex-1">
+        <a href={`/article/${article._id}`}>
+          <div className="flex flex-col space-y-2">
+            <div className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-300">
+              {article.title}
+            </div>
+            <div className="flex space-x-4 text-sm text-gray-600">
+              <div>{article.views} views</div>
+              <div>
                 {article.published_at
                   ? formatDate(article.published_at)
                   : "No date available"}
-              </li>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2 text-sm text-gray-600">
+              <UserCircleIcon className="w-5 h-5" />
+              <p>{article.source}</p>
+            </div>
+            <div className="text-sm text-gray-700">
+              {truncateText(article.body, 150)}{" "}
+              {/* Adjust maxLength as needed */}
             </div>
           </div>
-          <div className="flex space-x-2 pb-7 font-light">
-            <UserCircleIcon className="h-6 w-6" />
-            <p>AllYeezyNews</p>
-          </div>
-          <div className="text-sm font-light break-all">
-            {truncateText(article.body, 100)} {/* Adjust maxLength as needed */}
-          </div>
-        </div>
-      </a>
+        </a>
+      </div>
     </div>
   );
 };

@@ -4,7 +4,7 @@ import React from 'react'
 
 export default function TopFakeNewsSource() {
   return (
-    <Card className="flex flex-col h-full">
+    <Card className="flex flex-col h-full dark:bg-offgray">
       <CardHeader className=''>
         <CardTitle className="flex items-center justify-between gap-x-5">Top Fake News Source
             <span>
@@ -14,7 +14,7 @@ export default function TopFakeNewsSource() {
       </CardHeader>
       <CardContent>
         <p className='text-2xl font-semibold'>Reuters - 794</p>
-        <p className='text-gray-500 text-sm'>as of 30/3/2024</p>
+        <p className='text-gray-500 dark:text-gray-400 text-sm'>as of 30/3/2024</p>
       </CardContent>
       
     </Card>
