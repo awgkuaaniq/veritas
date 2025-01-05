@@ -1,4 +1,5 @@
 import { formatDate } from "@/utils/formatDate";
+import { CodeBracketSquareIcon } from "@heroicons/react/24/solid"; // Import the icon
 import React from "react";
 
 interface Article {
@@ -37,13 +38,22 @@ const TestArticle: React.FC<{ article: Article }> = ({ article }) => {
         href={`/article/${article._id}`}
         className="flex flex-wrap lg:flex-nowrap gap-6 group"
       >
-        {/* Article Image */}
+        {/* Article Image or VERITAS Logo */}
         <div className="w-full lg:w-1/3 h-48 rounded-md overflow-hidden">
-          <img
-            className="object-cover w-full h-full transition-transform group-hover:scale-105"
-            src={article.image_url}
-            alt={article.title}
-          />
+          {article.image_url ? (
+            <img
+              className="object-cover w-full h-full transition-transform group-hover:scale-105"
+              src={article.image_url}
+              alt={article.title}
+            />
+          ) : (
+            <div className="flex items-center justify-center w-full h-full bg-gray-100">
+              <a href=".." className="flex items-center justify-center">
+                <CodeBracketSquareIcon className="size-12 text-black mr-2" />
+                <span className="text-black text-xl font-bold">VERITAS</span>
+              </a>
+            </div>
+          )}
         </div>
 
         {/* Article Content */}
