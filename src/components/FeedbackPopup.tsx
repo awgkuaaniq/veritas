@@ -64,10 +64,11 @@ const FeedbackPopup = ({
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
       <DialogBackdrop
         transition
-        className="fixed inset-0 bg-black/30 w-screen"
+        className="fixed inset-0 bg-black/50 w-screen"
       />
       <div className="fixed inset-0 flex flex-col items-center justify-center">
-        <DialogPanel className="fixed bg-white rounded border-black/25 border">
+      <DialogPanel className="fixed bg-white dark:bg-offblack rounded-lg dark:border-white/10 border-black/25 border shadow-md">
+        
           <div className="px-16 py-10">
             <DialogTitle className="font-semibold text-2xl">
               Feedback
@@ -81,18 +82,18 @@ const FeedbackPopup = ({
             </p>
           </div>
           <div className="flex items-center justify-between py-3 px-16">
-            <Rating
-              classes={{ icon: "mx-8" }}
-              size="large"
-              defaultValue={3}
-              value={rating}
-              onChange={(e, newValue) => setRating(newValue)}
+            <Rating 
+            classes={{icon: 'mx-8 dark:text-yellow-500'}}
+            size="large"
+            defaultValue={3}
+            value={rating}
+            onChange={(e, newValue) => setRating(newValue)}
             />
           </div>
           <div className="flex flex-col items-center py-3 px-16">
             <Textarea
-              className={`h-36 text-start ${
-                error ? "border-red-500 focus:ring-red-500" : "border-gray-300"
+              className={`h-36 text-start border shadow-lg dark:bg-offgray ${
+                error ? "border-red-500 focus:ring-red-500" : "dark:border-offblack border-black/15"
               }`}
               placeholder="Please give us your opinion. Your feedback is valuable to us."
               value={body}

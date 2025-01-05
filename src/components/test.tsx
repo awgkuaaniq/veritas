@@ -1,5 +1,4 @@
 import { formatDate } from "@/utils/formatDate";
-import { CodeBracketSquareIcon } from "@heroicons/react/24/solid"; // Import the icon
 import React from "react";
 
 interface Article {
@@ -7,11 +6,9 @@ interface Article {
   title: string;
   body: string;
   url: string;
-  source: string;
   published_at: Date | string;
   likes: number;
   dislikes: number;
-  source: string;
   views: number;
   time_added: Date;
   unique_hash?: string;
@@ -25,11 +22,7 @@ interface Classification {
   hasBeenChecked: boolean;
 }
 
-interface HomeArticleProps {
-  article: Article;
-}
-
-const HomeArticle: React.FC<HomeArticleProps> = ({ article }) => {
+const TestArticle: React.FC<{ article: Article }> = ({ article }) => {
   // Truncate the article body at the first full stop
   const truncateBody = (body: string): string => {
     const firstFullStopIndex = body.indexOf(".");
@@ -39,15 +32,13 @@ const HomeArticle: React.FC<HomeArticleProps> = ({ article }) => {
   };
 
   return (
-    <article className="flex flex-col h-full w-full">
+    <article className="hover:bg-gray-200 dark:hover:bg-offgray">
       <a
         href={`/article/${article._id}`}
-        className="flex flex-col h-full group"
+        className="flex flex-wrap lg:flex-nowrap gap-6 group"
       >
         {/* Article Image */}
-        <div className="relative rounded-md overflow-hidden h-48">
-          {" "}
-          {/* Adjusted to a smaller height */}
+        <div className="w-full lg:w-1/3 h-48 rounded-md overflow-hidden">
           <img
             className="object-cover w-full h-full transition-transform group-hover:scale-105"
             src={article.image_url}
@@ -56,12 +47,16 @@ const HomeArticle: React.FC<HomeArticleProps> = ({ article }) => {
         </div>
 
         {/* Article Content */}
-        <div className="flex-1 mt-4">
-          <h3 className="text-xl font-base group-hover:text-blue-600 mb-2">
+        <div className="flex-1">
+          <h3 className="text-xl font-bold group-hover:text-blue-600 mb-2">
             {article.title}
           </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 uppercase mb-4">
-            {article.source}
+
+          <p className="text-base text-gray-700 dark:text-gray-400 mb-4">
+            {truncateBody(article.body)}
+          </p>
+          <p className="text-sm text-gray-600 dark:text-gray-500">
+            {formatDate(article.published_at)}
           </p>
         </div>
       </a>
@@ -69,4 +64,4 @@ const HomeArticle: React.FC<HomeArticleProps> = ({ article }) => {
   );
 };
 
-export default HomeArticle;
+export default TestArticle;

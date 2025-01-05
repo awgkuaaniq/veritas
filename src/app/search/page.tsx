@@ -3,6 +3,8 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import SearchArticle from "@/components/SearchArticle";
+import { Input } from "@/components/ui/input";
+import TestArticle from "@/components/test";
 
 interface Article {
   _id: string;
@@ -12,6 +14,8 @@ interface Article {
   url: string;
   published_at: Date;
   likes: number;
+  source: string;
+  image_url: string;
   dislikes: number;
   views: number;
   time_added: Date;
@@ -42,12 +46,13 @@ function SearchContent() {
         setLoading(true);
         setError(null);
         try {
-          const fetchUrl = `${
-            process.env.NEXT_PUBLIC_BACKEND_URL
-          }/api/get-search-article-result/?search_query=${encodeURIComponent(
-            q
-          )}`;
-          const response = await fetch(fetchUrl);
+          const response = await fetch(
+            `${
+              process.env.NEXT_PUBLIC_BACKEND_URL
+            }/api/get-search-article-result/?search_query=${encodeURIComponent(
+              q as string
+            )}`
+          );
           if (!response.ok) throw new Error("Failed to fetch search results");
 
           const data: Article[] = await response.json();
@@ -81,11 +86,12 @@ function SearchContent() {
   };
 
   return (
-    <main className="bg-gray-200 min-h-screen">
+    <main className="bg-gray-100 min-h-screen pb-10 dark:bg-offblack">
+      {/* Upper Component */}
       {/* Search Bar */}
       <div className="flex justify-center mx-auto px-2 max-w-7xl py-11">
-        <input
-          className="border-black/25 w-full text-sm text-black placeholder-gray-700"
+        <Input
+          className="border-black/25 w-full dark:border-white/10 dark:bg-offgray text-sm placeholder-gray-700 dark:placeholder-gray-400"
           type="text"
           id="search"
           value={searchInput}
@@ -94,14 +100,13 @@ function SearchContent() {
           placeholder="Search news, terms and more"
         />
       </div>
-
-      {/* Search Results */}
-      <div className="flex flex-col space-y-5 max-w-7xl mx-auto px-2">
+      {/* Bottom Component */}
+      <div className="flex divide-y divide-black/15 flex-col *:py-5 max-w-7xl mx-auto px-2">
         {loading && <div>Loading...</div>}
         {error && <div style={{ color: "red" }}>{error}</div>}
         {results.length > 0 ? (
           results.map((article) => (
-            <SearchArticle key={article._id} article={article} />
+            <TestArticle key={article._id} article={article} /> // Pass article data to SearchArticle
           ))
         ) : (
           <div className="flex flex-col justify-items-center mx-auto items-center text-xl space-y-5">

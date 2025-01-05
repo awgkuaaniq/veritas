@@ -36,7 +36,7 @@ export default function TrendingKeywords() {
     fetchKeywords();
   }, []);
   return (
-    <Card className="flex flex-col h-full">
+    <Card className="flex flex-col h-full dark:bg-offgray">
       <CardHeader>
         <CardTitle className="">Trending Keywords</CardTitle>
       </CardHeader>
@@ -48,7 +48,7 @@ export default function TrendingKeywords() {
             .map((keyword, index) => (
               <div key={index}>
                 <p>{keyword.keyword}</p>
-                <p className="text-gray-500 font-normal text-sm">
+                <p className="text-gray-500 dark:text-gray-400 font-normal text-sm">
                   {keyword.total_count} mentioned
                 </p>
               </div>
@@ -62,7 +62,7 @@ export default function TrendingKeywords() {
             .map((keyword, index) => (
               <div key={index}>
                 <p>{keyword.keyword}</p>
-                <p className="text-gray-500 font-normal text-sm">
+                <p className="text-gray-500 dark:text-gray-400 font-normal text-sm">
                   {keyword.total_count} mentioned
                 </p>
               </div>

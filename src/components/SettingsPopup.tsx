@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { requestForToken } from "../../firebase";
 import axios from "axios";
 import { getMessaging, deleteToken } from "firebase/messaging";
+import { useTheme } from "@/context/ThemeContext";
 
 const SettingsPopup = ({
   isOpen,
@@ -22,7 +23,13 @@ const SettingsPopup = ({
 }) => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  // Initialize theme from localStorage
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    if (typeof window !== "undefined") {
+      return (localStorage.getItem("theme") as "light" | "dark") || "light";
+    }
+    return "light";
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [uniqueVisitorId, setUniqueVisitorId] = useState<string | null>(null);
   const [existingToken, setExistingToken] = useState<string | null>(null);
@@ -42,9 +49,9 @@ const SettingsPopup = ({
         const preferenceResponse = await axios.get(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/preference/${uniqueVisitorId}`
         );
-        const { theme, notification, token } = preferenceResponse.data;
+        const { notification, token } = preferenceResponse.data;
 
-        setTheme(theme);
+        // Only update notification and token, not theme
         setNotificationsEnabled(notification);
         setExistingToken(token);
       } catch (err) {
@@ -76,6 +83,9 @@ const SettingsPopup = ({
     setIsLoading(true);
 
     try {
+      // Update theme in local storage and document class
+      localStorage.setItem("theme", theme);
+      document.documentElement.classList.toggle("dark", theme === "dark");
       // First handle notification permission if it's being enabled
       if (notificationsEnabled) {
         if (!("serviceWorker" in navigator)) {
@@ -182,10 +192,10 @@ const SettingsPopup = ({
     <Dialog open={isOpen} onClose={handleClose} className="relative z-50">
       <DialogBackdrop
         transition
-        className="fixed inset-0 bg-black/30 w-screen"
+        className="fixed inset-0 bg-black/50 w-screen"
       />
       <div className="fixed inset-0 flex flex-col items-center justify-center">
-        <DialogPanel className="fixed bg-white rounded border-black/25 border">
+        <DialogPanel className="fixed bg-white dark:bg-offblack rounded-lg border-black/25 dark:border-white/10 border shadow-md">
           <div className="px-16 py-12">
             <DialogTitle className="font-semibold text-2xl">
               Settings

@@ -39,7 +39,11 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
     return (
       <div
         ref={ref}
-        className="flex flex-col h-fit w-full shadow-md border border-black/30 bg-white rounded-xl"
+        className={`flex flex-col h-fit w-full ${
+          showInfo
+            ? "bg-gray-200 dark:bg-offgray shadow"
+            : ""
+        }transition-colors hover:bg-gray-200 dark:hover:bg-offgray ease-out duration-150`}
       >
         {/* Tweet */}
         <div className="flex min-h-28 h-fit">
@@ -61,10 +65,12 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
                 {/* name  */}
                 <p className="font-semibold">{tweet.name}</p>
                 {/* username  */}
-                <p className="font-light text-gray-700">@{tweet.username}</p>
+                <p className="font-light text-gray-700 dark:text-gray-400">
+                  @{tweet.username}
+                </p>
               </div>
               {/* datetime  */}
-              <div className="flex space-x-2.5 items-center w-fit h-fit font-light text-gray-700">
+              <div className="flex space-x-2.5 items-center w-fit h-fit font-light text-gray-700 dark:text-gray-400">
                 {/* formatted date and time */}
                 <p>{formattedDate}</p>
               </div>
@@ -77,7 +83,9 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
             <div className="flex p-2.5 justify-between content-end w-full h-full">
               <button
                 className={`rounded-full p-2 ${
-                  showInfo ? "bg-gray-300" : "hover:bg-gray-200"
+                  showInfo
+                    ? "bg-gray-300 dark:bg-sage"
+                    : "hover:bg-gray-300 dark:hover:bg-sage transition-colors ease-out duration-150"
                 }`}
                 onClick={toggleInfo}
                 title="Crosschecking Sources"
@@ -85,18 +93,8 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
                 <InformationCircleIcon className="w-6 h-6" />
               </button>
               <div className="flex space-x-5">
-                {tweet.article_url && (
-                  <a
-                    className="hover:bg-gray-200 rounded-full p-2"
-                    title="Embedded Article URL"
-                    href={tweet.article_url}
-                    target="_blank"
-                  >
-                    <NewspaperIcon className="h-6 w-6" />
-                  </a>
-                )}
                 <a
-                  className="hover:bg-gray-200 rounded-full p-2"
+                  className="hover:bg-gray-300 rounded-full p-2 dark:hover:bg-sage transition-colors ease-out duration-150"
                   title="Tweet URL"
                   href={tweet.tweet_url}
                   target="_blank"
@@ -109,17 +107,17 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
         </div>
         {/* Tweet Info  */}
         {showInfo && tweet.crosscheck && (
-          <div className="flex flex-col py-4 justify-center items-center px-20 w-full border-black/30 rounded-b-lg h-fit">
+          <div className="flex flex-col pb-8 justify-center items-center md:px-20 w-full h-fit">
             {/* Card  */}
-            <div className="flex flex-col border border-black/30 rounded-3xl w-full border-black/30">
+            <div className="flex flex-col shadow-2xl rounded-3xl w-full">
               {/* Info Header  */}
-              <div className="flex w-full justify-center rounded-t-3xl py-2.5 h-fit px-2.5 mx-auto bg-gray-100">
+              <div className="flex w-full justify-center rounded-t-3xl py-2.5 h-fit px-2.5 mx-auto bg-gray-100 dark:bg-offblack">
                 {/* Source  */}
                 <p className="font-semibold">Source</p>
               </div>
               {/* Info Body  */}
               <div className="flex w-full h-fit p-2.5">
-                <div className="flex w-full h-fit p-3 gap-x-3 items-center">
+                <div className="md:flex-row flex flex-col w-full h-fit p-3 gap-x-3 items-center">
                   <h1
                     className="text-xl text-nowrap font-semibold"
                     title="How similar the tweet is to the source"
@@ -131,7 +129,7 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
                   </h1>
                   <div className="flex flex-col">
                     <a
-                      className="text-base font-semibold w-full text-blue-500"
+                      className="text-base font-semibold w-full hover:text-sky-600"
                       href={tweet.crosscheck.source}
                     >
                       {tweet.crosscheck.title}
