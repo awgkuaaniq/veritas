@@ -150,7 +150,7 @@ export default function AboutPage() {
             Contact Us
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 mb-4">
-            Have any questions or feedback? We'd love to hear from you! Reach
+            Have any questions or feedback? We&apos;d love to hear from you! Reach
             out to us through our feedback form.
           </p>
           <p className="text-xl text-gray-600 dark:text-gray-300">
