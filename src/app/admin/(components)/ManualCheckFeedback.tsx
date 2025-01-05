@@ -31,7 +31,7 @@ export default function Home({ params }: any) {
   }, []);
 
   return (
-    <Card className="flex flex-col h-full">
+    <Card className="flex flex-col h-full  dark:bg-offgray">
       <CardHeader>
         <CardTitle className="text-xl font-bold">
           Manual Check Feedback
