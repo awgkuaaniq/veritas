@@ -62,7 +62,7 @@ export default function AddArticle() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles/ui`,
         {
           method: "POST",
           body: formPayload,
