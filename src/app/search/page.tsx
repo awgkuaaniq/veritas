@@ -10,12 +10,10 @@ interface Article {
   _id: string;
   title: string;
   body: string;
-  source: string;
   url: string;
   published_at: Date;
   likes: number;
   source: string;
-  image_url: string;
   dislikes: number;
   views: number;
   time_added: Date;
