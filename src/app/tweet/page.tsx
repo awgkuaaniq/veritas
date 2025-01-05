@@ -74,7 +74,7 @@ export default function TweetsPage() {
   );
 
   return (
-    <main className="bg-gray-100 min-h-screen">
+    <main className="bg-gray-100 dark:bg-gray-950 min-h-screen">
       {/* Main Container */}
       <div className="flex flex-col mx-auto px-2 space-y-2 max-w-7xl py-11">
         <Suspense fallback={<div>Loading tweets...</div>}>

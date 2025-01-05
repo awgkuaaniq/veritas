@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import MagnifyingGlassIcon from "@heroicons/react/24/outline/MagnifyingGlassIcon";
 import SearchArticle from "@/components/SearchArticle";
+import { Input } from "@/components/ui/input";
 
 interface Article {
   _id: string;
@@ -74,12 +75,12 @@ function SearchContent() {
   };
 
   return (
-    <main className="bg-gray-100 min-h-screen">
+    <main className="bg-gray-100 min-h-screen dark:bg-gray-950">
       {/* Upper Component */}
       {/* Search Bar */}
       <div className="flex justify-center mx-auto px-2 max-w-7xl py-11">
-        <input
-          className="border-black/25 w-full text-sm text-black placeholder-gray-700"
+        <Input
+          className="border-black/25 w-full dark:border-white/10 dark:bg-slate-900 text-sm placeholder-gray-700"
           type="text"
           id="search"
           value={searchInput} // Sync input field with state

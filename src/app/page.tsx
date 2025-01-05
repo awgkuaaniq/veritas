@@ -89,7 +89,7 @@ export default function Home() {
   ];
 
   return (
-    <main className="bg-gray-100 min-h-screen py-10">
+    <main className="bg-gray-100 dark:bg-gray-950 min-h-screen py-10">
       <div className="grid grid-cols-1 lg:grid-cols-12 divide-x divide-black/15 gap-3 max-w-screen-xl px-4 border-b border-black/15 mx-auto">
         {/* Left Side Articles */}
         <div className="lg:col-span-3 [&>*:last-child]:pt-3 divide-y divide-black/15 flex flex-col gap-3">

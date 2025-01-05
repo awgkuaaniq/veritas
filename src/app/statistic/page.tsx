@@ -15,7 +15,7 @@ import VolumeFakeNews from "./(components)/VolumeFakeNews";
 
 export default function StatisticsPage() {
   return (
-    <main className="bg-gray-100">
+    <main className="bg-gray-100 dark:bg-gray-950">
       {/* Main Container */}
       <div className="flex flex-col mx-auto px-2 max-w-7xl py-11">
         {/* Grid Container */}

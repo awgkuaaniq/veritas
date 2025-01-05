@@ -3,7 +3,10 @@ import { Inter } from "next/font/google";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+
+import { ThemeProvider } from "@/context/ThemeContext";
 import { UserProvider } from "@auth0/nextjs-auth0/client"; // Import UserProvider
+
 
 const inter = Inter({ subsets: ["latin"] });
 const poppins = Poppins({
@@ -23,13 +26,28 @@ export default function RootLayout({
 }>) {
   return (
     <html className="overflow-y-scroll" lang="en">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                let theme = localStorage.getItem('theme');
+                if (!theme) theme = 'light';
+                document.documentElement.classList.add(theme);
+              } catch (e) {}
+            `,
+          }}
+        />
+      </head>
       <body className={poppins.className}>
-        <UserProvider>
+        <ThemeProvider>
+          <UserProvider>
           {" "}
           {/* Wrap the entire app with UserProvider */}
           <Navbar />
           {children}
         </UserProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

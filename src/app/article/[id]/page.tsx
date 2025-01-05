@@ -229,7 +229,7 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
   };
 
   return (
-    <main className="bg-gray-100 py-8">
+    <main className="bg-gray-100 py-8 dark:bg-gray-950">
       <div className="flex flex-col mx-auto px-4 max-w-4xl overflow-hidden">
         {/* Article Title */}
         <h1 className="text-4xl font-semibold text-gray-800 py-6">
@@ -249,7 +249,7 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
 
         {/* Article AI Check and Thumbnail */}
         <div className="py-6">
-          <div className="flex justify-between bg-black text-white items-center max-w-4xl text-2xl font-bold py-4 px-5 rounded-3xl max-w-4xl mx-auto">
+          <div className="flex justify-between bg-black dark:bg-slate-900 text-white items-center text-2xl font-bold py-4 px-5 rounded-3xl max-w-4xl mx-auto">
             <h1>
               {Math.round((article?.classification?.probability ?? 0) * 100)}%
             </h1>
@@ -259,7 +259,9 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
               <Button
                 onClick={() => handleLikeDislike("like")}
                 className={`rounded-full aspect-square h-fit p-1 ${
-                  hasLiked ? "bg-green-700" : "bg-green-500 hover:bg-green-700"
+                  hasLiked
+                    ? "bg-green-700 hover:bg-green-900"
+                    : "bg-green-500 hover:bg-green-700"
                 }`}
               >
                 <HandThumbUpIcon className="text-black size-8" />
@@ -267,7 +269,9 @@ export default function ArticleDetail({ params }: { params: { id: string } }) {
               <Button
                 onClick={() => handleLikeDislike("dislike")}
                 className={`rounded-full aspect-square h-fit p-1 ${
-                  hasDisliked ? "bg-red-700" : "bg-red-500 hover:bg-red-700"
+                  hasDisliked
+                    ? "bg-red-700 hover:bg-red-900"
+                    : "bg-red-500 hover:bg-red-700"
                 }`}
               >
                 <HandThumbDownIcon className="text-black size-8" />

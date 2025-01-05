@@ -64,15 +64,15 @@ export default function VolumeFakeNews() {
         )}
       </CardContent>
       <CardFooter>
-        <div className="mt-4 flex space-x-2">
+        <div className="mt-4 flex space-x-8 w-full justify-center">
           {["day", "week", "month", "6months"].map((range) => (
             <button
               key={range}
-              className={`px-4 py-2 rounded-lg font-medium text-sm ${
+              className={`px-4 py-2 rounded-2xl shadow-md border font-medium text-sm ${
                 granularity === range
-                  ? "bg-blue-600 text-white border border-blue-700"
-                  : "bg-gray-200 text-gray-700 border border-gray-300"
-              } hover:bg-blue-500 hover:text-white transition-colors`}
+                  ? "bg-gray-400 text-white dark:bg-slate-500"
+                  : "bg-gray-200 dark:bg-slate-800"
+              } hover:bg-gray-400 dark:hover:bg-slate-500 hover:text-white transition-colors ease-out duration-150`}
               onClick={() => setGranularity(range)} // Update granularity state
             >
               {range.charAt(0).toUpperCase() + range.slice(1)}{" "}
