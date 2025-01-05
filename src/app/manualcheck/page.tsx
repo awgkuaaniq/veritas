@@ -68,11 +68,11 @@ export default function FakeNewsChecker() {
               placeholder="Enter text to check..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              className="w-full p-2 border rounded dark:bg-gray-700  dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400 focus:ring-blue-500 focus:border-transparent"
+              className="w-full p-2 border rounded dark:bg-gray-700  dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-200 focus:ring-blue-500 focus:border-transparent"
             />
             <Button
               type="submit"
-              className="w-full  dark:bg-gray-600 dark:hover:bg-gray-500 dark: text-white"
+              className="w-full  dark:bg-gray-600 dark:hover:bg-gray-500 dark: text-gray-200"
               disabled={isLoading}
             >
               {isLoading ? (
