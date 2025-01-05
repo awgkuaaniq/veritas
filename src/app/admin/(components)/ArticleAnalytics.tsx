@@ -46,15 +46,16 @@ export default function Home({ params }: any) {
   }, []);
 
   return (
-    <Card className="flex flex-col h-full">
+    <Card className="flex flex-col h-full  dark:bg-offgray">
       <CardHeader>
         <CardTitle className="text-xl font-bold flex justify-between items-center">
           <span>Article Analytics</span>
           <a
             href="/addArticle"
-            className="flex items-center px-3 py-1 text-gray-600 text-sm rounded-md border border-gray-300 hover:bg-gray-100"
+            className="flex items-center px-3 py-1 text-gray-700 text-sm rounded-md border border-gray-300 hover:bg-gray-100 transition-colors duration-200 ease-in-out
+                 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700/50 dark:bg-gray-800/30"
           >
-            <PlusIcon className="w-4 h-4 mr-2" />
+            <PlusIcon className="w-4 h-4 mr-2 dark:text-gray-300" />
             Add Article
           </a>
         </CardTitle>
