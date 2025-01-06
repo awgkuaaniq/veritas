@@ -47,9 +47,7 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
       <div
         ref={ref}
         className={`flex flex-col h-fit w-full ${
-          showInfo
-            ? "bg-gray-200 dark:bg-offgray shadow"
-            : ""
+          showInfo ? "bg-gray-200 dark:bg-offgray shadow" : ""
         }transition-colors hover:bg-gray-200 dark:hover:bg-offgray ease-out duration-150`}
       >
         {/* Tweet */}
@@ -138,6 +136,7 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
                     <a
                       className="text-base font-semibold w-full hover:text-sky-600"
                       href={tweet.crosscheck.source}
+                      target="_blank"
                     >
                       {tweet.crosscheck.title}
                     </a>
