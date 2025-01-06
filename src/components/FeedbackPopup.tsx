@@ -68,8 +68,8 @@ const FeedbackPopup = ({
         className="fixed inset-0 bg-black/50 w-screen"
       />
       <div className="fixed inset-0 flex flex-col items-center justify-center">
-        <DialogPanel className="fixed bg-white dark:bg-offblack rounded-lg dark:border-white/10 border-black/25 border shadow-md">
-          <div className="flex px-16 py-10 justify-between">
+        <DialogPanel className="flex flex-col justify-center bg-white dark:bg-offblack rounded-lg dark:border-white/10 border-black/25 border sm:h-fit sm:w-fit w-screen h-screen shadow-md">
+          <div className="flex px-6 sm:px-16 py-8 sm:py-10 justify-between">
             <DialogTitle className="font-semibold text-2xl">
               Feedback
             </DialogTitle>
@@ -80,9 +80,9 @@ const FeedbackPopup = ({
               <XMarkIcon className="h-6" />
             </button>
           </div>
-          <div className="flex flex-col py-2.5 px-16 space-y-2">
+          <div className="flex flex-col py-2.5 px-6 sm:text-start text-center sm:px-16 space-y-2">
             <p className="font-semibold">How was your experience?</p>
-            <p className="max-w-[482px] font-light text-sm">
+            <p className="max-w-[482px] font-light sm:text-start text-center text-sm">
               Please feel free to share with us your experience using our
               website. Our admins will improve the website upon your feedback.
             </p>
@@ -96,7 +96,7 @@ const FeedbackPopup = ({
               onChange={(e, newValue) => setRating(newValue)}
             />
           </div>
-          <div className="flex flex-col items-center py-3 px-16">
+          <div className="flex flex-col items-center py-3 px-6 sm:px-16">
             <Textarea
               className={`h-36 text-start border shadow-lg dark:bg-offgray ${
                 error
@@ -111,7 +111,7 @@ const FeedbackPopup = ({
               <p className="flex pt-3 text-red-500 text-sm w-fit">{error}</p>
             )}
           </div>
-          <div className="flex flex-col px-16 pt-3 pb-12 w-full">
+          <div className="flex flex-col px-6 sm:px-16 pt-3 pb-12 w-full">
             <Button
               className="w-full hover:scale-105 transition ease-out duration-150"
               onClick={handleSubmit}
