@@ -11,19 +11,9 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-const messaging = async () => {
-  const supported = await isSupported();
-  console.log("Is messaging supported:", supported);
-  return supported && getMessaging(app);
-};
+const messaging = firebase.messaging();
 
-const messagingInstance = await messaging();
-if (!messagingInstance) {
-  console.log("Messaging is not supported.");
-  return null;
-}
-
-messagingInstance.onBackgroundMessage(function (payload) {
+messaging.onBackgroundMessage(function (payload) {
   console.log(
     "[firebase-messaging-sw.js] Received background message ",
     payload
