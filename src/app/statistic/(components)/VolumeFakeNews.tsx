@@ -64,11 +64,11 @@ export default function VolumeFakeNews() {
         )}
       </CardContent>
       <CardFooter>
-        <div className="mt-4 flex space-x-8 w-full justify-center">
+        <div className="mt-4 flex sm:space-x-8 justify-between w-full sm:justify-center">
           {["day", "week", "month", "6months"].map((range) => (
             <button
               key={range}
-              className={`px-4 py-2 rounded-2xl shadow-md border font-medium text-sm ${
+              className={`px-4 py-2 rounded-2xl shadow-md border font-medium text-xs sm:text-sm ${
                 granularity === range
                   ? "bg-gray-400 text-white dark:bg-slate-800"
                   : "bg-gray-200 dark:bg-offblack"
