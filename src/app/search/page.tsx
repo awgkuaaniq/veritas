@@ -4,7 +4,6 @@ import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import SearchArticle from "@/components/SearchArticle";
 import { Input } from "@/components/ui/input";
-import TestArticle from "@/components/test";
 
 interface Article {
   _id: string;
@@ -104,7 +103,7 @@ function SearchContent() {
         {error && <div style={{ color: "red" }}>{error}</div>}
         {results.length > 0 ? (
           results.map((article) => (
-            <TestArticle key={article._id} article={article} /> // Pass article data to SearchArticle
+            <SearchArticle key={article._id} article={article} /> // Pass article data to SearchArticle
           ))
         ) : (
           <div className="flex flex-col justify-items-center mx-auto items-center text-xl space-y-5">
