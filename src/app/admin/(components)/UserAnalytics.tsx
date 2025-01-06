@@ -15,8 +15,15 @@ interface VisitorData {
   previousWeek: number;
 }
 
+// Define the type for search trends
+interface SearchTrend {
+  _id: string; // The search query
+  total_count: number; // The total number of searches for this query
+}
+
 export default function UserAnalytics() {
   const [visitorData, setVisitorData] = useState<VisitorData | null>(null);
+  const [searchTrends, setSearchTrends] = useState<SearchTrend[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -45,13 +52,15 @@ export default function UserAnalytics() {
     }).length;
   };
 
+  // Fetch visitor data and search trends
   useEffect(() => {
-    const fetchVisitorData = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(
+        // Fetch visitor data
+        const visitorResponse = await axios.get(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/unique-visitor-count`
         );
-        const visitors: Visitor[] = response.data;
+        const visitors: Visitor[] = visitorResponse.data;
 
         // Get the current week range
         const now = new Date();
@@ -81,16 +90,23 @@ export default function UserAnalytics() {
           currentWeek: currentWeekVisitors,
           previousWeek: previousWeekVisitors,
         });
+
+        // Fetch search trends
+        const searchTrendsResponse = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/searches`
+        );
+        setSearchTrends(searchTrendsResponse.data);
+
         setError(null); // Clear any previous errors
       } catch (error) {
-        console.error("Error fetching visitor data:", error);
-        setError("Failed to fetch visitor data. Please try again later.");
+        console.error("Error fetching data:", error);
+        setError("Failed to fetch data. Please try again later.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchVisitorData();
+    fetchData();
   }, []);
 
   // Calculate the percentage change in visitors
@@ -164,8 +180,9 @@ export default function UserAnalytics() {
         </div>
 
         {/* Search Trends Section */}
-        <div className="flex flex-col gap-4 border p-4 rounded-lg shadow-sm bg-white dark:bg-gray-800/50 dark:border-gray-700">
-          <div className="flex items-center gap-4">
+        <div className="flex gap-4 border p-4 rounded-lg shadow-sm bg-white dark:bg-gray-800/50 dark:border-gray-700">
+          {/* Left Side: Icon and Title */}
+          <div className="flex flex-col items-center gap-2">
             <div className="flex items-center justify-center w-16 h-16 rounded-full dark:bg-gray-700">
               <img
                 src="/Trends.svg"
@@ -177,9 +194,32 @@ export default function UserAnalytics() {
               Search Trends
             </p>
           </div>
-          <ul className="pl-6 list-disc space-y-1 dark:text-gray-300">
-            {/* Placeholder for search trends */}
-            <li className="text-sm font-medium">No data available</li>
+
+          {/* Right Side: Vertical List of Keywords */}
+          <ul className="flex-1 space-y-2 dark:text-gray-300">
+            {loading ? (
+              <li className="text-sm font-medium">Loading...</li>
+            ) : error ? (
+              <li className="text-sm font-medium text-red-500 dark:text-red-400">
+                {error}
+              </li>
+            ) : searchTrends.length > 0 ? (
+              searchTrends.map((trend, index) => (
+                <li key={index} className="text-sm font-medium">
+                  <a
+                    href={`/search?q=${encodeURIComponent(trend._id)}`}
+                    className="hover:underline hover:scale-105 transition-all ease-out duration-150"
+                  >
+                    {trend._id}
+                  </a>
+                  <span className="text-gray-500 dark:text-gray-400 ml-2">
+                    ({trend.total_count} searches)
+                  </span>
+                </li>
+              ))
+            ) : (
+              <li className="text-sm font-medium">No data available</li>
+            )}
           </ul>
         </div>
 
