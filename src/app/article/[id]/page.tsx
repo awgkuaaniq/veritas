@@ -1,312 +1,164 @@
-"use client";
+import { Suspense } from "react";
+import { notFound } from "next/navigation";
+import Image from "next/image";
+import { format } from "date-fns";
+import { ArrowUpRightFromSquare, ThumbsDown, ThumbsUp } from "lucide-react";
+import { cookies } from "next/headers";
 
-import LikeDislikeBar from "@/components/LikeDislikeBar";
-import { Button } from "@/components/ui/button";
 import {
-  HandThumbDownIcon,
-  HandThumbUpIcon,
-} from "@heroicons/react/24/outline";
-import { useEffect, useState, useRef } from "react";
-import axios from "axios";
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import RelevantArticle from "@/components/RelevantArticle";
+import LikeDislikeButtons from "@/components/LikeDislikeButtons";
 
-type Article = {
-  _id: string;
-  title: string;
-  body: string;
-  url: string;
-  published_at?: Date;
-  likes: number;
-  source: string;
-  dislikes: number;
-  views: number;
-  image_url: string;
-  time_added: Date;
-  unique_hash?: string;
-  classification: Classification;
-};
+async function getArticle(id: string) {
+  // Fetch article data with cache busting
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles/${id}?_=${Date.now()}`,
+    { next: { revalidate: 60 } }
+  );
+  if (!res.ok) {
+    throw new Error("Failed to fetch article");
+  }
+  const article = await res.json();
 
-type Classification = {
-  category: string;
-  probability: number;
-  hasBeenChecked: boolean;
-};
+  // Use an absolute URL for the /api/get-cookie endpoint
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
-export default function ArticleDetail({ params }: { params: { id: string } }) {
-  const [article, setArticle] = useState<Article | null>(null); // State for fetched article
-  const [isLoading, setIsLoading] = useState(true); // State for loading indicator
-  const [error, setError] = useState<string | null>(null); // State for any error
-  const [isCookieLoading, setIsCookieLoading] = useState(false);
-  const { id } = params; // Dynamic article ID from the route
-  const [hasLiked, setHasLiked] = useState(false);
-  const [hasDisliked, setHasDisliked] = useState(false);
+  // Check if the user has already viewed this article
+  const viewCookieRes = await fetch(
+    `${baseUrl}/api/get-cookie?type=view&articleId=${id}`
+  );
+  const viewCookieData = await viewCookieRes.json();
+  const hasViewed =
+    viewCookieData.hasInteracted || viewCookieData.articleId?.includes(id);
 
-  const hasIncremented = useRef(false);
+  // Increment view count only if the user hasn't viewed the article yet
+  if (!hasViewed) {
+    await fetch(`${baseUrl}/api/set-cookie`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ articleId: id, type: "view" }),
+    });
 
-  useEffect(() => {
-    const fetchArticle = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/articles/${id}`
-        );
-
-        if (response.data) {
-          setArticle(response.data);
-        } else {
-          throw new Error("Article not found.");
-        }
-      } catch (err) {
-        // Type guard to handle different error types
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("An unknown error occurred");
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchArticle();
-  }, [id]);
-
-  useEffect(() => {
-    if (id && !hasIncremented.current) {
-      setIsCookieLoading(true);
-      manageCookieForType("view", id).finally(() => {
-        setIsCookieLoading(false);
-        hasIncremented.current = true; // Ensure this logic only runs once
-      });
-    }
-  }, [id]);
-
-  useEffect(() => {
-    const checkLikesDislikes = async () => {
-      const liked = await checkCookieStatus("like", id);
-      const disliked = await checkCookieStatus("dislike", id);
-
-      setHasLiked(liked);
-      setHasDisliked(disliked);
-    };
-
-    checkLikesDislikes();
-  }, [id]);
-
-  // Separate function to only check cookie status without setting
-  async function checkCookieStatus(
-    type: "like" | "dislike",
-    articleId: string
-  ) {
-    try {
-      const res = await fetch(`/api/get-cookie?type=${type}`);
-      const data = await res.json();
-      const interactedArticles = data.articleId
-        ? data.articleId.split(",")
-        : [];
-      return interactedArticles.includes(articleId);
-    } catch (err) {
-      console.error(`Error checking cookie for ${type}:`, err);
-      return false;
-    }
+    // Increment the view count locally (optional, if you want immediate UI feedback)
+    article.views += 1;
   }
 
-  if (isCookieLoading) return <div>Processing cookies...</div>;
-  if (isLoading) return <div>Loading article...</div>;
-  if (error) return <div>Error fetching article.</div>;
+  return article;
+}
 
-  // Function to handle like/dislike actions
-  const handleLikeDislike = async (type: "like" | "dislike") => {
-    if (!article) return;
-    const updatedArticle = { ...article };
+export default async function ArticlePage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const article = await getArticle(params.id);
 
-    try {
-      // If user has already performed this action, handle as an undo
-      if (
-        (type === "like" && hasLiked) ||
-        (type === "dislike" && hasDisliked)
-      ) {
-        // Decrement the count
-        if (type === "like") {
-          updatedArticle.likes -= 1;
-          setHasLiked(false);
-        } else {
-          updatedArticle.dislikes -= 1;
-          setHasDisliked(false);
-        }
-
-        // Call API to decrement count
-        await fetch(`/api/set-cookie`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            articleId: id,
-            type: `remove-${type}`,
-          }),
-        });
-
-        setArticle(updatedArticle);
-        return;
-      }
-
-      // Handle normal like/dislike action
-      const response = await fetch("/api/set-cookie", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ articleId: id, type }),
-      });
-
-      if (response.ok) {
-        if (type === "like") {
-          updatedArticle.likes += 1;
-          if (hasDisliked) {
-            updatedArticle.dislikes -= 1;
-            setHasDisliked(false);
-          }
-          setHasLiked(true);
-        } else {
-          updatedArticle.dislikes += 1;
-          if (hasLiked) {
-            updatedArticle.likes -= 1;
-            setHasLiked(false);
-          }
-          setHasDisliked(true);
-        }
-        setArticle(updatedArticle);
-      }
-    } catch (err) {
-      console.error(`Error handling ${type}:`, err);
-    }
-  };
-
-  // Function to handle view counts
-  async function manageCookieForType(type: "view", articleId: string) {
-    try {
-      const res = await fetch(`/api/get-cookie?type=${type}`);
-      const data = await res.json();
-      const interactedArticles = data.articleId
-        ? data.articleId.split(",")
-        : [];
-
-      if (!interactedArticles.includes(articleId)) {
-        await fetch("/api/set-cookie", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ articleId, type }),
-        });
-      }
-    } catch (err) {
-      console.error(`Error managing view cookie:`, err);
-    }
+  if (!article) {
+    notFound();
   }
-
-  // Function to split text into chunks of 3 sentences and add paragraphs
-  const formatBody = (text: string | undefined) => {
-    if (!text) return "";
-
-    // Split by period and filter empty strings
-    const sentences = text
-      .split(".")
-      .filter((sentence) => sentence.trim() !== "");
-
-    // Group sentences into chunks of 3
-    const chunkedSentences = [];
-    for (let i = 0; i < sentences.length; i += 3) {
-      chunkedSentences.push(sentences.slice(i, i + 3).join(".") + ".");
-    }
-
-    // Join chunks with <p> tags and add margin-bottom for spacing between paragraphs
-    return chunkedSentences
-      .map((chunk, index) => `<p key=${index} class="mb-4">${chunk.trim()}</p>`)
-      .join("");
-  };
 
   return (
-    <main className="bg-gray-100 py-8 dark:bg-offblack">
+    <main className="py-8 min-h-screen bg-gray-50 dark:bg-offblack transition-colors duration-200">
       <div className="flex flex-col mx-auto px-4 max-w-4xl overflow-hidden">
-        {/* Article Title */}
-        <h1 className="text-4xl font-semibold text-gray-800 dark:text-white py-6">
-          {article?.title}
-        </h1>
-
-        {/* Article Details */}
-        <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-4">
-          <div>
-            <p className="font-medium">By {article?.source}</p>
-            <p>{new Date(article?.published_at ?? "").toLocaleDateString()}</p>
-          </div>
-          <div className="flex flex-col items-end">
-            <p className="text-lg font-medium">{article?.views} views</p>
-          </div>
-        </div>
-
-        {/* Article AI Check and Thumbnail */}
-        <div className="py-6">
-          <div className="flex justify-between bg-black dark:bg-offgray text-white items-center text-2xl font-bold py-4 px-5 rounded-3xl max-w-4xl mx-auto">
-            <h1>
-              {Math.round((article?.classification?.probability ?? 0) * 100)}%
-            </h1>
-            <h1>Possible Fake News Detected</h1>
-            {/* Like/Dislike Button Container */}
-            <div className="flex gap-x-3">
-              <Button
-                onClick={() => handleLikeDislike("like")}
-                className={`rounded-full aspect-square h-fit p-1 ${
-                  hasLiked
-                    ? "bg-green-700 hover:bg-green-900"
-                    : "bg-green-500 hover:bg-green-700"
-                }`}
-              >
-                <HandThumbUpIcon className="text-black size-8" />
-              </Button>
-              <Button
-                onClick={() => handleLikeDislike("dislike")}
-                className={`rounded-full aspect-square h-fit p-1 ${
-                  hasDisliked
-                    ? "bg-red-700 hover:bg-red-900"
-                    : "bg-red-500 hover:bg-red-700"
-                }`}
-              >
-                <HandThumbDownIcon className="text-black size-8" />
-              </Button>
+        <Card className="overflow-hidden bg-white dark:bg-gray-800 transition-colors duration-200">
+          <CardHeader className="relative p-0">
+            <Image
+              src={article.image_url}
+              alt={article.title}
+              width={1200}
+              height={630}
+              className="object-cover w-full h-64 rounded-t-lg"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+            <div className="absolute bottom-4 left-4 right-4">
+              <CardTitle className="text-3xl font-bold text-white mb-2">
+                {article.title}
+              </CardTitle>
+              <div className="flex items-center justify-between text-white/80">
+                <span>{article.source}</span>
+                <span>{format(new Date(article.published_at), "PPP")}</span>
+              </div>
             </div>
-          </div>
+          </CardHeader>
+          <CardContent className="mt-6">
+            <div className="flex justify-between items-center mb-4">
+              <Badge
+                variant="outline"
+                className="bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground"
+              >
+                {article.domain}
+              </Badge>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-muted-foreground">
+                  {article.views} views
+                </span>
+              </div>
+            </div>
+            <div
+              className="prose dark:prose-invert max-w-none"
+              dangerouslySetInnerHTML={{ __html: article.body }}
+            />
+          </CardContent>
+          <CardFooter className="flex justify-between items-center border-t pt-4 dark:border-gray-700">
+            <div className="flex space-x-2">
+              <Suspense fallback={<LikeDislikeSkeleton />}>
+                <LikeDislikeButtons
+                  id={article._id}
+                  initialLikes={article.likes}
+                  initialDislikes={article.dislikes}
+                />
+              </Suspense>
+            </div>
+            <a
+              href={article.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center text-blue-500 hover:underline dark:text-blue-400"
+            >
+              Read original article
+              <ArrowUpRightFromSquare className="ml-1 h-4 w-4" />
+            </a>
+          </CardFooter>
+        </Card>
 
-          {/* Article Like/Dislike Bar */}
-          <div className="flex justify-end max-w-4xl w-full py-2">
-            {article && (
-              <LikeDislikeBar
-                likes={article.likes}
-                dislikes={article.dislikes}
-              />
-            )}
-          </div>
-        </div>
-
-        {/* Article Thumbnail and Description */}
-        <div className="flex py-6 justify-center w-full items-center">
-          <img
-            src={article?.image_url}
-            alt="Thumbnail"
-            className="max-h-[600px] rounded-lg shadow-md"
-          />
-        </div>
-
-        {/* Article Content */}
-        <div className="prose lg:prose-xl text-gray-800 dark:text-white mb-6">
-          <div
-            className="flex flex-col space-y-8"
-            dangerouslySetInnerHTML={{ __html: formatBody(article?.body) }}
-          />
-        </div>
+        <Suspense fallback={<RelevantArticleSkeleton />}>
+          <RelevantArticle article={article.most_relevant_article} />
+        </Suspense>
       </div>
     </main>
+  );
+}
+
+function LikeDislikeSkeleton() {
+  return (
+    <div className="flex space-x-2">
+      <Skeleton className="h-10 w-10 rounded-full" />
+      <Skeleton className="h-10 w-10 rounded-full" />
+    </div>
+  );
+}
+
+function RelevantArticleSkeleton() {
+  return (
+    <Card className="mt-8">
+      <CardHeader>
+        <Skeleton className="h-8 w-3/4" />
+      </CardHeader>
+      <CardContent>
+        <Skeleton className="h-4 w-full mb-2" />
+        <Skeleton className="h-4 w-5/6" />
+      </CardContent>
+    </Card>
   );
 }

@@ -1,37 +1,25 @@
-"use client";
-import React, { useState } from 'react';
+import { Progress } from "@/components/ui/progress";
 
-type LikeDislikeBarProps = {
+export default function LikeDislikeBar({
+  likes,
+  dislikes,
+}: {
   likes: number;
   dislikes: number;
-};
-
-const LikeDislikeBar: React.FC<LikeDislikeBarProps> = ({ likes, dislikes }) => {
+}) {
   const total = likes + dislikes;
-  const likePercentage = (likes / total) * 100 || 0; // Handle divide by 0
-  const dislikePercentage = (dislikes / total) * 100 || 0;
+  const likePercentage = total > 0 ? (likes / total) * 100 : 50;
 
   return (
-    <div className="flex flex-col px-2 w-1/4">
-      {/* Like/Dislike Bar */}
-      <div className="flex rounded-3xl p-0.5 bg-black h-3 gap-x-1">
-        {/* Like */}
-        <div
-          className="bg-green-500 rounded-l-3xl"
-          style={{ width: `${likePercentage}%` }}
-        ></div>
-        {/* Dislike */}
-        <div
-          className="bg-red-500 rounded-r-3xl"
-          style={{ width: `${dislikePercentage}%` }}
-        ></div>
-      </div>
-      <div className="flex mt-1 text-sm gap-x-1">
-        <span>{likes} likes,</span>
-        <span>{dislikes} dislikes</span>
-      </div>
+    <div className="flex items-center space-x-2">
+      <span className="text-sm text-green-500 dark:text-green-400">
+        {likes}
+      </span>
+      <Progress
+        value={likePercentage}
+        className="w-24 h-2 bg-gray-200 dark:bg-gray-700"
+      />
+      <span className="text-sm text-red-500 dark:text-red-400">{dislikes}</span>
     </div>
   );
-};
-
-export default LikeDislikeBar;
+}
