@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { format } from "date-fns";
 import { ArrowUpRightFromSquare, ThumbsDown, ThumbsUp } from "lucide-react";
-import { cookies } from "next/headers";
+import { CodeBracketSquareIcon } from "@heroicons/react/24/solid"; // Import the icon
 
 import {
   Card,
@@ -73,13 +73,24 @@ export default async function ArticlePage({
       <div className="flex flex-col mx-auto px-4 max-w-4xl overflow-hidden">
         <Card className="overflow-hidden bg-white dark:bg-gray-800 transition-colors duration-200">
           <CardHeader className="relative p-0">
-            <Image
-              src={article.image_url}
-              alt={article.title}
-              width={1200}
-              height={630}
-              className="object-cover w-full h-64 rounded-t-lg"
-            />
+            {article.image_url ? (
+              <Image
+                src={article.image_url}
+                alt={article.title}
+                width={1200}
+                height={630}
+                className="object-cover w-full h-64 rounded-t-lg"
+              />
+            ) : (
+              <div className="h-64 flex items-center justify-center bg-gray-100 rounded-t-lg">
+                <a href=".." className="flex items-center justify-center">
+                  <CodeBracketSquareIcon className="size-12 text-black mr-2" />
+                  <span className="text-black text-xl font-bold">VERITAS</span>
+                </a>
+              </div>
+            )}
+
+            {/* Keep the rest of the CardHeader content */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             <div className="absolute bottom-4 left-4 right-4">
               <CardTitle className="text-3xl font-bold text-white mb-2">
