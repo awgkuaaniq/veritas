@@ -93,7 +93,7 @@ export default function UserAnalytics() {
 
         // Fetch search trends
         const searchTrendsResponse = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/searches`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/searches/`
         );
         setSearchTrends(searchTrendsResponse.data);
 
