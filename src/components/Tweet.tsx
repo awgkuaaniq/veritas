@@ -27,6 +27,13 @@ interface Tweets {
   crosscheck: CrosscheckResult;
 }
 
+const truncateBody = (body: string): string => {
+  const firstFullStopIndex = body.indexOf(".");
+  return firstFullStopIndex !== -1
+    ? body.slice(0, firstFullStopIndex + 1)
+    : body; // If no full stop is found, return the entire body
+};
+
 const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
   ({ tweet }, ref) => {
     const formattedDate = formatDate(tweet.published_at);
@@ -120,9 +127,9 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
                 <div className="md:flex-row flex flex-col w-full h-fit p-3 gap-x-3 items-center">
                   <h1
                     className="text-xl text-nowrap font-semibold"
-                    title="How similar the tweet is to the source"
+                    title="Probability of fake news"
                   >
-                    Similarity Level:
+                    Probability:
                   </h1>
                   <h1 className="text-4xl w-fit text-green-500 font-bold">
                     {(tweet.crosscheck.probability * 100).toFixed(2)}%
@@ -135,7 +142,7 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
                       {tweet.crosscheck.title}
                     </a>
                     <h2 className="text-sm font-light text-justify">
-                      {tweet.crosscheck.content}
+                      {truncateBody(tweet.crosscheck.content)}
                     </h2>
                   </div>
                 </div>

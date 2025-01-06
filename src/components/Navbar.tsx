@@ -50,7 +50,10 @@ const Navbar: React.FC = () => {
       <div className="flex justify-between max-w-7xl mx-auto items-center px-2 h-fit">
         {/* Logo */}
         <div>
-          <a href=".." className="flex items-center">
+          <a
+            href=".."
+            className="flex items-center hover:scale-105 transition-all ease-out duration-150"
+          >
             <CodeBracketSquareIcon className="size-12 text-black dark:text-white mr-2" />
             <span className="text-black dark:text-white text-xl font-bold">
               VERITAS
