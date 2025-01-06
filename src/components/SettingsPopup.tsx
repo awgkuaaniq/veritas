@@ -87,6 +87,11 @@ const SettingsPopup = ({
       // Update theme in local storage and document class
       localStorage.setItem("theme", theme);
       document.documentElement.classList.toggle("dark", theme === "dark");
+      // Step 1: Check if Notifications are supported in the browser.
+      if (!("Notification" in window)) {
+        console.info("This browser does not support desktop notification");
+        return null;
+      }
       // First handle notification permission if it's being enabled
       if (notificationsEnabled) {
         if (!("serviceWorker" in navigator)) {
