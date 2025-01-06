@@ -40,34 +40,20 @@ export default function TrendingKeywords() {
       <CardHeader>
         <CardTitle className="">Trending Keywords</CardTitle>
       </CardHeader>
-      <CardContent className="flex max-h-80 flex-grow justify-between font-semibold overflow-y-auto">
-        {/* Left Part */}
-        <div className="flex flex-col gap-y-4">
-          {keywords
-            .slice(0, Math.ceil(keywords.length / 2))
-            .map((keyword, index) => (
-              <div key={index}>
-                <p>{keyword.keyword}</p>
-                <p className="text-gray-500 dark:text-gray-400 font-normal text-sm">
-                  {keyword.total_count} mentioned
-                </p>
-              </div>
-            ))}
-        </div>
-
-        {/* Right Part */}
-        <div className="flex flex-col gap-y-4">
-          {keywords
-            .slice(Math.ceil(keywords.length / 2))
-            .map((keyword, index) => (
-              <div key={index}>
-                <p>{keyword.keyword}</p>
-                <p className="text-gray-500 dark:text-gray-400 font-normal text-sm">
-                  {keyword.total_count} mentioned
-                </p>
-              </div>
-            ))}
-        </div>
+      <CardContent className="grid grid-cols-2 gap-x-40 gap-y-4 font-semibold overflow-y-auto">
+        {keywords.map((keyword, index) => (
+          <div key={index} className="flex flex-col">
+            <a
+              href={`/search?q=${encodeURIComponent(keyword.keyword)}`}
+              className="relative hover:underline hover:scale-105 transition-all ease-out duration-150"
+            >
+              {keyword.keyword}
+            </a>
+            <p className="text-gray-500 dark:text-gray-400 font-normal text-sm">
+              {keyword.total_count} mentioned
+            </p>
+          </div>
+        ))}
       </CardContent>
     </Card>
   );

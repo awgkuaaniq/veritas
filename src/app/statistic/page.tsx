@@ -33,13 +33,8 @@ export default function StatisticsPage() {
             <TopFakeNewsSource />
           </div>
 
-          {/* Bottom Left Component spanning 5x4 */}
-          <div className="rounded-lg shadow-2xl lg:col-span-4 lg:row-span-5">
-            <TopNewsThisWeek />
-          </div>
-
           {/* Bottom Right Component spanning 5x6 */}
-          <div className="rounded-lg shadow-2xl lg:col-span-6 lg:row-span-5">
+          <div className="rounded-lg shadow-2xl lg:col-span-10 lg:row-span-5">
             <VolumeFakeNews />
           </div>
         </div>
