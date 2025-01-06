@@ -127,7 +127,7 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
                 <div className="md:flex-row flex flex-col w-full h-fit p-3 gap-x-3 items-center">
                   <h1
                     className="text-xl text-nowrap font-semibold"
-                    title="How similar the tweet is to the source"
+                    title="Probability of fake news"
                   >
                     Probability:
                   </h1>
