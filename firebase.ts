@@ -1,7 +1,6 @@
 // veritas/firebase.ts
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, isSupported } from "firebase/messaging";
-import axios from "axios";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAcXDk_cyXelkWxuCmPwRi_LEcgqEIqnPs",
@@ -29,8 +28,7 @@ export const requestForToken = async () => {
     }
     console.log("Requesting token...");
     const currentToken = await getToken(messagingInstance, {
-      vapidKey:
-        "BHuPnDOHHq_BrCqBOOa85-O0nHmnkvKyq0tCOU1PL0CQZCOx92SABAqg4gJIwy5drg0ViihO2ICkeKjwM2Ma8NQ",
+      vapidKey: process.env.NEXT_PUBLIC_FIREBASE_FCM_VAPID_KEY,
     });
     if (currentToken) {
       console.log("Current token for client: ", currentToken);

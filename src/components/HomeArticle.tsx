@@ -53,10 +53,10 @@ const HomeArticle: React.FC<HomeArticleProps> = ({ article }) => {
             />
           ) : (
             <div className="flex items-center justify-center w-full h-full bg-gray-100">
-              <a href=".." className="flex items-center justify-center">
+              <div className="flex items-center justify-center">
                 <CodeBracketSquareIcon className="size-12 text-black mr-2" />
                 <span className="text-black text-xl font-bold">VERITAS</span>
-              </a>
+              </div>
             </div>
           )}
         </div>
