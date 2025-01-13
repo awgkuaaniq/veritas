@@ -15,6 +15,31 @@ import { getMessaging, deleteToken } from "firebase/messaging";
 import { useTheme } from "@/context/ThemeContext";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
+// iOS detection function
+const isIOS = () => {
+  if (typeof window === "undefined" || typeof navigator === "undefined") {
+    return false;
+  }
+  
+  const browserInfo = navigator.userAgent.toLowerCase();
+  
+  if (browserInfo.match('iphone') || browserInfo.match('ipad')) {
+    return true;
+  }
+  
+  if (['iPad Simulator', 'iPhone Simulator', 'iPod Simulator', 'iPad', 'iPhone', 'iPod'].includes(navigator.platform)) {
+    return true;
+  } 
+  
+  return false;
+};
+
+// Safe notification check
+const checkNotificationPermission = () => {
+  if (isIOS()) return false;
+  return typeof window !== "undefined" && "Notification" in window;
+};
+
 const SettingsPopup = ({
   isOpen,
   onClose,
@@ -39,6 +64,12 @@ const SettingsPopup = ({
   // Check if notifications are supported
   useEffect(() => {
     const checkNotificationSupport = () => {
+      if (isIOS()) {
+        setIsNotificationSupported(false);
+        setNotificationsEnabled(false);
+        return;
+      }
+      
       const isSupported =
         typeof window !== "undefined" &&
         "Notification" in window &&
@@ -73,9 +104,11 @@ const SettingsPopup = ({
         );
         const { notification, token } = preferenceResponse.data;
 
-        // Only update notification and token, not theme
-        setNotificationsEnabled(notification && isNotificationSupported);
-        setExistingToken(token);
+        // Check iOS before enabling notifications
+        if (!isIOS()) {
+          setNotificationsEnabled(notification && isNotificationSupported);
+          setExistingToken(token);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       }
@@ -87,8 +120,15 @@ const SettingsPopup = ({
   }, [isOpen, isNotificationSupported]);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && typeof navigator !== "undefined") {
-      if (Notification.permission === "granted") {
+    if (
+      typeof window !== "undefined" &&
+      typeof navigator !== "undefined" &&
+      !isIOS()
+    ) {
+      if (
+        checkNotificationPermission() &&
+        Notification.permission === "granted"
+      ) {
         setNotificationsEnabled(true);
       } else {
         setNotificationsEnabled(false);
@@ -111,7 +151,7 @@ const SettingsPopup = ({
       document.documentElement.classList.toggle("dark", theme === "dark");
 
       // Handle notifications
-      if (notificationsEnabled) {
+      if (notificationsEnabled && !isIOS()) {
         if (!isNotificationSupported) {
           throw new Error("Notifications are not supported in this browser");
         }
