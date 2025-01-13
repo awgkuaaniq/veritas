@@ -36,7 +36,6 @@ export default function FakeNewsChecker() {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<CrosscheckResponse | null>(null);
   const [showModal, setShowModal] = useState(false);
-  // For feedback
   const [feedback, setFeedback] = useState("");
   const [thumbsUp, setThumbsUp] = useState<boolean>();
   const [feedbackError, setFeedbackError] = useState("");
@@ -75,11 +74,11 @@ export default function FakeNewsChecker() {
   };
 
   const sendFeedback = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); // Prevent page refresh
+    event.preventDefault();
 
     if (!feedback || thumbsUp === undefined) {
       console.error("Feedback and thumbsUp state are required.");
-      setFeedbackError("Please fill the feedback form and like/dislike.")
+      setFeedbackError("Please fill the feedback form and like/dislike.");
       return;
     }
     var fake = 1;
@@ -99,7 +98,6 @@ export default function FakeNewsChecker() {
         }
       );
       console.log("Feedback submitted successfully:", response.data);
-      // Optionally, reset feedback and thumbsUp state
       setFeedback("");
       setFeedbackError("");
       setThumbsUp(undefined);
@@ -110,7 +108,7 @@ export default function FakeNewsChecker() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 dark:bg-offblack">
-      <Card className="w-full max-w-2xl  dark:bg-offgray">
+      <Card className="w-full max-w-2xl dark:bg-offgray">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
             Fake News Checker
@@ -122,11 +120,11 @@ export default function FakeNewsChecker() {
               placeholder="Enter text to check..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              className="w-full p-2 border rounded dark:bg-gray-700  dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-200 focus:ring-blue-500 focus:border-transparent"
+              className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-200 focus:ring-blue-500 focus:border-transparent"
             />
             <Button
               type="submit"
-              className="w-full  dark:bg-gray-600 dark:hover:bg-gray-500 dark: text-gray-200"
+              className="w-full dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-gray-200"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -143,7 +141,7 @@ export default function FakeNewsChecker() {
       </Card>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="w-full max-w-[90vw] sm:max-w-[425px] md:max-w-[600px] lg:max-w-[800px] overflow-y-auto max-h-[90vh]">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-center text-2xl font-bold">
               {result?.classification ? (
@@ -165,19 +163,19 @@ export default function FakeNewsChecker() {
               <ArticleCard key={index} article={article} />
             ))}
           </div>
-          {/* Manual Check Feedback Form*/}
           <form
             onSubmit={sendFeedback}
             className="flex flex-col w-full space-y-4 h-fit"
           >
             <h1 className="text-lg font-semibold">Feedback:</h1>
-            <div className="flex space-x-2">
+            <div className="flex flex-col space-y-2">
               <Input
                 placeholder="Enter your feedback here"
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
+                className="w-full"
               />
-              <div className="flex items-start border divide-x-2 divide-gray-300">
+              <div className="flex justify-center space-x-2">
                 <Button
                   type="button"
                   className={`aspect-square rounded p-1 shadow-md group
@@ -185,12 +183,12 @@ export default function FakeNewsChecker() {
                       thumbsUp
                         ? "bg-green-600 scale-110 text-white"
                         : "bg-green-500 text-black"
-                    } 
+                    }
                     hover:bg-green-600 hover:scale-110 transition ease-out duration-150`}
                   onClick={() => checkThumbsUp("thumbs_up")}
                 >
                   <HandThumbUpIcon
-                    className={`text-black size-8 group-hover:text-white group-hover:scale-110 
+                    className={`text-black size-8 group-hover:text-white group-hover:scale-110
                                 transition ease-out duration-150
                                 ${thumbsUp ? "text-white" : "text-black"} `}
                   />
@@ -207,7 +205,7 @@ export default function FakeNewsChecker() {
                   onClick={() => checkThumbsUp("thumbs_down")}
                 >
                   <HandThumbDownIcon
-                    className={`text-black size-8 group-hover:text-white group-hover:scale-110 
+                    className={`text-black size-8 group-hover:text-white group-hover:scale-110
                                 transition ease-out duration-150
                                 ${
                                   thumbsUp === false
@@ -218,11 +216,12 @@ export default function FakeNewsChecker() {
                 </Button>
               </div>
             </div>
-            {/* Feedback Error Message */}
             {feedbackError && (
               <p className="text-sm text-red-500">{feedbackError}</p>
             )}
-            <Button type="submit">Submit</Button>
+            <Button type="submit" className="w-full">
+              Submit
+            </Button>
           </form>
         </DialogContent>
       </Dialog>
