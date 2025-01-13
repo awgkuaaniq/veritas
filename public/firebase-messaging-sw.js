@@ -10,19 +10,28 @@ const firebaseConfig = {
   appId: "1:428186617574:web:7d4269c602631cd4a5dd27",
 };
 
-firebase.initializeApp(firebaseConfig);
-const messaging = firebase.messaging();
+try {
+  firebase.initializeApp(firebaseConfig);
+  const messaging = firebase.messaging();
 
-messaging.onBackgroundMessage(function (payload) {
-  console.log(
-    "[firebase-messaging-sw.js] Received background message ",
-    payload
-  );
-  const notificationTitle = payload.notification.title;
-  const notificationOptions = {
-    body: payload.notification.body,
-    icon: "/firebase-logo.png",
-  };
+  messaging.onBackgroundMessage(function (payload) {
+    console.log(
+      "[firebase-messaging-sw.js] Received background message",
+      payload
+    );
+    if (!payload?.notification) return;
 
-  self.registration.showNotification(notificationTitle, notificationOptions);
-});
+    const notificationTitle = payload.notification.title;
+    const notificationOptions = {
+      body: payload.notification.body,
+      icon: "/firebase-logo.png",
+    };
+
+    return self.registration.showNotification(
+      notificationTitle,
+      notificationOptions
+    );
+  });
+} catch (error) {
+  console.log("Service worker initialization failed:", error);
+}
