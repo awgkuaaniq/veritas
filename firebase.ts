@@ -15,12 +15,16 @@ const app = initializeApp(firebaseConfig);
 
 // Check if notifications are supported
 const isNotificationSupported = () => {
-  return (
-    typeof window !== "undefined" &&
-    "Notification" in window &&
-    "serviceWorker" in navigator &&
-    "PushManager" in window
-  );
+  try {
+    return (
+      typeof window !== "undefined" &&
+      "Notification" in window &&
+      "serviceWorker" in navigator &&
+      "PushManager" in window
+    );
+  } catch (e) {
+    return false;
+  }
 };
 
 const messaging = async () => {
