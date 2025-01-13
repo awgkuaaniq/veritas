@@ -1,4 +1,4 @@
-// veritas/firebase.ts
+// firebase.ts
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, isSupported } from "firebase/messaging";
 
@@ -12,7 +12,23 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
+// Check if notifications are supported
+const isNotificationSupported = () => {
+  return (
+    typeof window !== "undefined" &&
+    "Notification" in window &&
+    "serviceWorker" in navigator &&
+    "PushManager" in window
+  );
+};
+
 const messaging = async () => {
+  if (!isNotificationSupported()) {
+    console.log("Push notifications are not supported");
+    return null;
+  }
+
   const supported = await isSupported();
   console.log("Is messaging supported:", supported);
   return supported && getMessaging(app);
@@ -20,16 +36,25 @@ const messaging = async () => {
 
 export const requestForToken = async () => {
   try {
+    if (!isNotificationSupported()) {
+      console.log(
+        "Push notifications are not supported on this device/browser"
+      );
+      return null;
+    }
+
     console.log("Getting messaging instance...");
     const messagingInstance = await messaging();
     if (!messagingInstance) {
       console.log("Messaging is not supported.");
       return null;
     }
+
     console.log("Requesting token...");
     const currentToken = await getToken(messagingInstance, {
       vapidKey: process.env.NEXT_PUBLIC_FIREBASE_FCM_VAPID_KEY,
     });
+
     if (currentToken) {
       console.log("Current token for client: ", currentToken);
       return currentToken;

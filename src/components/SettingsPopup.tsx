@@ -87,16 +87,26 @@ const SettingsPopup = ({
       // Update theme in local storage and document class
       localStorage.setItem("theme", theme);
       document.documentElement.classList.toggle("dark", theme === "dark");
-      // First handle notification permission if it's being enabled
+
+      // Check if notifications are being enabled
       if (notificationsEnabled) {
+        // Check if notifications are supported
+        if (typeof window === "undefined" || !("Notification" in window)) {
+          setError("Notifications are not supported in this browser.");
+          setNotificationsEnabled(false);
+          setIsLoading(false);
+          return;
+        }
+
         if (!("serviceWorker" in navigator)) {
           setError("Service Worker is not supported in this browser.");
           setNotificationsEnabled(false);
           setIsLoading(false);
           return;
         }
+
         if (!("PushManager" in window)) {
-          setError("Push API is not supported in this browser.");
+          setError("Push notifications are not supported in this browser.");
           setNotificationsEnabled(false);
           setIsLoading(false);
           return;
