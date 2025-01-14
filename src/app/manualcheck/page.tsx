@@ -141,88 +141,92 @@ export default function FakeNewsChecker() {
       </Card>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="w-screen h-screen sm:w-full sm:max-w-[90vw] sm:max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center justify-center text-2xl font-bold">
-              {result?.classification ? (
-                <CheckCircle className="mr-2 h-6 w-6 text-green-500" />
-              ) : (
-                <XCircle className="mr-2 h-6 w-6 text-red-500" />
-              )}
-              {result?.classification ? "Likely True" : "Likely fake news"}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="mt-4 space-y-4">
-            <h3 className="text-lg font-semibold">Most Relevant Source:</h3>
-            <ArticleCard
-              article={result?.most_relevant_article}
-              isHighlighted={true}
-            />
-            <h3 className="text-lg font-semibold">Other Sources:</h3>
-            {result?.other_articles.slice(0, 2).map((article, index) => (
-              <ArticleCard key={index} article={article} />
-            ))}
-          </div>
-          <form
-            onSubmit={sendFeedback}
-            className="flex flex-col w-full space-y-4 h-fit"
-          >
-            <h1 className="text-lg font-semibold">Feedback:</h1>
-            <div className="flex flex-col space-y-2">
-              <Input
-                placeholder="Enter your feedback here"
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-                className="w-full"
+        <DialogContent className="w-screen h-screen sm:w-full sm:max-w-[90vw] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6">
+          <div className="pt-16 pb-8">
+            {" "}
+            {/* Added padding at the top and bottom */}
+            <DialogHeader>
+              <DialogTitle className="flex items-center justify-center text-2xl font-bold">
+                {result?.classification ? (
+                  <CheckCircle className="mr-2 h-6 w-6 text-green-500" />
+                ) : (
+                  <XCircle className="mr-2 h-6 w-6 text-red-500" />
+                )}
+                {result?.classification ? "Likely True" : "Likely fake news"}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="mt-4 space-y-4">
+              <h3 className="text-lg font-semibold">Most Relevant Source:</h3>
+              <ArticleCard
+                article={result?.most_relevant_article}
+                isHighlighted={true}
               />
-              <div className="flex justify-center space-x-2">
-                <Button
-                  type="button"
-                  className={`aspect-square rounded p-1 shadow-md group
-                    ${
-                      thumbsUp
-                        ? "bg-green-600 scale-110 text-white"
-                        : "bg-green-500 text-black"
-                    }
-                    hover:bg-green-600 hover:scale-110 transition ease-out duration-150`}
-                  onClick={() => checkThumbsUp("thumbs_up")}
-                >
-                  <HandThumbUpIcon
-                    className={`text-black size-8 group-hover:text-white group-hover:scale-110
-                                transition ease-out duration-150
-                                ${thumbsUp ? "text-white" : "text-black"} `}
-                  />
-                </Button>
-                <Button
-                  type="button"
-                  className={`aspect-square rounded p-1 shadow-md group
-                    ${
-                      thumbsUp === false
-                        ? "bg-red-600 scale-110 text-white"
-                        : "bg-red-500 text-white "
-                    }
-                    hover:bg-red-600 hover:scale-110 transition ease-out duration-150`}
-                  onClick={() => checkThumbsUp("thumbs_down")}
-                >
-                  <HandThumbDownIcon
-                    className={`text-black size-8 group-hover:text-white group-hover:scale-110
-                                transition ease-out duration-150
-                                ${
-                                  thumbsUp === false
-                                    ? "text-white"
-                                    : "text-black"
-                                } `}
-                  />
-                </Button>
-              </div>
+              <h3 className="text-lg font-semibold">Other Sources:</h3>
+              {result?.other_articles.slice(0, 2).map((article, index) => (
+                <ArticleCard key={index} article={article} />
+              ))}
             </div>
-            {feedbackError && (
-              <p className="text-sm text-red-500">{feedbackError}</p>
-            )}
-            <Button type="submit" className="w-full">
-              Submit
-            </Button>
-          </form>
+            <form
+              onSubmit={sendFeedback}
+              className="flex flex-col w-full space-y-4 h-fit mt-8"
+            >
+              <h1 className="text-lg font-semibold">Feedback:</h1>
+              <div className="flex flex-col space-y-2">
+                <Input
+                  placeholder="Enter your feedback here"
+                  value={feedback}
+                  onChange={(e) => setFeedback(e.target.value)}
+                  className="w-full"
+                />
+                <div className="flex justify-center space-x-2">
+                  <Button
+                    type="button"
+                    className={`aspect-square rounded p-1 shadow-md group
+                      ${
+                        thumbsUp
+                          ? "bg-green-600 scale-110 text-white"
+                          : "bg-green-500 text-black"
+                      }
+                      hover:bg-green-600 hover:scale-110 transition ease-out duration-150`}
+                    onClick={() => checkThumbsUp("thumbs_up")}
+                  >
+                    <HandThumbUpIcon
+                      className={`text-black size-8 group-hover:text-white group-hover:scale-110
+                                  transition ease-out duration-150
+                                  ${thumbsUp ? "text-white" : "text-black"} `}
+                    />
+                  </Button>
+                  <Button
+                    type="button"
+                    className={`aspect-square rounded p-1 shadow-md group
+                      ${
+                        thumbsUp === false
+                          ? "bg-red-600 scale-110 text-white"
+                          : "bg-red-500 text-white "
+                      }
+                      hover:bg-red-600 hover:scale-110 transition ease-out duration-150`}
+                    onClick={() => checkThumbsUp("thumbs_down")}
+                  >
+                    <HandThumbDownIcon
+                      className={`text-black size-8 group-hover:text-white group-hover:scale-110
+                                  transition ease-out duration-150
+                                  ${
+                                    thumbsUp === false
+                                      ? "text-white"
+                                      : "text-black"
+                                  } `}
+                    />
+                  </Button>
+                </div>
+              </div>
+              {feedbackError && (
+                <p className="text-sm text-red-500">{feedbackError}</p>
+              )}
+              <Button type="submit" className="w-full">
+                Submit
+              </Button>
+            </form>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
