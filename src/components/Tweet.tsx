@@ -34,6 +34,7 @@ const truncateBody = (body: string): string => {
     : body; // If no full stop is found, return the entire body
 };
 
+// Tweet.tsx
 const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
   ({ tweet }, ref) => {
     const formattedDate = formatDate(tweet.published_at);
@@ -41,6 +42,13 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
 
     const toggleInfo = () => {
       setShowInfo((prev) => !prev);
+    };
+
+    const getProbabilityColor = (probability: number) => {
+      const similarityPercentage = (1 - probability) * 100;
+      if (similarityPercentage >= 65) return "text-green-500";
+      if (similarityPercentage >= 30) return "text-yellow-500";
+      return "text-red-500";
     };
 
     return (
@@ -63,27 +71,28 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
           </div>
           {/* Tweet Content */}
           <div className="flex flex-col pr-2.5 w-full h-full">
-            {/* Tweet Header */}
-            <div className="flex space-x-2.5 px-2.5 pt-2.5 w-full h-fit">
-              {/* user  */}
-              <div className="flex space-x-1 w-fit h-fit items-center">
-                {/* name  */}
-                <p className="font-semibold">{tweet.name}</p>
-                {/* username  */}
-                <p className="font-light text-gray-700 dark:text-gray-400">
+            {/* Tweet Header - Modified for mobile */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-y-1 sm:gap-y-0 sm:space-x-2.5 px-2.5 pt-2.5 w-full h-fit">
+              {/* User Info */}
+              <div className="flex flex-col sm:flex-row space-x-1 w-fit h-fit text-sm sm:text-base items-center text-wrap">
+                {/* Name */}
+                <p className="font-semibold text-wrap">{tweet.name}</p>
+                {/* Username */}
+                <p className="font-light text-gray-700 dark:text-gray-400 text-wrap">
                   @{tweet.username}
                 </p>
               </div>
-              {/* datetime  */}
-              <div className="flex space-x-2.5 items-center w-fit h-fit font-light text-gray-700 dark:text-gray-400">
-                {/* formatted date and time */}
+              {/* DateTime */}
+              <div className="text-sm sm:text-base font-light text-gray-700 dark:text-gray-400">
                 <p>{formattedDate}</p>
               </div>
             </div>
+
             {/* Tweet Body */}
-            <div className="flex px-2.5 w-full h-fit">
-              <p className="w-fit h-fit">{tweet.body}</p>
+            <div className="flex px-2.5 text-sm sm:text-base w-full h-fit mt-1">
+              <p className="break-words">{tweet.body}</p>
             </div>
+
             {/* Tweet Footer */}
             <div className="flex p-2.5 justify-between content-end w-full h-full">
               <button
@@ -95,7 +104,7 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
                 onClick={toggleInfo}
                 title="Crosschecking Sources"
               >
-                <InformationCircleIcon className="w-6 h-6" />
+                <InformationCircleIcon className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
               <div className="flex space-x-5">
                 <a
@@ -104,43 +113,48 @@ const Tweet = forwardRef<HTMLDivElement, { tweet: Tweets }>(
                   href={tweet.tweet_url}
                   target="_blank"
                 >
-                  <LinkIcon className="w-6 h-6" />
+                  <LinkIcon className="w-5 h-5 sm:w-6 sm:h-6" />
                 </a>
               </div>
             </div>
           </div>
         </div>
-        {/* Tweet Info  */}
+
+        {/* Tweet Info */}
         {showInfo && tweet.crosscheck && (
-          <div className="flex flex-col pb-8 justify-center items-center md:px-20 w-full h-fit">
-            {/* Card  */}
+          <div className="flex flex-col pb-8 justify-center items-center px-4 md:px-20 w-full h-fit">
             <div className="flex flex-col shadow-2xl rounded-3xl w-full">
-              {/* Info Header  */}
-              <div className="flex w-full justify-center rounded-t-3xl py-2.5 h-fit px-2.5 mx-auto bg-gray-100 dark:bg-offblack">
-                {/* Source  */}
+              {/* Info Header */}
+              <div className="flex w-full text-sm sm:text-base justify-center rounded-t-3xl py-2.5 h-fit px-2.5 mx-auto bg-gray-100 dark:bg-offblack">
                 <p className="font-semibold">Source</p>
               </div>
-              {/* Info Body  */}
+              {/* Info Body */}
               <div className="flex w-full h-fit p-2.5">
-                <div className="md:flex-row flex flex-col w-full h-fit p-3 gap-x-3 items-center">
-                  <h1
-                    className="text-xl text-nowrap font-semibold"
-                    title="Probability of fake news"
-                  >
-                    Probability:
-                  </h1>
-                  <h1 className="text-4xl w-fit text-green-500 font-bold">
-                    {(tweet.crosscheck.probability * 100).toFixed(2)}%
-                  </h1>
+                <div className="flex flex-col w-full h-fit p-3 gap-3 items-center md:flex-row md:gap-x-3">
+                  <div className="flex items-center gap-2">
+                    <h1
+                      className="text-lg sm:text-xl font-semibold whitespace-nowrap"
+                      title="How similar it is to the related article (Higher similarity = More probability to be true)"
+                    >
+                      Similarity:
+                    </h1>
+                    <h1
+                      className={`text-3xl sm:text-4xl font-bold ${getProbabilityColor(
+                        tweet.crosscheck.probability
+                      )}`}
+                    >
+                      {((1 - tweet.crosscheck.probability) * 100).toFixed(2)}%
+                    </h1>
+                  </div>
                   <div className="flex flex-col">
                     <a
-                      className="text-base font-semibold w-full hover:text-sky-600"
+                      className="text-sm sm:text-base font-semibold hover:text-sky-600 break-words"
                       href={tweet.crosscheck.source}
                       target="_blank"
                     >
                       {tweet.crosscheck.title}
                     </a>
-                    <h2 className="text-sm font-light text-justify">
+                    <h2 className="text-xs sm:text-sm font-light text-justify">
                       {truncateBody(tweet.crosscheck.content)}
                     </h2>
                   </div>

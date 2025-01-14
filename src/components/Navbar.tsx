@@ -20,6 +20,8 @@ const Navbar: React.FC = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [prevScrollPos, setPrevScrollPos] = useState(0);
   const { user, isLoading } = useUser(); // Get user and loading state
 
   const toggleSmallScreenMenu = () => {
@@ -44,8 +46,34 @@ const Navbar: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollPos = window.scrollY;
+      const isScrollingUp = prevScrollPos > currentScrollPos;
+
+      // Only update state if there's a significant scroll (>10px)
+      if (Math.abs(prevScrollPos - currentScrollPos) > 10) {
+        setIsVisible(isScrollingUp || currentScrollPos < 10);
+        setPrevScrollPos(currentScrollPos);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [prevScrollPos]);
+
   return (
-    <nav className="bg-gray-100 dark:bg-offblack border-b border-black/15 shadow-lg relative">
+    <nav
+      className={`
+      fixed top-0 left-0 right-0 w-full
+      bg-gray-100/70 dark:bg-offblack/70 
+      border-b border-black/15 
+      shadow-lg backdrop-blur
+      transition-transform duration-300
+      ${isVisible ? "translate-y-0" : "-translate-y-full"}
+      z-20
+    `}
+    >
       {/* General Container */}
       <div className="flex justify-between max-w-7xl mx-auto items-center px-2 h-fit">
         {/* Logo */}

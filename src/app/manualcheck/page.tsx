@@ -141,7 +141,7 @@ export default function FakeNewsChecker() {
       </Card>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="w-full max-w-[90vw] sm:max-w-[425px] md:max-w-[600px] lg:max-w-[800px] overflow-y-auto max-h-[90vh]">
+        <DialogContent className="w-screen h-screen sm:w-full sm:max-w-[90vw] sm:max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-center text-2xl font-bold">
               {result?.classification ? (

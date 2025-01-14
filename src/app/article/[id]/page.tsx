@@ -30,7 +30,7 @@ async function getArticle(id: string) {
   const article = await res.json();
 
   // Use an absolute URL for the /api/get-cookie endpoint
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://localhost:3000";
 
   // Check if the user has already viewed this article
   const viewCookieRes = await fetch(
@@ -69,7 +69,7 @@ export default async function ArticlePage({
   }
 
   return (
-    <main className="py-8 min-h-screen bg-gray-50 dark:bg-offblack transition-colors duration-200">
+    <main className="py-20 min-h-screen bg-gray-50 dark:bg-offblack transition-colors duration-200">
       <div className="flex flex-col mx-auto px-4 max-w-4xl overflow-hidden">
         <Card className="overflow-hidden bg-white dark:bg-gray-800 transition-colors duration-200">
           <CardHeader className="relative p-0">
