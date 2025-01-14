@@ -94,8 +94,8 @@ export default function Home() {
   );
 
   return (
-    <main className="bg-gray-100 dark:bg-offblack min-h-screen py-10">
-      <div className="grid grid-cols-1 lg:grid-cols-12 divide-x divide-black/15 dark:divide-offgray gap-3 max-w-screen-xl px-4 border-b border-black/15 dark:border-white/15 mx-auto">
+    <main className="bg-gray-100 dark:bg-offblack py-20 min-h-screen py-10">
+      <div className="grid grid-cols-1 lg:grid-cols-12 lg:divide-x divide-black/15 dark:divide-offgray gap-3 max-w-screen-xl px-4 border-b border-black/15 dark:border-white/15 mx-auto">
         {/* Left Side Articles */}
         <div className="lg:col-span-3 [&>*:last-child]:pt-3 divide-y divide-black/15 dark:divide-offgray flex flex-col gap-3">
           {filteredArticles.slice(0, 2).map((article) => (
@@ -167,7 +167,7 @@ export default function Home() {
         {filteredArticles.slice(4).map((article) => (
           <div
             key={article._id}
-            className="[&:nth-child(4n+1)]:pl-0 [&:nth-child(4n+1)]:border-l-0 [&:nth-child(-n+4)]:pt-0 *:pt-3 *:border-b border-l *:border-black/15 dark:border-offgray dark:*:border-offgray border-black/15 pl-3 h-100%"
+            className="lg:[&:nth-child(4n+1)]:pl-0 [&:nth-child(4n+1)]:border-l-0 [&:nth-child(-n+4)]:pt-0 *:pt-3 *:border-b lg:border-l *:border-black/15 dark:border-offgray dark:*:border-offgray border-black/15 lg:pl-3 h-100%"
           >
             <HomeArticle article={article} />
           </div>
