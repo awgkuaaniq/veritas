@@ -8,7 +8,7 @@ import Image from "next/image";
 
 export default function AboutPage() {
   return (
-    <main className="bg-gray-100 dark:bg-zinc-800 min-h-screen">
+    <main className="bg-gray-100 py-20 dark:bg-zinc-800 min-h-screen">
       {/* Header Section */}
       <div
         className="flex flex-col items-center py-16 bg-gradient-to-t from-gray-100 via-eggshell to-gray-100

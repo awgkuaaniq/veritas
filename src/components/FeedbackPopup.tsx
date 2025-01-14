@@ -38,6 +38,10 @@ const FeedbackPopup = ({
       setError("Feedback is required.");
       return;
     }
+    if (!rating) {
+      setError("Rating is required.");
+      return;
+    }
     setError(""); // Clear previous errors
     try {
       const response = await axios.post(

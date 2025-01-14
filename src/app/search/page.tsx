@@ -83,7 +83,7 @@ function SearchContent() {
   };
 
   return (
-    <main className="bg-gray-100 min-h-screen pb-10 dark:bg-offblack">
+    <main className="bg-gray-100 py-20 min-h-screen pb-10 dark:bg-offblack">
       {/* Upper Component */}
       {/* Search Bar */}
       <div className="flex justify-center mx-auto px-2 max-w-7xl py-11">
