@@ -15,6 +15,31 @@ import { getMessaging, deleteToken } from "firebase/messaging";
 import { useTheme } from "@/context/ThemeContext";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
+// iOS detection function
+const isIOS = () => {
+  if (typeof window === "undefined" || typeof navigator === "undefined") {
+    return false;
+  }
+  
+  const browserInfo = navigator.userAgent.toLowerCase();
+  
+  if (browserInfo.match('iphone') || browserInfo.match('ipad')) {
+    return true;
+  }
+  
+  if (['iPad Simulator', 'iPhone Simulator', 'iPod Simulator', 'iPad', 'iPhone', 'iPod'].includes(navigator.platform)) {
+    return true;
+  } 
+  
+  return false;
+};
+
+// Safe notification check
+const checkNotificationPermission = () => {
+  if (isIOS()) return false;
+  return typeof window !== "undefined" && "Notification" in window;
+};
+
 const SettingsPopup = ({
   isOpen,
   onClose,
@@ -34,6 +59,33 @@ const SettingsPopup = ({
   const [isLoading, setIsLoading] = useState(false);
   const [uniqueVisitorId, setUniqueVisitorId] = useState<string | null>(null);
   const [existingToken, setExistingToken] = useState<string | null>(null);
+  const [isNotificationSupported, setIsNotificationSupported] = useState(false);
+
+  // Check if notifications are supported
+  useEffect(() => {
+    const checkNotificationSupport = () => {
+      if (isIOS()) {
+        setIsNotificationSupported(false);
+        setNotificationsEnabled(false);
+        return;
+      }
+      
+      const isSupported =
+        typeof window !== "undefined" &&
+        "Notification" in window &&
+        "serviceWorker" in navigator &&
+        "PushManager" in window;
+
+      setIsNotificationSupported(isSupported);
+
+      // If notifications aren't supported, ensure they're disabled
+      if (!isSupported && notificationsEnabled) {
+        setNotificationsEnabled(false);
+      }
+    };
+
+    checkNotificationSupport();
+  }, []);
 
   // Fetch unique visitor ID and preferences on mount
   useEffect(() => {
@@ -52,9 +104,11 @@ const SettingsPopup = ({
         );
         const { notification, token } = preferenceResponse.data;
 
-        // Only update notification and token, not theme
-        setNotificationsEnabled(notification);
-        setExistingToken(token);
+        // Check iOS before enabling notifications
+        if (!isIOS()) {
+          setNotificationsEnabled(notification && isNotificationSupported);
+          setExistingToken(token);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       }
@@ -63,11 +117,18 @@ const SettingsPopup = ({
     if (isOpen) {
       fetchVisitorData();
     }
-  }, [isOpen]);
+  }, [isOpen, isNotificationSupported]);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && typeof navigator !== "undefined") {
-      if (Notification.permission === "granted") {
+    if (
+      typeof window !== "undefined" &&
+      typeof navigator !== "undefined" &&
+      !isIOS()
+    ) {
+      if (
+        checkNotificationPermission() &&
+        Notification.permission === "granted"
+      ) {
         setNotificationsEnabled(true);
       } else {
         setNotificationsEnabled(false);
@@ -82,35 +143,25 @@ const SettingsPopup = ({
     }
 
     setIsLoading(true);
+    setError(null);
 
     try {
-      // Update theme in local storage and document class
+      // Update theme
       localStorage.setItem("theme", theme);
       document.documentElement.classList.toggle("dark", theme === "dark");
-      // First handle notification permission if it's being enabled
-      if (notificationsEnabled) {
-        if (!("serviceWorker" in navigator)) {
-          setError("Service Worker is not supported in this browser.");
-          setNotificationsEnabled(false);
-          setIsLoading(false);
-          return;
-        }
-        if (!("PushManager" in window)) {
-          setError("Push API is not supported in this browser.");
-          setNotificationsEnabled(false);
-          setIsLoading(false);
-          return;
-        }
 
-        const permission = await Notification.requestPermission();
-        if (permission !== "granted") {
-          setError("Notification permission denied.");
-          setNotificationsEnabled(false);
-          setIsLoading(false);
-          return;
+      // Handle notifications
+      if (notificationsEnabled && !isIOS()) {
+        if (!isNotificationSupported) {
+          throw new Error("Notifications are not supported in this browser");
         }
 
         try {
+          const permission = await Notification.requestPermission();
+          if (permission !== "granted") {
+            throw new Error("Notification permission denied");
+          }
+
           if (!existingToken) {
             const token = await requestForToken();
             if (token) {
@@ -119,49 +170,45 @@ const SettingsPopup = ({
                   "/firebase-messaging-sw.js"
                 );
               }
-              // Update all preferences including the token in a single request
+
               await axios.put(
                 `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/preference/${uniqueVisitorId}`,
                 {
-                  theme: theme,
-                  notification: notificationsEnabled,
+                  theme,
+                  notification: true,
                   _id: uniqueVisitorId,
-                  token: token,
+                  token,
                 }
               );
               setExistingToken(token);
             }
           } else {
-            // If token already exists, just update other preferences
             await axios.put(
               `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/preference/${uniqueVisitorId}`,
               {
-                theme: theme,
-                notification: notificationsEnabled,
+                theme,
+                notification: true,
                 _id: uniqueVisitorId,
-                token: existingToken, // Include existing token
+                token: existingToken,
               }
             );
           }
         } catch (err) {
-          console.error("Error handling FCM token:", err);
-          setError("Error handling FCM token.");
-          setNotificationsEnabled(false);
-          setIsLoading(false);
-          return;
+          console.error("Error handling notifications:", err);
+          throw new Error("Failed to enable notifications");
         }
       } else {
         // Handle disabling notifications
         try {
-          const messaging = getMessaging();
           if (existingToken) {
+            const messaging = getMessaging();
             await deleteToken(messaging);
           }
-          // Update preferences with null token
+
           await axios.put(
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/preference/${uniqueVisitorId}`,
             {
-              theme: theme,
+              theme,
               notification: false,
               _id: uniqueVisitorId,
               token: null,
@@ -169,20 +216,17 @@ const SettingsPopup = ({
           );
           setExistingToken(null);
         } catch (err) {
-          console.error("Error deleting FCM token:", err);
-          setError("Error deleting FCM token.");
-          setIsLoading(false);
-          return;
+          console.error("Error disabling notifications:", err);
+          throw new Error("Failed to disable notifications");
         }
       }
-    } catch (error) {
-      console.error("Error updating preferences:", error);
-      setError("Error updating preferences");
-      setIsLoading(false);
-      return;
-    }
 
-    setIsLoading(false);
+    } catch (err) {
+      console.error("Error saving settings:", err);
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleClose = async () => {
@@ -236,6 +280,7 @@ const SettingsPopup = ({
                 className="hover:scale-105 transition ease-out duration-150"
                 checked={notificationsEnabled}
                 onCheckedChange={(checked) => setNotificationsEnabled(checked)}
+                disabled={!isNotificationSupported}
               />
             </div>
           </div>

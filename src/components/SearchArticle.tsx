@@ -24,12 +24,22 @@ interface Classification {
 }
 
 const SearchArticle: React.FC<{ article: Article }> = ({ article }) => {
-  // Truncate the article body at the first full stop
-  const truncateBody = (body: string): string => {
-    const firstFullStopIndex = body.indexOf(".");
-    return firstFullStopIndex !== -1
-      ? body.slice(0, firstFullStopIndex + 1)
-      : body; // If no full stop is found, return the entire body
+  // Function to strip HTML and truncate at first period
+  const truncateAndStripHTML = (html: string): string => {
+    // Create a temporary div to parse HTML
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    
+    // Get text content (strips HTML)
+    const textContent = tempDiv.textContent || tempDiv.innerText;
+    
+    // Find first period
+    const firstPeriodIndex = textContent.indexOf('.');
+    
+    // Return truncated text or full text if no period found
+    return firstPeriodIndex !== -1 
+      ? textContent.slice(0, firstPeriodIndex + 1)
+      : textContent;
   };
 
   return (
@@ -63,7 +73,7 @@ const SearchArticle: React.FC<{ article: Article }> = ({ article }) => {
           </h3>
 
           <p className="text-base text-gray-700 dark:text-gray-400 mb-4">
-            {truncateBody(article.body)}
+            {truncateAndStripHTML(article.body)}
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-500">
             {formatDate(article.published_at)}
