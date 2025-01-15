@@ -5,8 +5,8 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 
 import { ThemeProvider } from "@/context/ThemeContext";
+import { Footer } from "@/components/Footer";
 import { UserProvider } from "@auth0/nextjs-auth0/client"; // Import UserProvider
-
 
 const inter = Inter({ subsets: ["latin"] });
 const poppins = Poppins({
@@ -42,11 +42,14 @@ export default function RootLayout({
       <body className={poppins.className}>
         <ThemeProvider>
           <UserProvider>
-          {" "}
-          {/* Wrap the entire app with UserProvider */}
-          <Navbar />
-          {children}
-        </UserProvider>
+            {" "}
+            {/* Wrap the entire app with UserProvider */}
+            <Navbar />
+            {children}
+            <footer>
+              <Footer />
+            </footer>
+          </UserProvider>
         </ThemeProvider>
       </body>
     </html>
