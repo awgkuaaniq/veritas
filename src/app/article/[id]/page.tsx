@@ -35,7 +35,7 @@ type Article = {
   time_added: Date;
   unique_hash?: string;
   classification: Classification;
-   most_relevant_article?: {
+  most_relevant_article?: {
     title: string;
     content: string;
     similarity_score: number;
@@ -49,11 +49,7 @@ type Classification = {
   hasBeenChecked: boolean;
 };
 
-export default function ArticlePage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default function ArticlePage({ params }: { params: { id: string } }) {
   const [article, setArticle] = useState<Article | null>(null); // State for fetched article
   const [isLoading, setIsLoading] = useState(true); // State for loading indicator
   const [error, setError] = useState<string | null>(null); // State for any error
@@ -234,7 +230,7 @@ export default function ArticlePage({
         <Card className="overflow-hidden bg-white dark:bg-gray-800 transition-colors duration-200">
           <CardHeader className="relative p-0">
             {article?.image_url ? (
-              <Image
+              <img
                 src={article?.image_url}
                 alt={article?.title}
                 width={1200}
@@ -345,7 +341,7 @@ export default function ArticlePage({
         </Card>
 
         <Suspense fallback={<RelevantArticleSkeleton />}>
-          <RelevantArticle article={article?.most_relevant_article} />
+          <RelevantArticle article={article?.most_relevant_article ?? null} />
         </Suspense>
       </div>
     </main>

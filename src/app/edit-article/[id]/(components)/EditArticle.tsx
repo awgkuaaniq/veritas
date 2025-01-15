@@ -207,7 +207,7 @@ export default function EditArticle() {
         {/* Content Section */}
         <div>
           <textarea
-            name="content"
+            name="body"
             placeholder="Content *"
             value={formData.body}
             onChange={handleChange}
