@@ -16,6 +16,7 @@ import {
   HandThumbDownIcon,
   HandThumbUpIcon,
 } from "@heroicons/react/24/outline";
+import { XMarkIcon } from "@heroicons/react/24/outline"; // Import the close icon
 
 type Article = {
   title: string;
@@ -142,18 +143,27 @@ export default function FakeNewsChecker() {
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent className="w-screen h-screen sm:w-full sm:max-w-[90vw] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6">
-          <div className="pt-16 pb-8">
+          <div className="pt-20 sm:pt-8 pb-8">
             {" "}
-            {/* Added padding at the top and bottom */}
+            {/* Responsive padding at the top */}
             <DialogHeader>
-              <DialogTitle className="flex items-center justify-center text-2xl font-bold">
-                {result?.classification ? (
-                  <CheckCircle className="mr-2 h-6 w-6 text-green-500" />
-                ) : (
-                  <XCircle className="mr-2 h-6 w-6 text-red-500" />
-                )}
-                {result?.classification ? "Likely True" : "Likely fake news"}
-              </DialogTitle>
+              <div className="flex justify-between items-center">
+                <DialogTitle className="flex items-center justify-center text-2xl font-bold">
+                  {result?.classification ? (
+                    <CheckCircle className="mr-2 h-6 w-6 text-green-500" />
+                  ) : (
+                    <XCircle className="mr-2 h-6 w-6 text-red-500" />
+                  )}
+                  {result?.classification ? "Likely True" : "Likely fake news"}
+                </DialogTitle>
+                <button
+                  className="p-2 hover:scale-125 transition hover:text-bold ease-out duration-150"
+                  onClick={() => setShowModal(false)}
+                  disabled={isLoading}
+                >
+                  <XMarkIcon className="h-6" />
+                </button>
+              </div>
             </DialogHeader>
             <div className="mt-4 space-y-4">
               <h3 className="text-lg font-semibold">Most Relevant Source:</h3>
