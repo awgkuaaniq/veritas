@@ -40,6 +40,7 @@ export default function FakeNewsChecker() {
   const [feedback, setFeedback] = useState("");
   const [thumbsUp, setThumbsUp] = useState<boolean>();
   const [feedbackError, setFeedbackError] = useState("");
+  const [successMessage, setSuccessMessage] = useState(""); // Track success message
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,6 +59,7 @@ export default function FakeNewsChecker() {
       setShowModal(true);
       setFeedback("");
       setFeedbackError("");
+      setSuccessMessage("");
       setThumbsUp(undefined);
     } catch (error) {
       console.error("Error:", error);
@@ -97,6 +99,9 @@ export default function FakeNewsChecker() {
           comments: feedback,
           fake: fake,
         }
+      );
+      setSuccessMessage(
+        "Thank you for your feedback! Your response has been submitted."
       );
       console.log("Feedback submitted successfully:", response.data);
       // Optionally, reset feedback and thumbsUp state
@@ -221,6 +226,12 @@ export default function FakeNewsChecker() {
             {/* Feedback Error Message */}
             {feedbackError && (
               <p className="text-sm text-red-500">{feedbackError}</p>
+            )}
+            {/* Success Message */}
+            {successMessage && (
+              <div className="pt-3 text-green-500 text-sm font-medium">
+                {successMessage}
+              </div>
             )}
             <Button type="submit">Submit</Button>
           </form>
